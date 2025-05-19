@@ -1,7 +1,7 @@
 
 import { Question } from "@/lib/types";
 
-// מיפוי הממדים עם כותרות ותיאורים
+// מיפוי הממדים עם כותרות ותיאורים - למטרות חישוב בלבד, לא יוצגו למשתמשים
 export const dimensionInfo = {
   S: {
     title: "אסטרטג",
@@ -138,541 +138,541 @@ export const dimensionMapping: Record<number, { dimension: Question["dimension"]
 export const questions: Question[] = [
   {
     id: 1,
-    text: "מרבה לבחון הנחות פעולה כדי לבדוק אם הן עדיין מתאימות",
+    text: "אני מרבה לבחון הנחות פעולה כדי לבדוק אם הן עדיין מתאימות",
     dimension: dimensionMapping[1].dimension,
     isReversed: dimensionMapping[1].isReversed
   },
   {
     id: 2,
-    text: "נמנע מלבחון רעיונות חדשים",
+    text: "אני נמנע מלבחון רעיונות חדשים",
     dimension: dimensionMapping[2].dimension,
     isReversed: dimensionMapping[2].isReversed
   },
   {
     id: 3,
-    text: "מקשיב לעובדיו בקשב רב",
+    text: "אני מקשיב לעובדיי בקשב רב",
     dimension: dimensionMapping[3].dimension,
     isReversed: dimensionMapping[3].isReversed
   },
   {
     id: 4,
-    text: "מתעלם מהצעות לשיפור מצד אחרים",
+    text: "אני מתעלם מהצעות לשיפור מצד אחרים",
     dimension: dimensionMapping[4].dimension,
     isReversed: dimensionMapping[4].isReversed
   },
   {
     id: 5,
-    text: "מעורר השראה דרך הדוגמה האישית",
+    text: "אני מעורר השראה דרך הדוגמה האישית",
     dimension: dimensionMapping[5].dimension,
     isReversed: dimensionMapping[5].isReversed
   },
   {
     id: 6,
-    text: "מוודא שכל יוזמה מקושרת לחזון הארגוני",
+    text: "אני מוודא שכל יוזמה מקושרת לחזון הארגוני",
     dimension: dimensionMapping[6].dimension,
     isReversed: dimensionMapping[6].isReversed
   },
   {
     id: 7,
-    text: "מתנהל בקשיחות ואינו מתחשב בצרכים אישיים",
+    text: "אני מתנהל בקשיחות ואיני מתחשב בצרכים אישיים",
     dimension: dimensionMapping[7].dimension,
     isReversed: dimensionMapping[7].isReversed
   },
   {
     id: 8,
-    text: "מרבה לשתף את העובדים בהחלטות",
+    text: "אני מרבה לשתף את העובדים בהחלטות",
     dimension: dimensionMapping[8].dimension,
     isReversed: dimensionMapping[8].isReversed
   },
   {
     id: 9,
-    text: "מתייחס לעשייה כמשהו שולי",
+    text: "אני מתייחס לעשייה כמשהו שולי",
     dimension: dimensionMapping[9].dimension,
     isReversed: dimensionMapping[9].isReversed
   },
   {
     id: 10,
-    text: "יודע להוביל תכנון ארוך טווח גם בעת משבר",
+    text: "אני יודע להוביל תכנון ארוך טווח גם בעת משבר",
     dimension: dimensionMapping[10].dimension,
     isReversed: dimensionMapping[10].isReversed
   },
   {
     id: 11,
-    text: "מתרגש כאשר משתפים אותו ברעיונות מקוריים",
+    text: "אני מתרגש כאשר משתפים אותי ברעיונות מקוריים",
     dimension: dimensionMapping[11].dimension,
     isReversed: dimensionMapping[11].isReversed
   },
   {
     id: 12,
-    text: "מתנגד באופן עקבי לשינויים",
+    text: "אני מתנגד באופן עקבי לשינויים",
     dimension: dimensionMapping[12].dimension,
     isReversed: dimensionMapping[12].isReversed
   },
   {
     id: 13,
-    text: "מספר סיפור שמעורר מוטיבציה אצל הצוות",
+    text: "אני מספר סיפור שמעורר מוטיבציה אצל הצוות",
     dimension: dimensionMapping[13].dimension,
     isReversed: dimensionMapping[13].isReversed
   },
   {
     id: 14,
-    text: "מתעלם משאלות של העובדים",
+    text: "אני מתעלם משאלות של העובדים",
     dimension: dimensionMapping[14].dimension,
     isReversed: dimensionMapping[14].isReversed
   },
   {
     id: 15,
-    text: "מתעקש רק על הדרך שלו, גם כשיש חלופות",
+    text: "אני מתעקש רק על הדרך שלי, גם כשיש חלופות",
     dimension: dimensionMapping[15].dimension,
     isReversed: dimensionMapping[15].isReversed
   },
   {
     id: 16,
-    text: "מבליט את החשיבות האישית של כל עובד",
+    text: "אני מבליט את החשיבות האישית של כל עובד",
     dimension: dimensionMapping[16].dimension,
     isReversed: dimensionMapping[16].isReversed
   },
   {
     id: 17,
-    text: "מרבה לשתף את סיפורו האישי לשם חיבור רגשי",
+    text: "אני מרבה לשתף את סיפורי האישי לשם חיבור רגשי",
     dimension: dimensionMapping[17].dimension,
     isReversed: dimensionMapping[17].isReversed
   },
   {
     id: 18,
-    text: "מוותר בקלות על עקרונות כשיש התנגדות",
+    text: "אני מוותר בקלות על עקרונות כשיש התנגדות",
     dimension: dimensionMapping[18].dimension,
     isReversed: dimensionMapping[18].isReversed
   },
   {
     id: 19,
-    text: "מתלהב מהאפשרות ללמוד משהו חדש",
+    text: "אני מתלהב מהאפשרות ללמוד משהו חדש",
     dimension: dimensionMapping[19].dimension,
     isReversed: dimensionMapping[19].isReversed
   },
   {
     id: 20,
-    text: "מדגיש שוב ושוב את הערכים המובילים של הארגון",
+    text: "אני מדגיש שוב ושוב את הערכים המובילים של הארגון",
     dimension: dimensionMapping[20].dimension,
     isReversed: dimensionMapping[20].isReversed
   },
   {
     id: 21,
-    text: "מתייעץ עם עובדים לפני החלטות חשובות",
+    text: "אני מתייעץ עם עובדים לפני החלטות חשובות",
     dimension: dimensionMapping[21].dimension,
     isReversed: dimensionMapping[21].isReversed
   },
   {
     id: 22,
-    text: "חושש לשתף פעולה עם צוותים אחרים",
+    text: "אני חושש לשתף פעולה עם צוותים אחרים",
     dimension: dimensionMapping[22].dimension,
     isReversed: dimensionMapping[22].isReversed
   },
   {
     id: 23,
-    text: "יוזם רפורמות כשהמציאות משתנה",
+    text: "אני יוזם רפורמות כשהמציאות משתנה",
     dimension: dimensionMapping[23].dimension,
     isReversed: dimensionMapping[23].isReversed
   },
   {
     id: 24,
-    text: "נצמד לנוהלים גם כשהם כבר לא רלוונטיים",
+    text: "אני נצמד לנוהלים גם כשהם כבר לא רלוונטיים",
     dimension: dimensionMapping[24].dimension,
     isReversed: dimensionMapping[24].isReversed
   },
   {
     id: 25,
-    text: "מלהיב את העובדים סביב חזון משותף",
+    text: "אני מלהיב את העובדים סביב חזון משותף",
     dimension: dimensionMapping[25].dimension,
     isReversed: dimensionMapping[25].isReversed
   },
   {
     id: 26,
-    text: "פועל תמיד מתוך שקיפות",
+    text: "אני פועל תמיד מתוך שקיפות",
     dimension: dimensionMapping[26].dimension,
     isReversed: dimensionMapping[26].isReversed
   },
   {
     id: 27,
-    text: "מתעלם ממשברים אישיים של עובדים",
+    text: "אני מתעלם ממשברים אישיים של עובדים",
     dimension: dimensionMapping[27].dimension,
     isReversed: dimensionMapping[27].isReversed
   },
   {
     id: 28,
-    text: "שואף שכל עשייה תחולל שינוי אמיתי",
+    text: "אני שואף שכל עשייה תחולל שינוי אמיתי",
     dimension: dimensionMapping[28].dimension,
     isReversed: dimensionMapping[28].isReversed
   },
   {
     id: 29,
-    text: "לא סומך על יצירתיות של אחרים",
+    text: "אני לא סומך על יצירתיות של אחרים",
     dimension: dimensionMapping[29].dimension,
     isReversed: dimensionMapping[29].isReversed
   },
   {
     id: 30,
-    text: "מעודד את הסובבים לחפש משמעות בעבודתם",
+    text: "אני מעודד את הסובבים לחפש משמעות בעבודתם",
     dimension: dimensionMapping[30].dimension,
     isReversed: dimensionMapping[30].isReversed
   },
   {
     id: 31,
-    text: "מוודא שכל משימה תורמת לחזון",
+    text: "אני מוודא שכל משימה תורמת לחזון",
     dimension: dimensionMapping[31].dimension,
     isReversed: dimensionMapping[31].isReversed
   },
   {
     id: 32,
-    text: "מביע ספק ביכולת של הארגון להצליח",
+    text: "אני מביע ספק ביכולת של הארגון להצליח",
     dimension: dimensionMapping[32].dimension,
     isReversed: dimensionMapping[32].isReversed
   },
   {
     id: 33,
-    text: "מקפיד על עדכון הידע האישי דרך קריאה ומפגשים",
+    text: "אני מקפיד על עדכון הידע האישי דרך קריאה ומפגשים",
     dimension: dimensionMapping[33].dimension,
     isReversed: dimensionMapping[33].isReversed
   },
   {
     id: 34,
-    text: "מתעלם מדעות המיעוט בצוות",
+    text: "אני מתעלם מדעות המיעוט בצוות",
     dimension: dimensionMapping[34].dimension,
     isReversed: dimensionMapping[34].isReversed
   },
   {
     id: 35,
-    text: "שואף שכל עובד ירגיש חלק ממסע אישי",
+    text: "אני שואף שכל עובד ירגיש חלק ממסע אישי",
     dimension: dimensionMapping[35].dimension,
     isReversed: dimensionMapping[35].isReversed
   },
   {
     id: 36,
-    text: "מראה אחריות אישית על כישלונות",
+    text: "אני מראה אחריות אישית על כישלונות",
     dimension: dimensionMapping[36].dimension,
     isReversed: dimensionMapping[36].isReversed
   },
   {
     id: 37,
-    text: "מאמין שהשראה נובעת ממעשים ולא מדיבורים",
+    text: "אני מאמין שהשראה נובעת ממעשים ולא מדיבורים",
     dimension: dimensionMapping[37].dimension,
     isReversed: dimensionMapping[37].isReversed
   },
   {
     id: 38,
-    text: "מפתח אסטרטגיות חלופיות לשם גמישות",
+    text: "אני מפתח אסטרטגיות חלופיות לשם גמישות",
     dimension: dimensionMapping[38].dimension,
     isReversed: dimensionMapping[38].isReversed
   },
   {
     id: 39,
-    text: "נמנע מלבקש עזרה גם כשהוא זקוק לה",
+    text: "אני נמנע מלבקש עזרה גם כשאני זקוק לה",
     dimension: dimensionMapping[39].dimension,
     isReversed: dimensionMapping[39].isReversed
   },
   {
     id: 40,
-    text: "רואה בהצלחת הארגון שליחות",
+    text: "אני רואה בהצלחת הארגון שליחות",
     dimension: dimensionMapping[40].dimension,
     isReversed: dimensionMapping[40].isReversed
   },
   {
     id: 41,
-    text: "נותן תחושה של ביטחון ביכולת לעמוד באתגרים",
+    text: "אני נותן תחושה של ביטחון ביכולת לעמוד באתגרים",
     dimension: dimensionMapping[41].dimension,
     isReversed: dimensionMapping[41].isReversed
   },
   {
     id: 42,
-    text: "מרבה לשאול שאלות ליצירת שיח",
+    text: "אני מרבה לשאול שאלות ליצירת שיח",
     dimension: dimensionMapping[42].dimension,
     isReversed: dimensionMapping[42].isReversed
   },
   {
     id: 43,
-    text: "מתחשב בהקשרים פוליטיים וכלכליים בתכנון",
+    text: "אני מתחשב בהקשרים פוליטיים וכלכליים בתכנון",
     dimension: dimensionMapping[43].dimension,
     isReversed: dimensionMapping[43].isReversed
   },
   {
     id: 44,
-    text: "מקדם שיתוף פעולה בין יחידות שונות",
+    text: "אני מקדם שיתוף פעולה בין יחידות שונות",
     dimension: dimensionMapping[44].dimension,
     isReversed: dimensionMapping[44].isReversed
   },
   {
     id: 45,
-    text: "יוזם תהליכי למידה שיתופיים",
+    text: "אני יוזם תהליכי למידה שיתופיים",
     dimension: dimensionMapping[45].dimension,
     isReversed: dimensionMapping[45].isReversed
   },
   {
     id: 46,
-    text: "דוחה הצעות שמאיימות על מעמדו",
+    text: "אני דוחה הצעות שמאיימות על מעמדי",
     dimension: dimensionMapping[46].dimension,
     isReversed: dimensionMapping[46].isReversed
   },
   {
     id: 47,
-    text: "רואה בכל שינוי הזדמנות לצמיחה",
+    text: "אני רואה בכל שינוי הזדמנות לצמיחה",
     dimension: dimensionMapping[47].dimension,
     isReversed: dimensionMapping[47].isReversed
   },
   {
     id: 48,
-    text: "מקשיב לעמיתיו גם כשהם טועים",
+    text: "אני מקשיב לעמיתיי גם כשהם טועים",
     dimension: dimensionMapping[48].dimension,
     isReversed: dimensionMapping[48].isReversed
   },
   {
     id: 49,
-    text: "משתמש בדוגמאות אישיות לחיבור רגשי",
+    text: "אני משתמש בדוגמאות אישיות לחיבור רגשי",
     dimension: dimensionMapping[49].dimension,
     isReversed: dimensionMapping[49].isReversed
   },
   {
     id: 50,
-    text: "פועל ליצירת תחושת שליחות בצוות",
+    text: "אני פועל ליצירת תחושת שליחות בצוות",
     dimension: dimensionMapping[50].dimension,
     isReversed: dimensionMapping[50].isReversed
   },
   {
     id: 51,
-    text: "בודק נתונים לפני קבלת החלטה אסטרטגית",
+    text: "אני בודק נתונים לפני קבלת החלטה אסטרטגית",
     dimension: dimensionMapping[51].dimension,
     isReversed: dimensionMapping[51].isReversed
   },
   {
     id: 52,
-    text: "מזמין שאלות קשות מהעובדים",
+    text: "אני מזמין שאלות קשות מהעובדים",
     dimension: dimensionMapping[52].dimension,
     isReversed: dimensionMapping[52].isReversed
   },
   {
     id: 53,
-    text: "לא משתף את חזונו מתוך חשש לביקורת",
+    text: "אני לא משתף את חזוני מתוך חשש לביקורת",
     dimension: dimensionMapping[53].dimension,
     isReversed: dimensionMapping[53].isReversed
   },
   {
     id: 54,
-    text: "מדגיש את ערך התרומה החברתית של הפעילות",
+    text: "אני מדגיש את ערך התרומה החברתית של הפעילות",
     dimension: dimensionMapping[54].dimension,
     isReversed: dimensionMapping[54].isReversed
   },
   {
     id: 55,
-    text: "נמנע מהחלטות כדי לא לטעות",
+    text: "אני נמנע מהחלטות כדי לא לטעות",
     dimension: dimensionMapping[55].dimension,
     isReversed: dimensionMapping[55].isReversed
   },
   {
     id: 56,
-    text: "מאמין שכל אדם מסוגל להוביל שינוי",
+    text: "אני מאמין שכל אדם מסוגל להוביל שינוי",
     dimension: dimensionMapping[56].dimension,
     isReversed: dimensionMapping[56].isReversed
   },
   {
     id: 57,
-    text: "בונה תכנית פעולה עם גמישות מובנית",
+    text: "אני בונה תכנית פעולה עם גמישות מובנית",
     dimension: dimensionMapping[57].dimension,
     isReversed: dimensionMapping[57].isReversed
   },
   {
     id: 58,
-    text: "מרבה להחמיא כאשר מגיע",
+    text: "אני מרבה להחמיא כאשר מגיע",
     dimension: dimensionMapping[58].dimension,
     isReversed: dimensionMapping[58].isReversed
   },
   {
     id: 59,
-    text: "משדר נחישות גם בעת אי ודאות",
+    text: "אני משדר נחישות גם בעת אי ודאות",
     dimension: dimensionMapping[59].dimension,
     isReversed: dimensionMapping[59].isReversed
   },
   {
     id: 60,
-    text: "נוהג לציין הצלחות קטנות בדרך ליעד",
+    text: "אני נוהג לציין הצלחות קטנות בדרך ליעד",
     dimension: dimensionMapping[60].dimension,
     isReversed: dimensionMapping[60].isReversed
   },
   {
     id: 61,
-    text: "מבסס תהליכים ארגוניים על עקרונות ערכיים",
+    text: "אני מבסס תהליכים ארגוניים על עקרונות ערכיים",
     dimension: dimensionMapping[61].dimension,
     isReversed: dimensionMapping[61].isReversed
   },
   {
     id: 62,
-    text: "מתחשב בצרכים תרבותיים של העובדים",
+    text: "אני מתחשב בצרכים תרבותיים של העובדים",
     dimension: dimensionMapping[62].dimension,
     isReversed: dimensionMapping[62].isReversed
   },
   {
     id: 63,
-    text: "מתמקד בפתרונות ולא בתירוצים",
+    text: "אני מתמקד בפתרונות ולא בתירוצים",
     dimension: dimensionMapping[63].dimension,
     isReversed: dimensionMapping[63].isReversed
   },
   {
     id: 64,
-    text: "משתף את הצוות במידע קריטי",
+    text: "אני משתף את הצוות במידע קריטי",
     dimension: dimensionMapping[64].dimension,
     isReversed: dimensionMapping[64].isReversed
   },
   {
     id: 65,
-    text: "מתנתק כשהאווירה קשה",
+    text: "אני מתנתק כשהאווירה קשה",
     dimension: dimensionMapping[65].dimension,
     isReversed: dimensionMapping[65].isReversed
   },
   {
     id: 66,
-    text: "מתעלם ממשימות שמחוץ להגדרתו",
+    text: "אני מתעלם ממשימות שמחוץ להגדרתי",
     dimension: dimensionMapping[66].dimension,
     isReversed: dimensionMapping[66].isReversed
   },
   {
     id: 67,
-    text: "מעודד מצוינות מתוך משמעות",
+    text: "אני מעודד מצוינות מתוך משמעות",
     dimension: dimensionMapping[67].dimension,
     isReversed: dimensionMapping[67].isReversed
   },
   {
     id: 68,
-    text: "מדבר על העתיד בצורה מעוררת השראה",
+    text: "אני מדבר על העתיד בצורה מעוררת השראה",
     dimension: dimensionMapping[68].dimension,
     isReversed: dimensionMapping[68].isReversed
   },
   {
     id: 69,
-    text: "לא מאמין שהלמידה יכולה לשנות דברים",
+    text: "אני לא מאמין שהלמידה יכולה לשנות דברים",
     dimension: dimensionMapping[69].dimension,
     isReversed: dimensionMapping[69].isReversed
   },
   {
     id: 70,
-    text: "משלב ידע חדש בפעילות היומיומית",
+    text: "אני משלב ידע חדש בפעילות היומיומית",
     dimension: dimensionMapping[70].dimension,
     isReversed: dimensionMapping[70].isReversed
   },
   {
     id: 71,
-    text: "נותן תחושת שייכות דרך הקשבה",
+    text: "אני נותן תחושת שייכות דרך הקשבה",
     dimension: dimensionMapping[71].dimension,
     isReversed: dimensionMapping[71].isReversed
   },
   {
     id: 72,
-    text: "לא פועל לשיפור אישי מתמיד",
+    text: "אני לא פועל לשיפור אישי מתמיד",
     dimension: dimensionMapping[72].dimension,
     isReversed: dimensionMapping[72].isReversed
   },
   {
     id: 73,
-    text: "מקשר כל תהליך לתמונה הגדולה",
+    text: "אני מקשר כל תהליך לתמונה הגדולה",
     dimension: dimensionMapping[73].dimension,
     isReversed: dimensionMapping[73].isReversed
   },
   {
     id: 74,
-    text: "רואה בעובד שותף אמיתי",
+    text: "אני רואה בעובד שותף אמיתי",
     dimension: dimensionMapping[74].dimension,
     isReversed: dimensionMapping[74].isReversed
   },
   {
     id: 75,
-    text: "מקדם הבנה הדדית בין עובדים מרקעים שונים",
+    text: "אני מקדם הבנה הדדית בין עובדים מרקעים שונים",
     dimension: dimensionMapping[75].dimension,
     isReversed: dimensionMapping[75].isReversed
   },
   {
     id: 76,
-    text: "שואל שאלות גם כשזה לא נוח",
+    text: "אני שואל שאלות גם כשזה לא נוח",
     dimension: dimensionMapping[76].dimension,
     isReversed: dimensionMapping[76].isReversed
   },
   {
     id: 77,
-    text: "מוודא שכל אחד רואה את חלקו במשימה",
+    text: "אני מוודא שכל אחד רואה את חלקו במשימה",
     dimension: dimensionMapping[77].dimension,
     isReversed: dimensionMapping[77].isReversed
   },
   {
     id: 78,
-    text: "מתמודד עם התנגדות בגמישות",
+    text: "אני מתמודד עם התנגדות בגמישות",
     dimension: dimensionMapping[78].dimension,
     isReversed: dimensionMapping[78].isReversed
   },
   {
     id: 79,
-    text: "נותן מקום לרגשות של אחרים",
+    text: "אני נותן מקום לרגשות של אחרים",
     dimension: dimensionMapping[79].dimension,
     isReversed: dimensionMapping[79].isReversed
   },
   {
     id: 80,
-    text: "נמנע מקונפליקטים גם כשנדרשים",
+    text: "אני נמנע מקונפליקטים גם כשנדרשים",
     dimension: dimensionMapping[80].dimension,
     isReversed: dimensionMapping[80].isReversed
   },
   {
     id: 81,
-    text: "רואה ערך בהתפתחות האישית של העובדים",
+    text: "אני רואה ערך בהתפתחות האישית של העובדים",
     dimension: dimensionMapping[81].dimension,
     isReversed: dimensionMapping[81].isReversed
   },
   {
     id: 82,
-    text: "מחפש גיוון רעיוני בכל דיון",
+    text: "אני מחפש גיוון רעיוני בכל דיון",
     dimension: dimensionMapping[82].dimension,
     isReversed: dimensionMapping[82].isReversed
   },
   {
     id: 83,
-    text: "מדבר בפתיחות על חזון עתידי",
+    text: "אני מדבר בפתיחות על חזון עתידי",
     dimension: dimensionMapping[83].dimension,
     isReversed: dimensionMapping[83].isReversed
   },
   {
     id: 84,
-    text: "משתף בכישלונותיו כדי לעודד למידה",
+    text: "אני משתף בכישלונותיי כדי לעודד למידה",
     dimension: dimensionMapping[84].dimension,
     isReversed: dimensionMapping[84].isReversed
   },
   {
     id: 85,
-    text: "לא מתעמק בתובנות מהעבר",
+    text: "אני לא מתעמק בתובנות מהעבר",
     dimension: dimensionMapping[85].dimension,
     isReversed: dimensionMapping[85].isReversed
   },
   {
     id: 86,
-    text: "פועל תמיד למען טוב משותף",
+    text: "אני פועל תמיד למען טוב משותף",
     dimension: dimensionMapping[86].dimension,
     isReversed: dimensionMapping[86].isReversed
   },
   {
     id: 87,
-    text: "מעודד פרשנות אישית של חזון הארגון",
+    text: "אני מעודד פרשנות אישית של חזון הארגון",
     dimension: dimensionMapping[87].dimension,
     isReversed: dimensionMapping[87].isReversed
   },
   {
     id: 88,
-    text: "לא נותן מקום לשאלות של ביקורת",
+    text: "אני לא נותן מקום לשאלות של ביקורת",
     dimension: dimensionMapping[88].dimension,
     isReversed: dimensionMapping[88].isReversed
   },
   {
     id: 89,
-    text: "שומר על מיקוד גם בעת משבר",
+    text: "אני שומר על מיקוד גם בעת משבר",
     dimension: dimensionMapping[89].dimension,
     isReversed: dimensionMapping[89].isReversed
   },
   {
     id: 90,
-    text: "מראה אכפתיות עמוקה בעבודה היומיומית",
+    text: "אני מראה אכפתיות עמוקה בעבודה היומיומית",
     dimension: dimensionMapping[90].dimension,
     isReversed: dimensionMapping[90].isReversed
   }

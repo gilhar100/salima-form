@@ -63,6 +63,11 @@ const Survey = () => {
         // שמירת התוצאות ב־localStorage
         localStorage.setItem('salimaResults', JSON.stringify(results));
         
+        toast({
+          title: "השאלון הושלם בהצלחה!",
+          description: "מעבר לדף התוצאות...",
+        });
+        
         // מעבר לדף התוצאות
         navigate('/results');
       }
@@ -88,7 +93,7 @@ const Survey = () => {
   const handleUserInfoSubmit = (info: UserInfo) => {
     setUserInfo(info);
     toast({
-      title: "ברוך הבא לשאלון SALIMA-WOCA",
+      title: "ברוך הבא לשאלון המנהיגות",
       description: "אנא השב/י על כל השאלות בכנות מרבית",
     });
   };
@@ -100,7 +105,7 @@ const Survey = () => {
       ) : (
         <>
           <div className="mb-4">
-            <h1 className="text-2xl font-bold text-center mb-2">שאלון מנהיגות SALIMA-WOCA</h1>
+            <h1 className="text-2xl font-bold text-center mb-2">שאלון מנהיגות</h1>
             <Progress value={progress} className="h-2" />
             <div className="text-center text-sm text-gray-500 mt-1">
               שלב {currentStep + 1} מתוך {totalSteps}
@@ -111,8 +116,8 @@ const Survey = () => {
             <CardHeader>
               <CardTitle className="text-xl">
                 {currentStep === 0 
-                  ? "נא לדרג עד כמה אתה מסכים עם ההיגדים הבאים:" 
-                  : `המשך לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
+                  ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:" 
+                  : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
               </CardTitle>
             </CardHeader>
             
