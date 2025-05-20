@@ -22,33 +22,11 @@ const Index = () => {
           
           <CardContent>
             <p className="mb-4">
-              מערכת SALIMA-WOCA היא כלי אבחון ארגוני מקיף המבוסס על שאלון מנהיגות הכולל 90 היגדים,
-              המסווגים לשישה ממדים מרכזיים:
+              מערכת SALIMA-WOCA היא כלי אבחון ארגוני מקיף המבוסס על שאלון מנהיגות הכולל 90 היגדים.
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">S</strong> - אסטרטג
-              </div>
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">L</strong> - לומד
-              </div>
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">I</strong> - השראה
-              </div>
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">M</strong> - משמעות
-              </div>
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">A</strong> - אדפטיבי
-              </div>
-              <div className="p-3 bg-salima-50 rounded-lg border border-salima-100">
-                <strong className="text-salima-700">A2</strong> - אותנטיות
-              </div>
-            </div>
-            
             <p>
-              לאחר השלמת השאלון, תקבל/י דוח מפורט עם ניתוח של הפרופיל האישי שלך, כולל גרף רדאר המציג את החוזקות והתחומים לשיפור.
+              לאחר השלמת השאלון, תוצאות השאלון יועברו למערכת לצורך ניתוח.
             </p>
           </CardContent>
           

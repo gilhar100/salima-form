@@ -98,7 +98,8 @@ function createEmailContent(results: SurveyResult): string {
 
 // פונקציה לשליחת התוצאות במייל
 export async function sendResultsByEmail(results: SurveyResult): Promise<void> {
-  const { userInfo } = results;
+  // כתובת המייל של המפתח - לכאן יישלחו התוצאות
+  const developerEmail = "developer@example.com"; // יש להחליף לכתובת האמיתית
   
   // הכנת הגוף של המייל
   const emailContent = createEmailContent(results);
@@ -106,7 +107,8 @@ export async function sendResultsByEmail(results: SurveyResult): Promise<void> {
   // כאן היית מממש קוד לשליחת מייל אמיתי, אבל ללא שרת אמיתי נשתמש בסימולציה
   return new Promise((resolve, reject) => {
     // סימולציה של שליחת מייל - מחכה 1.5 שניות ומחזירה הצלחה
-    console.log(`שולח מייל לכתובת: ${userInfo.email}`);
+    console.log(`שולח מייל לכתובת המפתח: ${developerEmail}`);
+    console.log(`מידע על המשתמש: ${results.userInfo.email}`);
     console.log(`תוכן המייל:`, emailContent);
     
     setTimeout(() => {

@@ -2,10 +2,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
-import ResultsRadar from "@/components/ResultsRadar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { sendResultsByEmail } from "@/lib/email-service";
 import { useToast } from "@/hooks/use-toast";
 
@@ -35,11 +33,6 @@ const Results = () => {
     );
   }
   
-  // פונקציה להדפסת התוצאות
-  const handlePrint = () => {
-    window.print();
-  };
-  
   // פונקציה לשליחת התוצאות במייל
   const handleSendEmail = async () => {
     if (!results.userInfo.email) {
@@ -56,7 +49,7 @@ const Results = () => {
       await sendResultsByEmail(results);
       toast({
         title: "נשלח בהצלחה",
-        description: `התוצאות המפורטות נשלחו לכתובת המייל: ${results.userInfo.email}`,
+        description: `התוצאות נשלחו לכתובת המייל: ${results.userInfo.email}`,
       });
     } catch (error) {
       console.error("שגיאה בשליחת המייל:", error);
@@ -79,57 +72,40 @@ const Results = () => {
   return (
     <div className="container max-w-4xl mx-auto py-6 print:py-0">
       <div className="mb-8 text-center print:mb-4">
-        <h1 className="text-3xl font-bold text-salima-800 mb-2">תוצאות שאלון מנהיגות</h1>
+        <h1 className="text-3xl font-bold text-salima-800 mb-2">תודה על מילוי השאלון</h1>
         <p className="text-gray-600">
-          שם: {results.userInfo.name} | תאריך: {new Date(results.date).toLocaleDateString('he-IL')}
+          השאלון הושלם בהצלחה
         </p>
-        {results.userInfo.organization && (
-          <p className="text-gray-600">
-            ארגון: {results.userInfo.organization}
-            {results.userInfo.department && ` | מחלקה: ${results.userInfo.department}`}
-            {results.userInfo.position && ` | תפקיד: ${results.userInfo.position}`}
-          </p>
-        )}
       </div>
       
       <div className="print:hidden">
         <Card className="w-full mb-6">
           <CardHeader>
-            <CardTitle>סיכום תוצאות</CardTitle>
+            <CardTitle>השאלון הושלם בהצלחה</CardTitle>
             <CardDescription>
-              תודה שהשלמת את שאלון המנהיגות. תוצאות מפורטות יישלחו לכתובת המייל שהזנת.
+              תודה שהשלמת את השאלון. התוצאות יישלחו למערכת.
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            <ResultsRadar result={results} />
-            
-            <div className="mt-6">
-              <p className="mb-4">
-                ציון ה-SLQ הכללי שלך הוא <strong>{results.slq}</strong> מתוך 5, המייצג את הממוצע של ששת הממדים המרכיבים את פרופיל המנהיגות שלך.
-              </p>
-              
-              <p className="text-center mt-8">
-                התוצאות המפורטות של השאלון יישלחו לכתובת המייל: <span className="font-semibold">{results.userInfo.email}</span>
-              </p>
-            </div>
+            <p className="text-center mt-4">
+              הודעת אימייל תישלח לכתובת: <span className="font-semibold">{results.userInfo.email}</span>
+            </p>
           </CardContent>
         </Card>
       </div>
       
       <div className="mt-8 flex flex-wrap gap-3 justify-center print:hidden">
-        <Button onClick={handlePrint} variant="outline">
-          הדפס סיכום
-        </Button>
         <Button 
           onClick={handleSendEmail} 
           variant="outline" 
           disabled={sending}
+          className="hidden"
         >
-          {sending ? "שולח..." : "שלח תוצאות מפורטות במייל"}
+          {sending ? "שולח..." : "שלח תוצאות במייל"}
         </Button>
         <Button onClick={handleNewSurvey} className="bg-salima-600 hover:bg-salima-700">
-          התחל שאלון חדש
+          מילוי שאלון חדש
         </Button>
       </div>
     </div>
