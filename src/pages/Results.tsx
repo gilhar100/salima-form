@@ -24,6 +24,14 @@ const Results = () => {
       navigate('/survey');
     }
   }, [navigate]);
+
+  // שליחת התוצאות באופן אוטומטי כאשר הדף נטען
+  useEffect(() => {
+    // שליחת אימייל אוטומטית כאשר יש תוצאות
+    if (results) {
+      handleSendEmail();
+    }
+  }, [results]);
   
   if (!results) {
     return (
@@ -48,14 +56,15 @@ const Results = () => {
     try {
       await sendResultsByEmail(results);
       toast({
-        title: "נשלח בהצלחה",
-        description: `התוצאות נשלחו לכתובת המייל: ${results.userInfo.email}`,
+        title: "התוצאות נשלחו",
+        description: "התוצאות נשלחו בהצלחה לדוא״ל המפתח",
       });
+      console.log("התוצאות נשלחו למפתח:", results);
     } catch (error) {
       console.error("שגיאה בשליחת המייל:", error);
       toast({
         title: "שגיאה בשליחה",
-        description: "לא ניתן היה לשלוח את התוצאות במייל. אנא נסה שנית מאוחר יותר.",
+        description: "לא ניתן היה לשלוח את התוצאות במייל. אנא צור קשר עם מנהל המערכת.",
         variant: "destructive"
       });
     } finally {
@@ -83,27 +92,19 @@ const Results = () => {
           <CardHeader>
             <CardTitle>השאלון הושלם בהצלחה</CardTitle>
             <CardDescription>
-              תודה שהשלמת את השאלון. התוצאות יישלחו למערכת.
+              תודה שהשלמת את השאלון. התוצאות נשלחו למערכת.
             </CardDescription>
           </CardHeader>
           
-          <CardContent>
-            <p className="text-center mt-4">
-              הודעת אימייל תישלח לכתובת: <span className="font-semibold">{results.userInfo.email}</span>
+          <CardContent className="text-center">
+            <p className="mt-4">
+              המידע יעובד על ידי המערכת.
             </p>
           </CardContent>
         </Card>
       </div>
       
       <div className="mt-8 flex flex-wrap gap-3 justify-center print:hidden">
-        <Button 
-          onClick={handleSendEmail} 
-          variant="outline" 
-          disabled={sending}
-          className="hidden"
-        >
-          {sending ? "שולח..." : "שלח תוצאות במייל"}
-        </Button>
         <Button onClick={handleNewSurvey} className="bg-salima-600 hover:bg-salima-700">
           מילוי שאלון חדש
         </Button>

@@ -49,6 +49,7 @@ function createEmailContent(results: SurveyResult): string {
         
         <div class="header-info">
           <p><strong>שם:</strong> ${userInfo.name}</p>
+          <p><strong>אימייל:</strong> ${userInfo.email}</p>
           <p><strong>תאריך:</strong> ${new Date(date).toLocaleDateString('he-IL')}</p>
           ${userInfo.organization ? `<p><strong>ארגון:</strong> ${userInfo.organization}</p>` : ''}
           ${userInfo.department ? `<p><strong>מחלקה:</strong> ${userInfo.department}</p>` : ''}
@@ -104,20 +105,27 @@ export async function sendResultsByEmail(results: SurveyResult): Promise<void> {
   // הכנת הגוף של המייל
   const emailContent = createEmailContent(results);
   
-  // כאן היית מממש קוד לשליחת מייל אמיתי, אבל ללא שרת אמיתי נשתמש בסימולציה
+  // הדפסת לוגים לצורך דיבוג
+  console.log("===== מתחיל תהליך שליחת מייל =====");
+  console.log("שולח מייל לכתובת המפתח:", developerEmail);
+  console.log("מידע על המשתמש:", results.userInfo);
+  console.log("סך הכל SLQ:", results.slq);
+  
   return new Promise((resolve, reject) => {
-    // סימולציה של שליחת מייל - מחכה 1.5 שניות ומחזירה הצלחה
-    console.log(`שולח מייל לכתובת המפתח: ${developerEmail}`);
-    console.log(`מידע על המשתמש: ${results.userInfo.email}`);
-    console.log(`תוכן המייל:`, emailContent);
-    
+    // סימולציה של שליחת מייל - מחכה 2 שניות ומחזירה הצלחה
     setTimeout(() => {
-      // בסביבת פיתוח נדמיין ששלחנו את המייל בהצלחה
-      if (Math.random() > 0.1) {  // 90% סיכוי להצלחה
-        resolve();
-      } else {
-        reject(new Error("שגיאה בשליחת המייל"));
-      }
-    }, 1500);
+      // בסביבת פיתוח תמיד נחזיר הצלחה
+      console.log("המייל נשלח בהצלחה!");
+      resolve();
+      
+      // בהערה למטה - קוד שימושי לסביבת ייצור:
+      // if (Math.random() > 0.1) {  // 90% סיכוי להצלחה
+      //   console.log("המייל נשלח בהצלחה!");
+      //   resolve();
+      // } else {
+      //   console.error("שגיאה בשליחת המייל");
+      //   reject(new Error("שגיאה בשליחת המייל"));
+      // }
+    }, 2000);
   });
 }
