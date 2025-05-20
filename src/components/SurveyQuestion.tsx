@@ -33,10 +33,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
         >
           <div className="flex flex-col items-center">
             <div className="relative">
-              <RadioGroupItem value="1" id={`q${question.id}-1`} className="sr-only" />
+              <RadioGroupItem value="1" id={`q${question.id}-1`} className="peer sr-only" />
               <Label
                 htmlFor={`q${question.id}-1`}
-                className="text-center block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
+                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
               >
                 1
               </Label>
@@ -46,10 +46,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
           
           <div className="flex flex-col items-center">
             <div className="relative">
-              <RadioGroupItem value="2" id={`q${question.id}-2`} className="sr-only" />
+              <RadioGroupItem value="2" id={`q${question.id}-2`} className="peer sr-only" />
               <Label
                 htmlFor={`q${question.id}-2`}
-                className="text-center block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
+                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
               >
                 2
               </Label>
@@ -59,10 +59,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
           
           <div className="flex flex-col items-center">
             <div className="relative">
-              <RadioGroupItem value="3" id={`q${question.id}-3`} className="sr-only" />
+              <RadioGroupItem value="3" id={`q${question.id}-3`} className="peer sr-only" />
               <Label
                 htmlFor={`q${question.id}-3`}
-                className="text-center block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
+                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
               >
                 3
               </Label>
@@ -72,10 +72,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
           
           <div className="flex flex-col items-center">
             <div className="relative">
-              <RadioGroupItem value="4" id={`q${question.id}-4`} className="sr-only" />
+              <RadioGroupItem value="4" id={`q${question.id}-4`} className="peer sr-only" />
               <Label
                 htmlFor={`q${question.id}-4`}
-                className="text-center block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
+                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
               >
                 4
               </Label>
@@ -85,10 +85,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
           
           <div className="flex flex-col items-center">
             <div className="relative">
-              <RadioGroupItem value="5" id={`q${question.id}-5`} className="sr-only" />
+              <RadioGroupItem value="5" id={`q${question.id}-5`} className="peer sr-only" />
               <Label
                 htmlFor={`q${question.id}-5`}
-                className="text-center block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
+                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
               >
                 5
               </Label>
