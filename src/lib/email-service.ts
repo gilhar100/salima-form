@@ -99,15 +99,15 @@ function createEmailContent(results: SurveyResult): string {
 
 // פונקציה לשליחת התוצאות במייל
 export async function sendResultsByEmail(results: SurveyResult): Promise<void> {
-  // כתובת המייל של המפתח - לכאן יישלחו התוצאות
-  const developerEmail = "developer@example.com"; // יש להחליף לכתובת האמיתית
+  // כתובת המייל הקבועה - לכאן יישלחו התוצאות
+  const recipientEmail = "gilhar100@gmail.com";
   
   // הכנת הגוף של המייל
   const emailContent = createEmailContent(results);
   
   // הדפסת לוגים לצורך דיבוג
   console.log("===== מתחיל תהליך שליחת מייל =====");
-  console.log("שולח מייל לכתובת המפתח:", developerEmail);
+  console.log("שולח מייל לכתובת:", recipientEmail);
   console.log("מידע על המשתמש:", results.userInfo);
   console.log("סך הכל SLQ:", results.slq);
   

@@ -43,15 +43,6 @@ const Results = () => {
   
   // פונקציה לשליחת התוצאות במייל
   const handleSendEmail = async () => {
-    if (!results.userInfo.email) {
-      toast({
-        title: "שגיאה",
-        description: "לא הוזנה כתובת מייל",
-        variant: "destructive"
-      });
-      return;
-    }
-    
     setSending(true);
     try {
       await sendResultsByEmail(results);
