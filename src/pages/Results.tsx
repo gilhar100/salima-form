@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { sendResultsByEmail, saveSurveyToDatabase } from "@/lib/survey-service";
+import { saveSurveyToDatabase } from "@/lib/survey-service";
 import { useToast } from "@/hooks/use-toast";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
@@ -16,7 +16,6 @@ const Results = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [sending, setSending] = useState(false);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -39,26 +38,6 @@ const Results = () => {
       </div>
     );
   }
-  
-  const handleSendEmail = async () => {
-    setSending(true);
-    try {
-      await sendResultsByEmail(results);
-      toast({
-        title: "התוצאות נשלחו",
-        description: "התוצאות נשלחו בהצלחה לדוא״ל המפתח",
-      });
-    } catch (error) {
-      console.error("שגיאה בשליחת המייל:", error);
-      toast({
-        title: "שגיאה בשליחה",
-        description: "לא ניתן היה לשלוח את התוצאות במייל",
-        variant: "destructive"
-      });
-    } finally {
-      setSending(false);
-    }
-  };
 
   const handleConsentResponse = async (consent: boolean, isAnonymous: boolean = true) => {
     setSaving(true);
@@ -144,15 +123,6 @@ const Results = () => {
           className={`border-salima-600 text-salima-600 hover:bg-salima-50 ${isMobile ? 'w-full sm:w-auto' : ''}`}
         >
           צפה בהשוואה סטטיסטית
-        </Button>
-        
-        <Button 
-          onClick={handleSendEmail} 
-          disabled={sending}
-          variant="outline"
-          className={isMobile ? 'w-full sm:w-auto' : ''}
-        >
-          {sending ? "שולח..." : "שלח במייל"}
         </Button>
         
         <Button 
