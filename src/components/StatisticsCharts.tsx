@@ -58,7 +58,7 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ statistics, userRes
         dimension: userResults.dimensions[dim as keyof typeof userResults.dimensions].title,
         average: Number(avg.toFixed(2)),
         userScore: userDimScore,
-        difference: Number((userScore - avg).toFixed(2))
+        difference: Number((userDimScore - avg).toFixed(2))
       };
     });
   };
