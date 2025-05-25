@@ -9,7 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      survey_responses: {
+        Row: {
+          consent_for_research: boolean | null
+          created_at: string
+          department: string | null
+          dimension_a: number
+          dimension_a2: number
+          dimension_i: number
+          dimension_l: number
+          dimension_m: number
+          dimension_s: number
+          id: string
+          is_anonymous: boolean | null
+          organization: string | null
+          position: string | null
+          slq_score: number
+          user_email: string | null
+          user_name: string | null
+        }
+        Insert: {
+          consent_for_research?: boolean | null
+          created_at?: string
+          department?: string | null
+          dimension_a: number
+          dimension_a2: number
+          dimension_i: number
+          dimension_l: number
+          dimension_m: number
+          dimension_s: number
+          id?: string
+          is_anonymous?: boolean | null
+          organization?: string | null
+          position?: string | null
+          slq_score: number
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          consent_for_research?: boolean | null
+          created_at?: string
+          department?: string | null
+          dimension_a?: number
+          dimension_a2?: number
+          dimension_i?: number
+          dimension_l?: number
+          dimension_m?: number
+          dimension_s?: number
+          id?: string
+          is_anonymous?: boolean | null
+          organization?: string | null
+          position?: string | null
+          slq_score?: number
+          user_email?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
