@@ -1,7 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, Cell } from "recharts";
 import { SurveyResult } from "@/lib/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SurveyResponse {
   id: string;
@@ -21,6 +21,8 @@ interface StatisticsChartsProps {
 }
 
 const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ statistics, userResults }) => {
+  const isMobile = useIsMobile();
+
   // הכנת נתונים להיסטוגרמה של ציוני SLQ
   const createHistogramData = () => {
     const bins = [
@@ -76,18 +78,24 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ statistics, userRes
   const userBin = getUserBin();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 px-2 sm:px-0">
       <Card>
-        <CardHeader>
-          <CardTitle>התפלגות ציוני SLQ</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg sm:text-xl">התפלגות ציוני SLQ</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-80">
+        <CardContent className="px-2 sm:px-6">
+          <div className={`${isMobile ? 'h-64' : 'h-80'} w-full`}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={histogramData}>
+              <BarChart data={histogramData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" />
-                <YAxis />
+                <XAxis 
+                  dataKey="range" 
+                  fontSize={isMobile ? 10 : 12}
+                  angle={isMobile ? -45 : 0}
+                  textAnchor={isMobile ? "end" : "middle"}
+                  height={isMobile ? 60 : 30}
+                />
+                <YAxis fontSize={isMobile ? 10 : 12} />
                 <Tooltip 
                   formatter={(value, name) => [value, 'מספר משתתפים']}
                   labelFormatter={(label) => `טווח: ${label}`}
@@ -103,23 +111,33 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ statistics, userRes
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-sm text-gray-600 mt-2 text-center">
+          <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center px-2">
             העמודה האדומה מציינת את הטווח שלך ({userResults.slq})
           </p>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>השוואת ממדים לממוצע</CardTitle>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg sm:text-xl">השוואת ממדים לממוצע</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="h-80">
+        <CardContent className="px-2 sm:px-6">
+          <div className={`${isMobile ? 'h-80' : 'h-80'} w-full`}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dimensionData} layout="horizontal">
+              <BarChart 
+                data={dimensionData} 
+                layout="horizontal"
+                margin={{ top: 5, right: 20, left: isMobile ? 80 : 100, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 5]} />
-                <YAxis dataKey="dimension" type="category" width={100} />
+                <XAxis type="number" domain={[0, 5]} fontSize={isMobile ? 10 : 12} />
+                <YAxis 
+                  dataKey="dimension" 
+                  type="category" 
+                  width={isMobile ? 75 : 100}
+                  fontSize={isMobile ? 8 : 10}
+                  tick={{ textAnchor: 'end' }}
+                />
                 <Tooltip 
                   formatter={(value, name) => [
                     value, 
@@ -135,25 +153,25 @@ const StatisticsCharts: React.FC<StatisticsChartsProps> = ({ statistics, userRes
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {dimensionData.map((dim, index) => (
-          <Card key={index}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{dim.dimension}</CardTitle>
+          <Card key={index} className="shadow-sm">
+            <CardHeader className="pb-2 px-4">
+              <CardTitle className="text-base sm:text-lg leading-tight">{dim.dimension}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-4 pb-4">
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">הציון שלך:</span>
-                  <span className="font-bold text-salima-600">{dim.userScore}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs sm:text-sm text-gray-600">הציון שלך:</span>
+                  <span className="font-bold text-salima-600 text-sm sm:text-base">{dim.userScore}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">ממוצע כללי:</span>
-                  <span className="font-medium">{dim.average}</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs sm:text-sm text-gray-600">ממוצע כללי:</span>
+                  <span className="font-medium text-sm sm:text-base">{dim.average}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">הפרש:</span>
-                  <span className={`font-medium ${dim.difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs sm:text-sm text-gray-600">הפרש:</span>
+                  <span className={`font-medium text-sm sm:text-base ${dim.difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {dim.difference > 0 ? '+' : ''}{dim.difference}
                   </span>
                 </div>

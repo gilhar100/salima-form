@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Question, Answer, UserInfo } from "@/lib/types";
@@ -10,14 +9,16 @@ import SurveyQuestion from "@/components/SurveyQuestion";
 import UserInfoForm from "@/components/UserInfoForm";
 import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Survey = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [questionsPerPage] = useState(5);
+  const [questionsPerPage] = useState(isMobile ? 3 : 5);
   
   // מספר קבוצות השאלות
   const totalSteps = Math.ceil(questions.length / questionsPerPage);
@@ -99,29 +100,29 @@ const Survey = () => {
   };
 
   return (
-    <div className="container py-6 max-w-3xl mx-auto">
+    <div className="container py-4 max-w-3xl mx-auto px-4">
       {!userInfo ? (
         <UserInfoForm onSubmit={handleUserInfoSubmit} />
       ) : (
         <>
-          <div className="mb-4">
-            <h1 className="text-2xl font-bold text-center mb-2">שאלון מנהיגות</h1>
-            <Progress value={progress} className="h-2" />
-            <div className="text-center text-sm text-gray-500 mt-1">
+          <div className="mb-4 space-y-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-center">שאלון מנהיגות</h1>
+            <Progress value={progress} className="h-2 sm:h-3" />
+            <div className="text-center text-sm text-gray-500">
               שלב {currentStep + 1} מתוך {totalSteps}
             </div>
           </div>
           
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">
+          <Card className="shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg sm:text-xl leading-tight">
                 {currentStep === 0 
                   ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:" 
                   : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
               </CardTitle>
             </CardHeader>
             
-            <CardContent>
+            <CardContent className="px-3 sm:px-6">
               <div className="space-y-4">
                 {currentQuestions.map((question) => (
                   <SurveyQuestion
@@ -134,12 +135,13 @@ const Survey = () => {
               </div>
             </CardContent>
             
-            <CardFooter className="flex justify-between">
+            <CardFooter className={`flex justify-between px-3 sm:px-6 ${isMobile ? 'flex-col gap-3' : 'flex-row'}`}>
               <Button
                 type="button"
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentStep === 0}
+                className={isMobile ? 'w-full order-2' : 'w-auto'}
               >
                 הקודם
               </Button>
@@ -148,7 +150,7 @@ const Survey = () => {
                 type="button"
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="bg-salima-600 hover:bg-salima-700"
+                className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full order-1' : 'w-auto'}`}
               >
                 {currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"}
               </Button>

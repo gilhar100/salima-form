@@ -4,6 +4,7 @@ import { Question } from "@/lib/types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SurveyQuestionProps {
   question: Question;
@@ -16,85 +17,51 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
   selectedValue, 
   onChange 
 }) => {
+  const isMobile = useIsMobile();
+
+  const options = [
+    { value: 1, label: "אף פעם", shortLabel: "1" },
+    { value: 2, label: "לעיתים רחוקות", shortLabel: "2" },
+    { value: 3, label: "לפעמים", shortLabel: "3" },
+    { value: 4, label: "לעיתים קרובות", shortLabel: "4" },
+    { value: 5, label: "בדרך כלל או תמיד", shortLabel: "5" }
+  ];
+
   return (
-    <Card className="w-full mb-4">
-      <CardContent className="pt-6">
-        <div className="mb-4 flex items-center">
-          <span className="ml-2 bg-salima-600 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm font-semibold">
+    <Card className="w-full mb-4 shadow-sm">
+      <CardContent className="pt-4 px-3 sm:pt-6 sm:px-6">
+        <div className="mb-4 flex items-start sm:items-center">
+          <span className="ml-2 bg-salima-600 text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-xs sm:text-sm font-semibold flex-shrink-0 mt-0.5 sm:mt-0">
             {question.id}
           </span>
-          <p className="font-medium text-lg mr-2">{question.text}</p>
+          <p className="font-medium text-sm sm:text-lg mr-2 leading-tight">{question.text}</p>
         </div>
         
         <RadioGroup
           value={selectedValue?.toString() || ""}
           onValueChange={(value) => onChange(parseInt(value))}
-          className="flex flex-wrap gap-4 justify-center"
+          className={`flex ${isMobile ? 'flex-col gap-2' : 'flex-wrap gap-4 justify-center'}`}
         >
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <RadioGroupItem value="1" id={`q${question.id}-1`} className="peer sr-only" />
-              <Label
-                htmlFor={`q${question.id}-1`}
-                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
-              >
-                1
-              </Label>
+          {options.map((option) => (
+            <div key={option.value} className={`flex ${isMobile ? 'flex-row items-center' : 'flex-col items-center'}`}>
+              <div className="relative">
+                <RadioGroupItem 
+                  value={option.value.toString()} 
+                  id={`q${question.id}-${option.value}`} 
+                  className="peer sr-only" 
+                />
+                <Label
+                  htmlFor={`q${question.id}-${option.value}`}
+                  className={`block cursor-pointer rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50`}
+                >
+                  {option.value}
+                </Label>
+              </div>
+              <span className={`text-xs ${isMobile ? 'mr-3 flex-1' : 'mt-1'} text-gray-500 ${isMobile ? 'text-right' : 'text-center'}`}>
+                {isMobile ? option.label : option.label}
+              </span>
             </div>
-            <span className="text-xs mt-1 text-gray-500">אף פעם</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <RadioGroupItem value="2" id={`q${question.id}-2`} className="peer sr-only" />
-              <Label
-                htmlFor={`q${question.id}-2`}
-                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
-              >
-                2
-              </Label>
-            </div>
-            <span className="text-xs mt-1 text-gray-500">לעיתים רחוקות</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <RadioGroupItem value="3" id={`q${question.id}-3`} className="peer sr-only" />
-              <Label
-                htmlFor={`q${question.id}-3`}
-                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
-              >
-                3
-              </Label>
-            </div>
-            <span className="text-xs mt-1 text-gray-500">לפעמים</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <RadioGroupItem value="4" id={`q${question.id}-4`} className="peer sr-only" />
-              <Label
-                htmlFor={`q${question.id}-4`}
-                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
-              >
-                4
-              </Label>
-            </div>
-            <span className="text-xs mt-1 text-gray-500">לעיתים קרובות</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="relative">
-              <RadioGroupItem value="5" id={`q${question.id}-5`} className="peer sr-only" />
-              <Label
-                htmlFor={`q${question.id}-5`}
-                className="block cursor-pointer rounded-full w-12 h-12 bg-white border-2 border-gray-200 hover:border-salima-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-salima-600 peer-data-[state=checked]:bg-salima-50"
-              >
-                5
-              </Label>
-            </div>
-            <span className="text-xs mt-1 text-gray-500">בדרך כלל או תמיד</span>
-          </div>
+          ))}
         </RadioGroup>
       </CardContent>
     </Card>

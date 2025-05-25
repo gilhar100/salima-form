@@ -7,6 +7,7 @@ import { getSurveyStatistics } from "@/lib/survey-service";
 import { SurveyResult } from "@/lib/types";
 import StatisticsCharts from "@/components/StatisticsCharts";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SurveyResponse {
   id: string;
@@ -23,6 +24,7 @@ interface SurveyResponse {
 const Statistics = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [statistics, setStatistics] = useState<SurveyResponse[]>([]);
   const [userResults, setUserResults] = useState<SurveyResult | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,24 +58,27 @@ const Statistics = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-xl">טוען סטטיסטיקות...</p>
+      <div className="flex justify-center items-center min-h-screen px-4">
+        <p className="text-lg sm:text-xl text-center">טוען סטטיסטיקות...</p>
       </div>
     );
   }
 
   if (!userResults) {
     return (
-      <div className="container max-w-4xl mx-auto py-6">
+      <div className="container max-w-4xl mx-auto py-4 px-4">
         <Card>
-          <CardHeader>
-            <CardTitle>אין תוצאות זמינות</CardTitle>
-            <CardDescription>
+          <CardHeader className="text-center">
+            <CardTitle className="text-lg sm:text-xl">אין תוצאות זמינות</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               כדי לצפות בהשוואה סטטיסטית, עליך תחילה למלא את השאלון.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button onClick={() => navigate('/survey')} className="bg-salima-600 hover:bg-salima-700">
+          <CardContent className="text-center">
+            <Button 
+              onClick={() => navigate('/survey')} 
+              className="bg-salima-600 hover:bg-salima-700 w-full sm:w-auto"
+            >
               מלא שאלון
             </Button>
           </CardContent>
@@ -95,42 +100,42 @@ const Statistics = () => {
     Number((slqScores.reduce((sum, score) => sum + score, 0) / slqScores.length).toFixed(2)) : 0;
 
   return (
-    <div className="container max-w-6xl mx-auto py-6">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-salima-800 mb-2">השוואה סטטיסטית</h1>
-        <p className="text-gray-600">
+    <div className="container max-w-6xl mx-auto py-4 px-4">
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-salima-800 mb-2">השוואה סטטיסטית</h1>
+        <p className="text-sm sm:text-base text-gray-600 px-2">
           ראה איך התוצאות שלך מתייחסות ביחס לשאר המשתתפים
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>הציון שלך</CardTitle>
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-6">
+        <Card className="text-center">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">הציון שלך</CardTitle>
           </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-4xl font-bold text-salima-600">{userResults.slq}</p>
-            <p className="text-sm text-gray-600">ציון SLQ</p>
+          <CardContent className="pt-0">
+            <p className="text-3xl sm:text-4xl font-bold text-salima-600">{userResults.slq}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">ציון SLQ</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>ממוצע כללי</CardTitle>
+        <Card className="text-center">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">ממוצע כללי</CardTitle>
           </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-4xl font-bold text-blue-600">{avgSlq}</p>
-            <p className="text-sm text-gray-600">מתוך {statistics.length} משתתפים</p>
+          <CardContent className="pt-0">
+            <p className="text-3xl sm:text-4xl font-bold text-blue-600">{avgSlq}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">מתוך {statistics.length} משתתפים</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>האחוזון שלך</CardTitle>
+        <Card className="text-center sm:col-span-2 lg:col-span-1">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">האחוזון שלך</CardTitle>
           </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-4xl font-bold text-green-600">{userPercentile}%</p>
-            <p className="text-sm text-gray-600">
+          <CardContent className="pt-0">
+            <p className="text-3xl sm:text-4xl font-bold text-green-600">{userPercentile}%</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">
               {userPercentile >= 75 ? "מעולה!" : 
                userPercentile >= 50 ? "טוב!" : 
                userPercentile >= 25 ? "סביר" : "יש מקום לשיפור"}
@@ -144,12 +149,19 @@ const Statistics = () => {
         userResults={userResults} 
       />
 
-      <div className="mt-8 text-center">
-        <div className="flex gap-3 justify-center">
-          <Button variant="outline" onClick={() => navigate('/results')}>
+      <div className="mt-6 text-center">
+        <div className={`flex gap-3 justify-center ${isMobile ? 'flex-col' : 'flex-row'}`}>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/results')}
+            className={isMobile ? 'w-full' : 'w-auto'}
+          >
             חזור לתוצאות
           </Button>
-          <Button onClick={() => navigate('/survey')} className="bg-salima-600 hover:bg-salima-700">
+          <Button 
+            onClick={() => navigate('/survey')} 
+            className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full' : 'w-auto'}`}
+          >
             מלא שאלון חדש
           </Button>
         </div>
