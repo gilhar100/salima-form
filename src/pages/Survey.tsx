@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Question, Answer, UserInfo } from "@/lib/types";
@@ -121,7 +120,7 @@ const Survey = () => {
 
   // אם לא ניתנה הסכמה למחקר
   if (!consentGiven) {
-    return <ResearchConsentForm onResponse={handleConsentResponse} />;
+    return <ResearchConsentForm onConsent={handleConsentResponse} />;
   }
 
   return (
