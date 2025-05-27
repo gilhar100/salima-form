@@ -31,7 +31,7 @@ const Results = () => {
         description: "אנא מלא/י את השאלון תחילה",
         variant: "destructive"
       });
-      navigate('/survey');
+      navigate('/');
     }
   }, [navigate, toast]);
 
