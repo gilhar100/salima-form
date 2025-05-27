@@ -19,6 +19,15 @@ interface SurveyResponse {
   dimension_a: number;
   dimension_a2: number;
   created_at: string;
+  consent_for_research: boolean;
+  is_anonymous: boolean;
+  user_email: string | null;
+  user_name: string | null;
+  organization: string | null;
+  department: string | null;
+  position: string | null;
+  strategy: number;
+  survey_type: string;
 }
 
 const Statistics = () => {
