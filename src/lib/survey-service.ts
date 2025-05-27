@@ -87,13 +87,19 @@ export async function saveColleagueSurveyToDatabase(
   }
 }
 
-// פונקציה לקבלת סטטיסטיקות כלליות
-export async function getSurveyStatistics() {
+// פונקציה לקבלת סטטיסטיקות כלליות עם אפשרות סינון לפי סוג שאלון
+export async function getSurveyStatistics(surveyType?: 'manager' | 'colleague') {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('survey_responses')
       .select('*')
       .eq('is_anonymous', true);
+
+    if (surveyType) {
+      query = query.eq('survey_type', surveyType);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('שגיאה בטעינת הסטטיסטיקות:', error);
@@ -103,6 +109,75 @@ export async function getSurveyStatistics() {
     return data || [];
   } catch (error) {
     console.error('שגיאה בקבלת הסטטיסטיקות:', error);
+    throw error;
+  }
+}
+
+// פונקציה לקבלת נתוני עמיתים עם אפשרות סינון לפי שם מנהל
+export async function getColleagueSurveyData(managerName?: string) {
+  try {
+    let query = supabase
+      .from('colleague_survey_responses')
+      .select('*')
+      .eq('is_anonymous', true);
+
+    if (managerName) {
+      query = query.eq('manager_name', managerName);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('שגיאה בטעינת נתוני עמיתים:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('שגיאה בקבלת נתוני עמיתים:', error);
+    throw error;
+  }
+}
+
+// פונקציה להשוואה בין נתוני מנהל לנתוני עמיתים
+export async function getManagerComparisonData(managerName: string, managerEmail?: string) {
+  try {
+    // קבלת נתוני המנהל
+    let managerQuery = supabase
+      .from('survey_responses')
+      .select('*')
+      .eq('survey_type', 'manager');
+
+    if (managerEmail) {
+      managerQuery = managerQuery.eq('user_email', managerEmail);
+    } else if (managerName) {
+      managerQuery = managerQuery.eq('user_name', managerName);
+    }
+
+    const { data: managerData, error: managerError } = await managerQuery;
+
+    if (managerError) {
+      console.error('שגיאה בטעינת נתוני המנהל:', managerError);
+      throw managerError;
+    }
+
+    // קבלת נתוני העמיתים
+    const { data: colleagueData, error: colleagueError } = await supabase
+      .from('colleague_survey_responses')
+      .select('*')
+      .eq('manager_name', managerName);
+
+    if (colleagueError) {
+      console.error('שגיאה בטעינת נתוני העמיתים:', colleagueError);
+      throw colleagueError;
+    }
+
+    return {
+      managerData: managerData || [],
+      colleagueData: colleagueData || []
+    };
+  } catch (error) {
+    console.error('שגיאה בקבלת נתוני השוואה:', error);
     throw error;
   }
 }
