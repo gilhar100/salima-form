@@ -87,7 +87,7 @@ const Results = () => {
             </div>
           </div>
           
-          <ResultsRadar results={results} />
+          <ResultsRadar result={results} />
           
           <div className="grid gap-4 md:grid-cols-2">
             {Object.values(results.dimensions).map((dimension) => (
