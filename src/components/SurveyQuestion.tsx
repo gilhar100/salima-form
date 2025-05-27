@@ -55,17 +55,18 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
                 <RadioGroupItem 
                   value={option.value.toString()} 
                   id={`q${question.id}-${option.value}`} 
-                  className="peer sr-only" 
+                  className="sr-only" 
                 />
                 <Label
                   htmlFor={`q${question.id}-${option.value}`}
-                  className={`block cursor-pointer rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} bg-white border-2 border-gray-200 hover:border-${surveyType === 'manager' ? 'salima' : 'blue'}-200 transition flex items-center justify-center text-gray-700 font-medium peer-data-[state=checked]:border-${surveyType === 'manager' ? 'salima' : 'blue'}-600 peer-data-[state=checked]:bg-${surveyType === 'manager' ? 'salima' : 'blue'}-50`}
+                  className={`block cursor-pointer rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} bg-white border-2 border-gray-200 hover:border-${surveyType === 'manager' ? 'salima' : 'blue'}-200 transition flex items-center justify-center text-gray-700 font-medium data-[state=checked]:border-${surveyType === 'manager' ? 'salima' : 'blue'}-600 data-[state=checked]:bg-${surveyType === 'manager' ? 'salima' : 'blue'}-50`}
+                  data-state={selectedValue === option.value ? 'checked' : 'unchecked'}
                 >
                   {option.value}
                 </Label>
               </div>
               <span className={`text-xs ${isMobile ? 'mr-3 flex-1' : 'mt-1'} text-gray-500 ${isMobile ? 'text-right' : 'text-center'}`}>
-                {isMobile ? option.label : option.label}
+                {option.label}
               </span>
             </div>
           ))}
