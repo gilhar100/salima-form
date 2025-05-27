@@ -145,7 +145,6 @@ const Survey = () => {
   
   // בדיקה אם אפשר להמשיך לשלב הבא
   const canProceed = () => {
-    const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
     if (!hasInfo || !consentGiven) return false;
     
     return currentQuestions.every(q => getAnswerValue(q.id) !== null);
@@ -192,7 +191,6 @@ const Survey = () => {
   }
 
   // אם לא הוזנו פרטי המשתמש/עמית
-  const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
   if (!hasInfo) {
     return surveyType === 'manager' ? (
       <UserInfoForm onSubmit={handleUserInfoSubmit} />
