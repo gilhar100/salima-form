@@ -13,6 +13,7 @@ import ResearchConsentForm from "@/components/ResearchConsentForm";
 import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Loader2 } from "lucide-react";
 
 const Survey = () => {
   const navigate = useNavigate();
