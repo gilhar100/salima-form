@@ -93,7 +93,7 @@ export async function getSurveyStatistics(surveyType?: 'manager' | 'colleague') 
     let query = supabase
       .from('survey_responses')
       .select('*')
-      .eq('is_anonymous', true);
+      .eq('consent_for_research', true);
 
     if (surveyType) {
       query = query.eq('survey_type', surveyType);
@@ -106,7 +106,19 @@ export async function getSurveyStatistics(surveyType?: 'manager' | 'colleague') 
       throw error;
     }
 
-    return data || [];
+    // ודא שכל הנתונים כוללים את כל השדות הנדרשים עם ערכי ברירת מחדל
+    const normalizedData = (data || []).map(record => ({
+      ...record,
+      dimension_s: record.dimension_s ?? 0,
+      dimension_l: record.dimension_l ?? 0,
+      dimension_i: record.dimension_i ?? 0,
+      dimension_m: record.dimension_m ?? 0,
+      dimension_a: record.dimension_a ?? 0,
+      dimension_a2: record.dimension_a2 ?? 0,
+      slq_score: record.slq_score ?? 0
+    }));
+
+    return normalizedData;
   } catch (error) {
     console.error('שגיאה בקבלת הסטטיסטיקות:', error);
     throw error;
@@ -119,7 +131,7 @@ export async function getColleagueSurveyData(managerName?: string) {
     let query = supabase
       .from('colleague_survey_responses')
       .select('*')
-      .eq('is_anonymous', true);
+      .eq('consent_for_research', true);
 
     if (managerName) {
       query = query.eq('manager_name', managerName);
@@ -132,7 +144,19 @@ export async function getColleagueSurveyData(managerName?: string) {
       throw error;
     }
 
-    return data || [];
+    // ודא שכל הנתונים כוללים את כל השדות הנדרשים עם ערכי ברירת מחדל
+    const normalizedData = (data || []).map(record => ({
+      ...record,
+      dimension_s: record.dimension_s ?? 0,
+      dimension_l: record.dimension_l ?? 0,
+      dimension_i: record.dimension_i ?? 0,
+      dimension_m: record.dimension_m ?? 0,
+      dimension_a: record.dimension_a ?? 0,
+      dimension_a2: record.dimension_a2 ?? 0,
+      slq_score: record.slq_score ?? 0
+    }));
+
+    return normalizedData;
   } catch (error) {
     console.error('שגיאה בקבלת נתוני עמיתים:', error);
     throw error;
@@ -146,7 +170,8 @@ export async function getManagerComparisonData(managerName: string, managerEmail
     let managerQuery = supabase
       .from('survey_responses')
       .select('*')
-      .eq('survey_type', 'manager');
+      .eq('survey_type', 'manager')
+      .eq('consent_for_research', true);
 
     if (managerEmail) {
       managerQuery = managerQuery.eq('user_email', managerEmail);
@@ -165,16 +190,38 @@ export async function getManagerComparisonData(managerName: string, managerEmail
     const { data: colleagueData, error: colleagueError } = await supabase
       .from('colleague_survey_responses')
       .select('*')
-      .eq('manager_name', managerName);
+      .eq('manager_name', managerName)
+      .eq('consent_for_research', true);
 
     if (colleagueError) {
       console.error('שגיאה בטעינת נתוני העמיתים:', colleagueError);
       throw colleagueError;
     }
 
+    // נרמול הנתונים
+    const normalizedManagerData = (managerData || []).map(record => ({
+      ...record,
+      dimension_s: record.dimension_s ?? 0,
+      dimension_l: record.dimension_l ?? 0,
+      dimension_i: record.dimension_i ?? 0,
+      dimension_m: record.dimension_m ?? 0,
+      dimension_a: record.dimension_a ?? 0,
+      dimension_a2: record.dimension_a2 ?? 0
+    }));
+
+    const normalizedColleagueData = (colleagueData || []).map(record => ({
+      ...record,
+      dimension_s: record.dimension_s ?? 0,
+      dimension_l: record.dimension_l ?? 0,
+      dimension_i: record.dimension_i ?? 0,
+      dimension_m: record.dimension_m ?? 0,
+      dimension_a: record.dimension_a ?? 0,
+      dimension_a2: record.dimension_a2 ?? 0
+    }));
+
     return {
-      managerData: managerData || [],
-      colleagueData: colleagueData || []
+      managerData: normalizedManagerData,
+      colleagueData: normalizedColleagueData
     };
   } catch (error) {
     console.error('שגיאה בקבלת נתוני השוואה:', error);

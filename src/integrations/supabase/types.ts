@@ -85,6 +85,7 @@ export type Database = {
           dimension_i: number
           dimension_l: number
           dimension_m: number
+          dimension_s: number
           id: string
           is_anonymous: boolean | null
           organization: string | null
@@ -104,6 +105,7 @@ export type Database = {
           dimension_i: number
           dimension_l: number
           dimension_m: number
+          dimension_s?: number
           id?: string
           is_anonymous?: boolean | null
           organization?: string | null
@@ -123,6 +125,7 @@ export type Database = {
           dimension_i?: number
           dimension_l?: number
           dimension_m?: number
+          dimension_s?: number
           id?: string
           is_anonymous?: boolean | null
           organization?: string | null
