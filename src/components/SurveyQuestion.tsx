@@ -34,6 +34,22 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
     ? question.colleagueText
     : question.text;
 
+  // קביעת כיתות CSS בהתאם לסוג השאלון
+  const getOptionClasses = (optionValue: number) => {
+    const isSelected = selectedValue === optionValue;
+    const baseClasses = `block cursor-pointer rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} border-2 transition flex items-center justify-center font-medium`;
+    
+    if (surveyType === 'manager') {
+      return `${baseClasses} ${isSelected 
+        ? 'border-salima-600 bg-salima-50 text-salima-700' 
+        : 'bg-white border-gray-200 hover:border-salima-200 text-gray-700'}`;
+    } else {
+      return `${baseClasses} ${isSelected 
+        ? 'border-blue-600 bg-blue-50 text-blue-700' 
+        : 'bg-white border-gray-200 hover:border-blue-200 text-gray-700'}`;
+    }
+  };
+
   return (
     <Card className="w-full mb-4 shadow-sm">
       <CardContent className="pt-4 px-3 sm:pt-6 sm:px-6">
@@ -59,8 +75,7 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
                 />
                 <Label
                   htmlFor={`q${question.id}-${option.value}`}
-                  className={`block cursor-pointer rounded-full ${isMobile ? 'w-10 h-10' : 'w-12 h-12'} bg-white border-2 border-gray-200 hover:border-${surveyType === 'manager' ? 'salima' : 'blue'}-200 transition flex items-center justify-center text-gray-700 font-medium data-[state=checked]:border-${surveyType === 'manager' ? 'salima' : 'blue'}-600 data-[state=checked]:bg-${surveyType === 'manager' ? 'salima' : 'blue'}-50`}
-                  data-state={selectedValue === option.value ? 'checked' : 'unchecked'}
+                  className={getOptionClasses(option.value)}
                 >
                   {option.value}
                 </Label>
