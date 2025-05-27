@@ -5,10 +5,10 @@ import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { saveSurveyToDatabase } from "@/lib/survey-service";
+import { sendResultsByEmail } from "@/lib/email-service";
 import { useToast } from "@/hooks/use-toast";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
-import ConsentDialog from "@/components/ConsentDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Results = () => {
@@ -16,45 +16,32 @@ const Results = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
   
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
     
     if (savedResults) {
-      setResults(JSON.parse(savedResults));
-      // הצגת דיאלוג ההסכמה לאחר טעינת התוצאות
-      setShowConsentDialog(true);
+      const parsedResults = JSON.parse(savedResults);
+      setResults(parsedResults);
+      // שמירה אוטומטית במסד הנתונים (המשתמש כבר נתן הסכמה)
+      handleAutoSave(parsedResults);
     } else {
       navigate('/survey');
     }
   }, [navigate]);
-  
-  if (!results) {
-    return (
-      <div className="flex justify-center items-center min-h-screen px-4">
-        <p className="text-lg sm:text-xl text-center">טוען תוצאות...</p>
-      </div>
-    );
-  }
 
-  const handleConsentResponse = async (consent: boolean, isAnonymous: boolean = true) => {
+  const handleAutoSave = async (results: SurveyResult) => {
     setSaving(true);
     try {
-      await saveSurveyToDatabase(results, consent, isAnonymous);
+      // המשתמש כבר נתן הסכמה במחקר בתחילת השאלון
+      await saveSurveyToDatabase(results, true, true);
       
-      if (consent) {
-        toast({
-          title: "תודה על השתתפותך!",
-          description: "הנתונים נשמרו ויעזרו לשיפור הכלי",
-        });
-      } else {
-        toast({
-          title: "התוצאות נשמרו",
-          description: "התוצאות נשמרו ללא שיתוף נתונים למחקר",
-        });
-      }
+      toast({
+        title: "התוצאות נשמרו בהצלחה",
+        description: "הנתונים נשמרו למחקר באופן אנונימי",
+      });
     } catch (error) {
       console.error("שגיאה בשמירת הנתונים:", error);
       toast({
@@ -64,7 +51,29 @@ const Results = () => {
       });
     } finally {
       setSaving(false);
-      setShowConsentDialog(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!results) return;
+    
+    setEmailSending(true);
+    try {
+      await sendResultsByEmail(results);
+      
+      toast({
+        title: "התוצאות נשלחו במייל",
+        description: "התוצאות נשלחו בהצלחה לכתובת המייל שלך",
+      });
+    } catch (error) {
+      console.error("שגיאה בשליחת המייל:", error);
+      toast({
+        title: "שגיאה בשליחת המייל",
+        description: "לא ניתן היה לשלוח את התוצאות במייל",
+        variant: "destructive"
+      });
+    } finally {
+      setEmailSending(false);
     }
   };
   
@@ -72,6 +81,14 @@ const Results = () => {
     localStorage.removeItem('salimaResults');
     navigate('/survey');
   };
+
+  if (!results) {
+    return (
+      <div className="flex justify-center items-center min-h-screen px-4">
+        <p className="text-lg sm:text-xl text-center">טוען תוצאות...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-6xl mx-auto py-4 px-4 print:py-0 print:px-0">
@@ -118,6 +135,14 @@ const Results = () => {
       
       <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 justify-center print:hidden">
         <Button 
+          onClick={handleSendEmail}
+          disabled={emailSending}
+          className={`bg-green-600 hover:bg-green-700 ${isMobile ? 'w-full sm:w-auto' : ''}`}
+        >
+          {emailSending ? "שולח מייל..." : "שלח תוצאות במייל"}
+        </Button>
+        
+        <Button 
           onClick={() => navigate('/statistics')} 
           variant="outline"
           className={`border-salima-600 text-salima-600 hover:bg-salima-50 ${isMobile ? 'w-full sm:w-auto' : ''}`}
@@ -132,12 +157,6 @@ const Results = () => {
           מילוי שאלון חדש
         </Button>
       </div>
-
-      <ConsentDialog
-        open={showConsentDialog}
-        onResponse={handleConsentResponse}
-        loading={saving}
-      />
     </div>
   );
 };

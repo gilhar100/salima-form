@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Question, Answer, UserInfo } from "@/lib/types";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import SurveyQuestion from "@/components/SurveyQuestion";
 import UserInfoForm from "@/components/UserInfoForm";
+import ResearchConsentForm from "@/components/ResearchConsentForm";
 import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,6 +17,7 @@ const Survey = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [consentGiven, setConsentGiven] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
@@ -24,10 +27,10 @@ const Survey = () => {
   const totalSteps = Math.ceil(questions.length / questionsPerPage);
   
   // חישוב ההתקדמות
-  const progress = userInfo ? ((currentStep) / totalSteps) * 100 : 0;
+  const progress = (userInfo && consentGiven) ? ((currentStep) / totalSteps) * 100 : 0;
   
   // השאלות הנוכחיות להצגה
-  const currentQuestions = userInfo 
+  const currentQuestions = (userInfo && consentGiven) 
     ? questions.slice(currentStep * questionsPerPage, (currentStep + 1) * questionsPerPage)
     : [];
   
@@ -85,19 +88,41 @@ const Survey = () => {
   
   // בדיקה אם אפשר להמשיך לשלב הבא
   const canProceed = () => {
-    if (!userInfo) return false;
+    if (!userInfo || !consentGiven) return false;
     
     return currentQuestions.every(q => getAnswerValue(q.id) !== null);
+  };
+  
+  // הסכמה למחקר
+  const handleConsentResponse = (consented: boolean) => {
+    if (consented) {
+      setConsentGiven(true);
+      toast({
+        title: "תודה על ההסכמה",
+        description: "כעת תוכל להמשיך למילוי השאלון",
+      });
+    } else {
+      toast({
+        title: "נדרשת הסכמה",
+        description: "לא ניתן להמשיך ללא הסכמה לשימוש בנתונים למחקר",
+        variant: "destructive"
+      });
+    }
   };
   
   // התחלת השאלון אחרי הזנת פרטי המשתמש
   const handleUserInfoSubmit = (info: UserInfo) => {
     setUserInfo(info);
     toast({
-      title: "ברוך הבא לשאלון המנהיגות",
-      description: "אנא השב/י על כל השאלות בכנות מרבית",
+      title: "פרטים נרשמו בהצלחה",
+      description: "כעת תוכל להתחיל במילוי השאלון",
     });
   };
+
+  // אם לא ניתנה הסכמה למחקר
+  if (!consentGiven) {
+    return <ResearchConsentForm onResponse={handleConsentResponse} />;
+  }
 
   return (
     <div className="container py-4 max-w-3xl mx-auto px-4">
