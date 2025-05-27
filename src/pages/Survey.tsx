@@ -1,12 +1,15 @@
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Question, Answer, UserInfo } from "@/lib/types";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Question, Answer, UserInfo, ColleagueEvaluatorInfo, SurveyType } from "@/lib/types";
 import { questions } from "@/data/questions";
 import { calculateSurveyResults } from "@/lib/calculations";
+import { saveSurveyToDatabase, saveColleagueSurveyToDatabase } from "@/lib/survey-service";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import SurveyQuestion from "@/components/SurveyQuestion";
 import UserInfoForm from "@/components/UserInfoForm";
+import ColleagueInfoForm from "@/components/ColleagueInfoForm";
 import ResearchConsentForm from "@/components/ResearchConsentForm";
 import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -16,20 +19,32 @@ const Survey = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const [searchParams] = useSearchParams();
+  const surveyType: SurveyType = (searchParams.get('type') as SurveyType) || 'manager';
+  
   const [consentGiven, setConsentGiven] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [colleagueInfo, setColleagueInfo] = useState<ColleagueEvaluatorInfo | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [questionsPerPage] = useState(isMobile ? 3 : 5);
+  
+  // בדיקה אם סוג השאלון תקין
+  useEffect(() => {
+    if (!['manager', 'colleague'].includes(surveyType)) {
+      navigate('/');
+    }
+  }, [surveyType, navigate]);
   
   // מספר קבוצות השאלות
   const totalSteps = Math.ceil(questions.length / questionsPerPage);
   
   // חישוב ההתקדמות
-  const progress = (userInfo && consentGiven) ? ((currentStep) / totalSteps) * 100 : 0;
+  const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
+  const progress = (hasInfo && consentGiven) ? ((currentStep) / totalSteps) * 100 : 0;
   
   // השאלות הנוכחיות להצגה
-  const currentQuestions = (userInfo && consentGiven) 
+  const currentQuestions = (hasInfo && consentGiven) 
     ? questions.slice(currentStep * questionsPerPage, (currentStep + 1) * questionsPerPage)
     : [];
   
@@ -53,26 +68,69 @@ const Survey = () => {
   };
   
   // מעבר לשלב הבא
-  const handleNext = () => {
+  const handleNext = async () => {
     const nextStep = currentStep + 1;
     if (nextStep < totalSteps) {
       setCurrentStep(nextStep);
       window.scrollTo(0, 0);
     } else {
       // סיום השאלון וחישוב התוצאות
-      if (userInfo) {
+      if (surveyType === 'manager' && userInfo) {
         const results = calculateSurveyResults(answers, userInfo);
         
         // שמירת התוצאות ב־localStorage
         localStorage.setItem('salimaResults', JSON.stringify(results));
+        
+        // שמירה במסד הנתונים
+        try {
+          await saveSurveyToDatabase(results, true, false);
+        } catch (error) {
+          console.error('שגיאה בשמירת נתוני המנהל:', error);
+        }
         
         toast({
           title: "השאלון הושלם בהצלחה!",
           description: "מעבר לדף התוצאות...",
         });
         
-        // מעבר לדף התוצאות
         navigate('/results');
+      } else if (surveyType === 'colleague' && colleagueInfo) {
+        // חישוב תוצאות לשאלון עמיתים
+        const fakeUserInfo: UserInfo = {
+          name: colleagueInfo.evaluatorName,
+          email: colleagueInfo.evaluatorEmail
+        };
+        const results = calculateSurveyResults(answers, fakeUserInfo);
+        
+        const colleagueSubmission = {
+          slq: results.slq,
+          dimensions: {
+            S: results.dimensions.S.score,
+            L: results.dimensions.L.score,
+            I: results.dimensions.I.score,
+            M: results.dimensions.M.score,
+            A: results.dimensions.A.score,
+            A2: results.dimensions.A2.score,
+          },
+          evaluatorInfo: colleagueInfo,
+          date: new Date().toLocaleDateString('he-IL'),
+        };
+        
+        // שמירה ב-localStorage ובמסד הנתונים
+        localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
+        
+        try {
+          await saveColleagueSurveyToDatabase(colleagueSubmission, true, false);
+        } catch (error) {
+          console.error('שגיאה בשמירת נתוני העמית:', error);
+        }
+        
+        toast({
+          title: "השאלון הושלם בהצלחה!",
+          description: "תודה על ההערכה",
+        });
+        
+        navigate('/colleague-completion');
       }
     }
   };
@@ -87,7 +145,8 @@ const Survey = () => {
   
   // בדיקה אם אפשר להמשיך לשלב הבא
   const canProceed = () => {
-    if (!userInfo || !consentGiven) return false;
+    const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
+    if (!hasInfo || !consentGiven) return false;
     
     return currentQuestions.every(q => getAnswerValue(q.id) !== null);
   };
@@ -118,70 +177,90 @@ const Survey = () => {
     });
   };
 
+  // התחלת השאלון אחרי הזנת פרטי העמית
+  const handleColleagueInfoSubmit = (info: ColleagueEvaluatorInfo) => {
+    setColleagueInfo(info);
+    toast({
+      title: "פרטים נרשמו בהצלחה",
+      description: "כעת תוכל להתחיל בהערכת המנהל",
+    });
+  };
+
   // אם לא ניתנה הסכמה למחקר
   if (!consentGiven) {
     return <ResearchConsentForm onConsent={handleConsentResponse} />;
   }
 
+  // אם לא הוזנו פרטי המשתמש/עמית
+  const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
+  if (!hasInfo) {
+    return surveyType === 'manager' ? (
+      <UserInfoForm onSubmit={handleUserInfoSubmit} />
+    ) : (
+      <ColleagueInfoForm onSubmit={handleColleagueInfoSubmit} />
+    );
+  }
+
+  const surveyTitle = surveyType === 'manager' ? 'שאלון מנהיגות' : 'הערכת מנהל';
+  const instructionText = surveyType === 'manager' 
+    ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+    : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+
   return (
     <div className="container py-4 max-w-3xl mx-auto px-4">
-      {!userInfo ? (
-        <UserInfoForm onSubmit={handleUserInfoSubmit} />
-      ) : (
-        <>
-          <div className="mb-4 space-y-3">
-            <h1 className="text-xl sm:text-2xl font-bold text-center">שאלון מנהיגות</h1>
-            <Progress value={progress} className="h-2 sm:h-3" />
-            <div className="text-center text-sm text-gray-500">
-              שלב {currentStep + 1} מתוך {totalSteps}
-            </div>
+      <div className="mb-4 space-y-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-center">{surveyTitle}</h1>
+        {surveyType === 'colleague' && colleagueInfo && (
+          <p className="text-center text-gray-600">מעריך את: {colleagueInfo.managerName}</p>
+        )}
+        <Progress value={progress} className="h-2 sm:h-3" />
+        <div className="text-center text-sm text-gray-500">
+          שלב {currentStep + 1} מתוך {totalSteps}
+        </div>
+      </div>
+      
+      <Card className="shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg sm:text-xl leading-tight">
+            {currentStep === 0 ? instructionText : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="px-3 sm:px-6">
+          <div className="space-y-4">
+            {currentQuestions.map((question) => (
+              <SurveyQuestion
+                key={question.id}
+                question={question}
+                selectedValue={getAnswerValue(question.id)}
+                onChange={(value) => handleAnswerChange(question.id, value)}
+                surveyType={surveyType}
+              />
+            ))}
           </div>
+        </CardContent>
+        
+        <CardFooter className={`flex justify-between px-3 sm:px-6 ${isMobile ? 'flex-col gap-3' : 'flex-row'}`}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={currentStep === 0}
+            className={isMobile ? 'w-full order-2' : 'w-auto'}
+          >
+            הקודם
+          </Button>
           
-          <Card className="shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg sm:text-xl leading-tight">
-                {currentStep === 0 
-                  ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:" 
-                  : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
-              </CardTitle>
-            </CardHeader>
-            
-            <CardContent className="px-3 sm:px-6">
-              <div className="space-y-4">
-                {currentQuestions.map((question) => (
-                  <SurveyQuestion
-                    key={question.id}
-                    question={question}
-                    selectedValue={getAnswerValue(question.id)}
-                    onChange={(value) => handleAnswerChange(question.id, value)}
-                  />
-                ))}
-              </div>
-            </CardContent>
-            
-            <CardFooter className={`flex justify-between px-3 sm:px-6 ${isMobile ? 'flex-col gap-3' : 'flex-row'}`}>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={currentStep === 0}
-                className={isMobile ? 'w-full order-2' : 'w-auto'}
-              >
-                הקודם
-              </Button>
-              
-              <Button
-                type="button"
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full order-1' : 'w-auto'}`}
-              >
-                {currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </>
-      )}
+          <Button
+            type="button"
+            onClick={handleNext}
+            disabled={!canProceed()}
+            className={`${surveyType === 'manager' ? 'bg-salima-600 hover:bg-salima-700' : 'bg-blue-600 hover:bg-blue-700'} ${isMobile ? 'w-full order-1' : 'w-auto'}`}
+          >
+            {currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"}
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

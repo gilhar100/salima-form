@@ -25,19 +25,27 @@ const Index = () => {
           <CardContent className="px-4 sm:px-6">
             <p className="mb-4 text-sm sm:text-base leading-relaxed">
               מערכת SALIMA-WOCA היא כלי אבחון ארגוני מקיף המבוסס על שאלון מנהיגות הכולל 90 היגדים.
+              המערכת מציעה שני סוגי שאלונים:
             </p>
             
-            <p className="text-sm sm:text-base leading-relaxed">
-              לאחר השלמת השאלון, תוצאות השאלון יועברו למערכת לצורך ניתוח.
-            </p>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div className="bg-salima-50 p-3 rounded-lg">
+                <h3 className="font-semibold text-salima-800 mb-1">שאלון מנהלים</h3>
+                <p>הערכה עצמית עם תוצאות מפורטות</p>
+              </div>
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <h3 className="font-semibold text-blue-800 mb-1">שאלון עמיתים</h3>
+                <p>הערכת מנהל על ידי עמית עבודה</p>
+              </div>
+            </div>
           </CardContent>
           
           <CardFooter className="flex justify-center px-4 sm:px-6">
             <Button 
               className={`bg-salima-600 hover:bg-salima-700 text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 ${isMobile ? 'w-full' : 'w-auto'}`}
-              onClick={() => navigate('/survey')}
+              onClick={() => navigate('/survey-selection')}
             >
-              התחל את השאלון
+              בחר סוג שאלון
             </Button>
           </CardFooter>
         </Card>

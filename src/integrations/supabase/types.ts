@@ -9,6 +9,72 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      colleague_survey_responses: {
+        Row: {
+          consent_for_research: boolean | null
+          created_at: string
+          dimension_a: number
+          dimension_a2: number
+          dimension_i: number
+          dimension_l: number
+          dimension_m: number
+          dimension_s: number
+          evaluator_department: string | null
+          evaluator_email: string | null
+          evaluator_name: string | null
+          evaluator_position: string | null
+          id: string
+          is_anonymous: boolean | null
+          manager_department: string | null
+          manager_name: string
+          manager_position: string | null
+          organization: string | null
+          slq_score: number
+        }
+        Insert: {
+          consent_for_research?: boolean | null
+          created_at?: string
+          dimension_a: number
+          dimension_a2: number
+          dimension_i: number
+          dimension_l: number
+          dimension_m: number
+          dimension_s: number
+          evaluator_department?: string | null
+          evaluator_email?: string | null
+          evaluator_name?: string | null
+          evaluator_position?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          manager_department?: string | null
+          manager_name: string
+          manager_position?: string | null
+          organization?: string | null
+          slq_score: number
+        }
+        Update: {
+          consent_for_research?: boolean | null
+          created_at?: string
+          dimension_a?: number
+          dimension_a2?: number
+          dimension_i?: number
+          dimension_l?: number
+          dimension_m?: number
+          dimension_s?: number
+          evaluator_department?: string | null
+          evaluator_email?: string | null
+          evaluator_name?: string | null
+          evaluator_position?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          manager_department?: string | null
+          manager_name?: string
+          manager_position?: string | null
+          organization?: string | null
+          slq_score?: number
+        }
+        Relationships: []
+      }
       survey_responses: {
         Row: {
           consent_for_research: boolean | null
@@ -19,12 +85,13 @@ export type Database = {
           dimension_i: number
           dimension_l: number
           dimension_m: number
-          dimension_s: number
           id: string
           is_anonymous: boolean | null
           organization: string | null
           position: string | null
           slq_score: number
+          strategy: number
+          survey_type: string
           user_email: string | null
           user_name: string | null
         }
@@ -37,12 +104,13 @@ export type Database = {
           dimension_i: number
           dimension_l: number
           dimension_m: number
-          dimension_s: number
           id?: string
           is_anonymous?: boolean | null
           organization?: string | null
           position?: string | null
           slq_score: number
+          strategy: number
+          survey_type?: string
           user_email?: string | null
           user_name?: string | null
         }
@@ -55,12 +123,13 @@ export type Database = {
           dimension_i?: number
           dimension_l?: number
           dimension_m?: number
-          dimension_s?: number
           id?: string
           is_anonymous?: boolean | null
           organization?: string | null
           position?: string | null
           slq_score?: number
+          strategy?: number
+          survey_type?: string
           user_email?: string | null
           user_name?: string | null
         }
