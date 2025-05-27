@@ -27,6 +27,7 @@ const Survey = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [questionsPerPage] = useState(isMobile ? 3 : 5);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // בדיקה אם סוג השאלון תקין
   useEffect(() => {
@@ -74,6 +75,9 @@ const Survey = () => {
       window.scrollTo(0, 0);
     } else {
       // סיום השאלון וחישוב התוצאות
+      if (isSubmitting) return; // מניעת שליחה כפולה
+      
+      setIsSubmitting(true);
       console.log('סיום השאלון, סוג:', surveyType);
       console.log('תשובות:', answers);
       
@@ -82,7 +86,7 @@ const Survey = () => {
           const results = calculateSurveyResults(answers, userInfo);
           console.log('תוצאות מחושבות למנהל:', results);
           
-          // שמירת התוצאות ב־localStorage
+          // שמירת התוצאות ב־localStorage תחילה
           localStorage.setItem('salimaResults', JSON.stringify(results));
           
           // שמירה במסד הנתונים
@@ -101,6 +105,7 @@ const Survey = () => {
             description: "אירעה שגיאה בשמירת הנתונים. אנא נסה שוב.",
             variant: "destructive"
           });
+          setIsSubmitting(false);
         }
       } else if (surveyType === 'colleague' && colleagueInfo) {
         try {
@@ -146,6 +151,7 @@ const Survey = () => {
             description: "אירעה שגיאה בשמירת הנתונים. אנא נסה שוב.",
             variant: "destructive"
           });
+          setIsSubmitting(false);
         }
       }
     }
@@ -268,10 +274,17 @@ const Survey = () => {
           <Button
             type="button"
             onClick={handleNext}
-            disabled={!canProceed()}
+            disabled={!canProceed() || isSubmitting}
             className={`${surveyType === 'manager' ? 'bg-salima-600 hover:bg-salima-700' : 'bg-blue-600 hover:bg-blue-700'} ${isMobile ? 'w-full order-1' : 'w-auto'}`}
           >
-            {currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                שומר...
+              </>
+            ) : (
+              currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"
+            )}
           </Button>
         </CardFooter>
       </Card>

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
-import { saveSurveyToDatabase } from "@/lib/survey-service";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -14,8 +13,6 @@ const Results = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [dataSaved, setDataSaved] = useState(false);
 
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
@@ -23,8 +20,10 @@ const Results = () => {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
       
-      // שמירת הנתונים במסד הנתונים אוטומטית
-      handleSaveData(parsedResults);
+      toast({
+        title: "תוצאות השאלון",
+        description: "הנתונים כבר נשמרו במערכת בהצלחה",
+      });
     } else {
       toast({
         title: "לא נמצאו תוצאות",
@@ -34,30 +33,6 @@ const Results = () => {
       navigate('/');
     }
   }, [navigate, toast]);
-
-  const handleSaveData = async (surveyResults: SurveyResult) => {
-    if (dataSaved) return;
-    
-    setLoading(true);
-    try {
-      await saveSurveyToDatabase(surveyResults, true, false);
-      setDataSaved(true);
-      
-      toast({
-        title: "הנתונים נשמרו בהצלחה",
-        description: "תוצאות השאלון נשמרו במערכת",
-      });
-    } catch (error) {
-      console.error('שגיאה בשמירת הנתונים:', error);
-      toast({
-        title: "שגיאה בשמירת הנתונים",
-        description: "אירעה שגיאה בשמירת התוצאות",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!results) {
     return (
@@ -95,18 +70,9 @@ const Results = () => {
             ))}
           </div>
           
-          {loading && (
-            <div className="flex items-center justify-center gap-2 text-blue-600">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span>שומר נתונים...</span>
-            </div>
-          )}
-          
-          {dataSaved && (
-            <div className="text-center text-green-600 font-medium">
-              ✓ הנתונים נשמרו בהצלחה במערכת
-            </div>
-          )}
+          <div className="text-center text-green-600 font-medium">
+            ✓ הנתונים נשמרו בהצלחה במערכת
+          </div>
         </CardContent>
       </Card>
       
