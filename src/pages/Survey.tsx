@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Question, Answer, UserInfo, ColleagueEvaluatorInfo, SurveyType } from "@/lib/types";
@@ -75,62 +74,79 @@ const Survey = () => {
       window.scrollTo(0, 0);
     } else {
       // סיום השאלון וחישוב התוצאות
+      console.log('סיום השאלון, סוג:', surveyType);
+      console.log('תשובות:', answers);
+      
       if (surveyType === 'manager' && userInfo) {
-        const results = calculateSurveyResults(answers, userInfo);
-        
-        // שמירת התוצאות ב־localStorage
-        localStorage.setItem('salimaResults', JSON.stringify(results));
-        
-        // שמירה במסד הנתונים
         try {
+          const results = calculateSurveyResults(answers, userInfo);
+          console.log('תוצאות מחושבות למנהל:', results);
+          
+          // שמירת התוצאות ב־localStorage
+          localStorage.setItem('salimaResults', JSON.stringify(results));
+          
+          // שמירה במסד הנתונים
           await saveSurveyToDatabase(results, true, false);
+          
+          toast({
+            title: "השאלון הושלם בהצלחה!",
+            description: "הנתונים נשמרו במסד הנתונים. מעבר לדף התוצאות...",
+          });
+          
+          navigate('/results');
         } catch (error) {
-          console.error('שגיאה בשמירת נתוני המנהל:', error);
+          console.error('שגיאה בעיבוד תוצאות המנהל:', error);
+          toast({
+            title: "שגיאה",
+            description: "אירעה שגיאה בשמירת הנתונים. אנא נסה שוב.",
+            variant: "destructive"
+          });
         }
-        
-        toast({
-          title: "השאלון הושלם בהצלחה!",
-          description: "מעבר לדף התוצאות...",
-        });
-        
-        navigate('/results');
       } else if (surveyType === 'colleague' && colleagueInfo) {
-        // חישוב תוצאות לשאלון עמיתים
-        const fakeUserInfo: UserInfo = {
-          name: colleagueInfo.evaluatorName,
-          email: colleagueInfo.evaluatorEmail
-        };
-        const results = calculateSurveyResults(answers, fakeUserInfo);
-        
-        const colleagueSubmission = {
-          slq: results.slq,
-          dimensions: {
-            S: results.dimensions.S.score,
-            L: results.dimensions.L.score,
-            I: results.dimensions.I.score,
-            M: results.dimensions.M.score,
-            A: results.dimensions.A.score,
-            A2: results.dimensions.A2.score,
-          },
-          evaluatorInfo: colleagueInfo,
-          date: new Date().toLocaleDateString('he-IL'),
-        };
-        
-        // שמירה ב-localStorage ובמסד הנתונים
-        localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
-        
         try {
+          // חישוב תוצאות לשאלון עמיתים
+          const fakeUserInfo: UserInfo = {
+            name: colleagueInfo.evaluatorName,
+            email: colleagueInfo.evaluatorEmail
+          };
+          const results = calculateSurveyResults(answers, fakeUserInfo);
+          console.log('תוצאות מחושבות לעמית:', results);
+          
+          const colleagueSubmission = {
+            slq: results.slq,
+            dimensions: {
+              S: results.dimensions.S.score,
+              L: results.dimensions.L.score,
+              I: results.dimensions.I.score,
+              M: results.dimensions.M.score,
+              A: results.dimensions.A.score,
+              A2: results.dimensions.A2.score,
+            },
+            evaluatorInfo: colleagueInfo,
+            date: new Date().toLocaleDateString('he-IL'),
+          };
+          
+          console.log('נתוני עמית לשמירה:', colleagueSubmission);
+          
+          // שמירה ב-localStorage ובמסד הנתונים
+          localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
+          
           await saveColleagueSurveyToDatabase(colleagueSubmission, true, false);
+          
+          toast({
+            title: "השאלון הושלם בהצלחה!",
+            description: "הנתונים נשמרו במסד הנתונים. תודה על ההערכה!",
+          });
+          
+          navigate('/colleague-completion');
         } catch (error) {
-          console.error('שגיאה בשמירת נתוני העמית:', error);
+          console.error('שגיאה בעיבוד תוצאות העמית:', error);
+          toast({
+            title: "שגיאה",
+            description: "אירעה שגיאה בשמירת הנתונים. אנא נסה שוב.",
+            variant: "destructive"
+          });
         }
-        
-        toast({
-          title: "השאלון הושלם בהצלחה!",
-          description: "תודה על ההערכה",
-        });
-        
-        navigate('/colleague-completion');
       }
     }
   };

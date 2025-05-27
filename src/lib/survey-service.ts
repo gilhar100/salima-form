@@ -9,6 +9,8 @@ export async function saveSurveyToDatabase(
   isAnonymous: boolean = true
 ): Promise<void> {
   try {
+    console.log('מתחיל שמירת נתוני מנהל:', results);
+    
     const surveyData = {
       user_email: isAnonymous ? null : results.userInfo.email,
       user_name: isAnonymous ? null : results.userInfo.name,
@@ -28,16 +30,19 @@ export async function saveSurveyToDatabase(
       survey_type: 'manager'
     };
 
-    const { error } = await supabase
+    console.log('נתונים לשמירה:', surveyData);
+
+    const { data, error } = await supabase
       .from('survey_responses')
-      .insert([surveyData]);
+      .insert([surveyData])
+      .select();
 
     if (error) {
       console.error('שגיאה בשמירת הנתונים:', error);
       throw error;
     }
 
-    console.log('נתוני שאלון המנהלים נשמרו בהצלחה במסד הנתונים');
+    console.log('נתוני שאלון המנהלים נשמרו בהצלחה:', data);
   } catch (error) {
     console.error('שגיאה בשמירת תוצאות שאלון המנהלים:', error);
     throw error;
@@ -51,6 +56,8 @@ export async function saveColleagueSurveyToDatabase(
   isAnonymous: boolean = true
 ): Promise<void> {
   try {
+    console.log('מתחיל שמירת נתוני עמיתים:', results);
+    
     const colleagueSurveyData = {
       manager_name: results.evaluatorInfo.managerName,
       manager_position: isAnonymous ? null : results.evaluatorInfo.managerPosition,
@@ -71,16 +78,19 @@ export async function saveColleagueSurveyToDatabase(
       is_anonymous: isAnonymous
     };
 
-    const { error } = await supabase
+    console.log('נתוני עמיתים לשמירה:', colleagueSurveyData);
+
+    const { data, error } = await supabase
       .from('colleague_survey_responses')
-      .insert([colleagueSurveyData]);
+      .insert([colleagueSurveyData])
+      .select();
 
     if (error) {
       console.error('שגיאה בשמירת נתוני שאלון עמיתים:', error);
       throw error;
     }
 
-    console.log('נתוני שאלון העמיתים נשמרו בהצלחה במסד הנתונים');
+    console.log('נתוני שאלון העמיתים נשמרו בהצלחה:', data);
   } catch (error) {
     console.error('שגיאה בשמירת תוצאות שאלון עמיתים:', error);
     throw error;
