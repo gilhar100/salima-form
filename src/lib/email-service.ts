@@ -3,16 +3,16 @@ import { SurveyResult } from "@/lib/types";
 
 export async function sendResultsByEmail(results: SurveyResult): Promise<void> {
   try {
-    // כאן תוסיף בעתיד את הפונקציונליות לשליחת מייל
-    // למשל דרך Supabase Edge Function או שירות חיצוני
-    console.log('שליחת תוצאות במייל:', results);
+    // פונקציה זו כרגע לא שולחת מייל בפועל
+    // היא נשמרת למקרה שבעתיד נרצה להוסיף שליחת מייל
+    console.log('פונקציית שליחת מייל - כרגע לא פעילה:', results);
     
-    // סימולציה של שליחת מייל
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // סימולציה של "שליחה" מוצלחת
+    await new Promise(resolve => setTimeout(resolve, 500));
     
-    console.log('התוצאות נשלחו בהצלחה במייל');
+    console.log('המערכת לא שולחת מייל כרגע - רק שומרת את הנתונים');
   } catch (error) {
-    console.error('שגיאה בשליחת המייל:', error);
+    console.error('שגיאה בפונקציית המייל:', error);
     throw error;
   }
 }

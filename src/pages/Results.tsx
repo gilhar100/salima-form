@@ -2,159 +2,128 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
+import { saveSurveyToDatabase } from "@/lib/survey-service";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { saveSurveyToDatabase } from "@/lib/survey-service";
-import { sendResultsByEmail } from "@/lib/email-service";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const Results = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const isMobile = useIsMobile();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [emailSending, setEmailSending] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+  const [dataSaved, setDataSaved] = useState(false);
+
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
-    
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
-      // שמירה אוטומטית במסד הנתונים (המשתמש כבר נתן הסכמה)
-      handleAutoSave(parsedResults);
+      
+      // שמירת הנתונים במסד הנתונים אוטומטית
+      handleSaveData(parsedResults);
     } else {
+      toast({
+        title: "לא נמצאו תוצאות",
+        description: "אנא מלא/י את השאלון תחילה",
+        variant: "destructive"
+      });
       navigate('/survey');
     }
-  }, [navigate]);
+  }, [navigate, toast]);
 
-  const handleAutoSave = async (results: SurveyResult) => {
-    setSaving(true);
-    try {
-      // המשתמש כבר נתן הסכמה במחקר בתחילת השאלון
-      await saveSurveyToDatabase(results, true, true);
-      
-      toast({
-        title: "התוצאות נשמרו בהצלחה",
-        description: "הנתונים נשמרו למחקר באופן אנונימי",
-      });
-    } catch (error) {
-      console.error("שגיאה בשמירת הנתונים:", error);
-      toast({
-        title: "שגיאה בשמירה",
-        description: "לא ניתן היה לשמור את הנתונים",
-        variant: "destructive"
-      });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleSendEmail = async () => {
-    if (!results) return;
+  const handleSaveData = async (surveyResults: SurveyResult) => {
+    if (dataSaved) return;
     
-    setEmailSending(true);
+    setLoading(true);
     try {
-      await sendResultsByEmail(results);
+      await saveSurveyToDatabase(surveyResults, true, false);
+      setDataSaved(true);
       
       toast({
-        title: "התוצאות נשלחו במייל",
-        description: "התוצאות נשלחו בהצלחה לכתובת המייל שלך",
+        title: "הנתונים נשמרו בהצלחה",
+        description: "תוצאות השאלון נשמרו במערכת",
       });
     } catch (error) {
-      console.error("שגיאה בשליחת המייל:", error);
+      console.error('שגיאה בשמירת הנתונים:', error);
       toast({
-        title: "שגיאה בשליחת המייל",
-        description: "לא ניתן היה לשלוח את התוצאות במייל",
+        title: "שגיאה בשמירת הנתונים",
+        description: "אירעה שגיאה בשמירת התוצאות",
         variant: "destructive"
       });
     } finally {
-      setEmailSending(false);
+      setLoading(false);
     }
-  };
-  
-  const handleNewSurvey = () => {
-    localStorage.removeItem('salimaResults');
-    navigate('/survey');
   };
 
   if (!results) {
     return (
-      <div className="flex justify-center items-center min-h-screen px-4">
-        <p className="text-lg sm:text-xl text-center">טוען תוצאות...</p>
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="container max-w-6xl mx-auto py-4 px-4 print:py-0 print:px-0">
-      <div className="mb-6 text-center print:mb-4">
-        <h1 className="text-2xl sm:text-3xl font-bold text-salima-800 mb-2">תוצאות השאלון שלך</h1>
-        <p className="text-sm sm:text-base text-gray-600 px-2">
-          ניתוח מפורט של כישורי המנהיגות שלך
-        </p>
-      </div>
-      
-      <div className={`grid gap-4 sm:gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2'} mb-6 sm:mb-8`}>
-        <ResultsRadar result={results} />
+    <div className="container py-6 max-w-4xl mx-auto px-4">
+      <Card className="mb-6">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-salima-800">
+            תוצאות שאלון מנהיגות SALIMA-WOCA
+          </CardTitle>
+          <CardDescription>
+            הנה התוצאות שלך מהשאלון - {results.date}
+          </CardDescription>
+        </CardHeader>
         
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">סיכום התוצאות</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-sm text-gray-600 mb-2">ציון SLQ כללי</p>
-                <p className="text-3xl sm:text-4xl font-bold text-salima-600">{results.slq}</p>
-              </div>
-              
-              <div className={`grid gap-3 ${isMobile ? 'grid-cols-2' : 'grid-cols-2'}`}>
-                {Object.values(results.dimensions).map((dimension) => (
-                  <div key={dimension.dimension} className="text-center p-2 sm:p-3 border rounded-lg">
-                    <p className="font-medium text-xs sm:text-sm leading-tight">{dimension.title}</p>
-                    <p className="text-lg sm:text-xl font-bold text-salima-600 mt-1">{dimension.score}</p>
-                  </div>
-                ))}
-              </div>
+        <CardContent className="space-y-6">
+          <div className="text-center">
+            <h3 className="text-xl font-semibold mb-2">ציון SLQ כולל</h3>
+            <div className="text-3xl font-bold text-salima-600">
+              {results.slq.toFixed(1)}
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+          
+          <ResultsRadar results={results} />
+          
+          <div className="grid gap-4 md:grid-cols-2">
+            {Object.values(results.dimensions).map((dimension) => (
+              <ResultsDetailCard key={dimension.dimension} dimension={dimension} />
+            ))}
+          </div>
+          
+          {loading && (
+            <div className="flex items-center justify-center gap-2 text-blue-600">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>שומר נתונים...</span>
+            </div>
+          )}
+          
+          {dataSaved && (
+            <div className="text-center text-green-600 font-medium">
+              ✓ הנתונים נשמרו בהצלחה במערכת
+            </div>
+          )}
+        </CardContent>
+      </Card>
       
-      <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-        <h2 className="text-xl sm:text-2xl font-bold text-salima-800 px-2">פירוט מפורט לפי ממדים</h2>
-        {Object.values(results.dimensions).map((dimension) => (
-          <ResultsDetailCard key={dimension.dimension} dimension={dimension} />
-        ))}
-      </div>
-      
-      <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 justify-center print:hidden">
-        <Button 
-          onClick={handleSendEmail}
-          disabled={emailSending}
-          className={`bg-green-600 hover:bg-green-700 ${isMobile ? 'w-full sm:w-auto' : ''}`}
-        >
-          {emailSending ? "שולח מייל..." : "שלח תוצאות במייל"}
-        </Button>
-        
-        <Button 
-          onClick={() => navigate('/statistics')} 
+      <div className="flex gap-4 justify-center">
+        <Button
+          onClick={() => navigate('/survey')}
           variant="outline"
-          className={`border-salima-600 text-salima-600 hover:bg-salima-50 ${isMobile ? 'w-full sm:w-auto' : ''}`}
+          className="w-auto"
         >
-          צפה בהשוואה סטטיסטית
+          מלא/י שאלון חדש
         </Button>
         
-        <Button 
-          onClick={handleNewSurvey} 
-          className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full sm:w-auto' : ''}`}
+        <Button
+          onClick={() => navigate('/')}
+          className="bg-salima-600 hover:bg-salima-700 w-auto"
         >
-          מילוי שאלון חדש
+          חזור לעמוד הבית
         </Button>
       </div>
     </div>
