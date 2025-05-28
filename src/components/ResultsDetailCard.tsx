@@ -3,9 +3,14 @@ import { DimensionResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { dimensionColors } from "./ResultsRadar";
+import SubDimensionAnalysis from "./SubDimensionAnalysis";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
+  answers?: { questionId: number; value: number }[];
 }
 
 // פונקציה להערכת רמת הביצוע עם תיאורים מפורטים
@@ -82,12 +87,13 @@ const getDetailedRecommendations = (dimension: string, score: number) => {
 const getSpectrumColor = (score: number, colors: any) => {
   if (score >= 4.5) return colors.primary;
   if (score >= 3.7) return colors.medium;
-  if (score >= 2.7) return "#fbbf24"; // צהוב
-  if (score >= 1.7) return "#fb923c"; // כתום
-  return "#ef4444"; // אדום
+  if (score >= 2.7) return "#fbbf24";
+  if (score >= 1.7) return "#fb923c";
+  return "#ef4444";
 };
 
-const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension }) => {
+const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answers = [] }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = evaluateDimensionLevel(dimension.score);
   const recommendations = getDetailedRecommendations(dimension.dimension, dimension.score);
   const colors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
@@ -199,6 +205,30 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension }) => {
               </p>
             </div>
           </div>
+
+          {/* כפתור להצגת ניתוח מפורט */}
+          {answers.length > 0 && (
+            <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+              <CollapsibleTrigger asChild>
+                <div 
+                  className="flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
+                  style={{ backgroundColor: colors.medium }}
+                >
+                  <span className="text-sm font-semibold text-white">
+                    ניתוח מפורט לתתי-תחומים
+                  </span>
+                  {isExpanded ? (
+                    <ChevronUp className="h-4 w-4 text-white" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-white" />
+                  )}
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SubDimensionAnalysis dimension={dimension} answers={answers} />
+              </CollapsibleContent>
+            </Collapsible>
+          )}
         </div>
       </CardContent>
     </Card>

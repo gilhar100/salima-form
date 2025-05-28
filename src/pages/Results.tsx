@@ -13,12 +13,21 @@ const Results = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
+  const [answers, setAnswers] = useState<{ questionId: number; value: number }[]>([]);
 
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
+    const savedAnswers = localStorage.getItem('salimaAnswers');
+    
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
+      
+      // טעינת התשובות לניתוח מפורט
+      if (savedAnswers) {
+        const parsedAnswers = JSON.parse(savedAnswers);
+        setAnswers(parsedAnswers);
+      }
       
       toast({
         title: "תוצאות השאלון",
@@ -103,7 +112,11 @@ const Results = () => {
             </h2>
             <div className="grid gap-6 lg:grid-cols-2">
               {Object.values(results.dimensions).map((dimension) => (
-                <ResultsDetailCard key={dimension.dimension} dimension={dimension} />
+                <ResultsDetailCard 
+                  key={dimension.dimension} 
+                  dimension={dimension} 
+                  answers={answers}
+                />
               ))}
             </div>
           </div>
