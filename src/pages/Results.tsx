@@ -5,7 +5,7 @@ import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, BarChart3 } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 
@@ -76,7 +76,16 @@ const Results = () => {
         </CardContent>
       </Card>
       
-      <div className="flex gap-4 justify-center">
+      <div className="flex gap-4 justify-center flex-wrap">
+        <Button
+          onClick={() => navigate('/statistics')}
+          variant="outline"
+          className="w-auto bg-blue-50 hover:bg-blue-100 border-blue-200"
+        >
+          <BarChart3 className="mr-2 h-4 w-4" />
+          השוואה סטטיסטית
+        </Button>
+        
         <Button
           onClick={() => navigate('/survey')}
           variant="outline"
