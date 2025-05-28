@@ -6,6 +6,8 @@ import SubDimensionAnalysis from "./SubDimensionAnalysis";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { questions } from "@/data/questions";
+import { getAdjustedValue } from "@/lib/calculations";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -52,45 +54,113 @@ const evaluateDimensionLevel = (score: number) => {
   };
 };
 
-// המלצות מפורטות לכל ממד ורמת ציון
-const getDetailedRecommendations = (dimension: string, score: number) => {
-  const recommendations = {
-    S: {
-      high: "המשך לפתח חשיבה אסטרטגית ארוכת טווח. הנהג תהליכי תכנון מובנים ובחן תרחישים עתידיים. שלב כלים אנליטיים מתקדמים בקבלת החלטות.",
-      medium: "השקע בפיתוח יכולות תכנון אסטרטגי. למד כלים לניתוח סביבה עסקית ובנה תכניות פעולה ברורות עם יעדים מדידים.",
-      low: "התחל בהגדרת חזון ברור ויעדים קצרי טווח. קח קורס בחשיבה אסטרטגית ופתח הרגלי בחינה שוטפת של הנחות יסוד."
-    },
-    L: {
-      high: "המשך להוביל תרבות למידה ארגונית. יזם פרויקטי למידה בין-מקצועיים ושתף ידע עם עמיתים. בנה מערכות לתיעוד ושיתוף תובנות.",
-      medium: "הקדש זמן יומי ללמידה והתפתחות. חפש מנטורים ורעיונות מתחומים שונים. שלב למידה מכישלונות בתהליכי העבודה.",
-      low: "התחל בקריאה יומית של 15 דקות בתחום המקצועי. הצטרף לקהילות מקצועיות ובקש משוב שוטף מעמיתים."
-    },
-    I: {
-      high: "המשך להיות מקור השראה ופתח מנהיגות השראתית בדרג הבא. בנה תכניות חונכות ושתף את סיפור החזון בפלטפורמות שונות.",
-      medium: "עבוד על פיתוח נרטיב אישי משכנע. התרגל לספר סיפורים מעוררי השראה ופתח יכולת חיבור רגשי עם הצוות.",
-      low: "התחל בזיהוי הערכים האישיים שלך ותרגם אותם למסרים ברורים. התרגל לשתף דוגמאות אישיות ולחבר לחזון הארגוני."
-    },
-    M: {
-      high: "המשך לחזק את תחושת השליחות בארגון. פתח תכניות לחיבור אישי של עובדים למטרות הארגון ובנה מדדי משמעות.",
-      medium: "עבוד על יצירת קשר בין המשימות היומיומיות לתכלית הגדולה. ארגן דיונים על ערכים ושאף את העובדים במסע משמעותי.",
-      low: "התחל בהגדרה אישית של המשמעות בעבודתך. חבר כל משימה למטרה גדולה יותר והדגש את הערך החברתי של הפעילות."
-    },
-    A: {
-      high: "המשך להוביל שינויים ופתח יכולות אדפטיביות בצוות. בנה מערכות תגובה מהירה לשינויים ויזם פרויקטי חדשנות.",
-      medium: "פתח גמישות מחשבתית ותרגל קבלת החלטות בתנאי אי-ודאות. חפש הזדמנויות ללמידה מתוך שינויים.",
-      low: "התחל בשינויים קטנים ובהדרגה. פתח סובלנות לאי-ודאות ותרגל חשיבה מחוץ לקופסה בבעיות פשוטות."
-    },
-    A2: {
-      high: "המשך להיות מודל לאותנטיות ובנה תרבות של שקיפות ואמון. הנהג דיאלוגים פתוחים ואמיתיים עם הצוות.",
-      medium: "עבוד על פיתוח המודעות העצמית ושקיפות בתקשורת. תרגל משוב הדדי ואמיתי עם העובדים.",
-      low: "התחל בזיהוי הערכים האישיים ופעל בהתאם להם באופן עקבי. תרגל שיתוף אישי מבוקר ובנה אמון הדרגתי."
-    }
+// פונקציה מחודשת לקבלת המלצות מפורטות בהתבסס על תשובות ספציפיות
+const getPersonalizedRecommendations = (dimension: string, answers: { questionId: number; value: number }[]) => {
+  // מציאת השאלות עם הציונים הנמוכים ביותר (1 או 2)
+  const lowScoreQuestions = answers
+    .filter(answer => {
+      const question = questions.find(q => q.id === answer.questionId);
+      if (!question) return false;
+      
+      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
+      return adjustedValue <= 2;
+    })
+    .map(answer => {
+      const question = questions.find(q => q.id === answer.questionId);
+      return {
+        questionId: answer.questionId,
+        text: question?.text || "",
+        adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
+      };
+    })
+    .sort((a, b) => a.adjustedValue - b.adjustedValue)
+    .slice(0, 3); // לקחת את 3 השאלות עם הציונים הנמוכים ביותר
+
+  if (lowScoreQuestions.length === 0) {
+    return "הביצועים בממד זה טובים יחסית. המשך לפתח ולחזק את היכולות הקיימות.";
+  }
+
+  let recommendations = "בהתבסס על התשובות שלך, אלו התחומים הספציפיים שדורשים תשומת לב:\n\n";
+  
+  lowScoreQuestions.forEach((item, index) => {
+    recommendations += `${index + 1}. **${getSpecificRecommendation(item.text, dimension)}**\n`;
+  });
+
+  recommendations += `\n**תכנית פעולה מומלצת:**\n${getActionPlan(dimension, lowScoreQuestions)}`;
+  
+  return recommendations;
+};
+
+// פונקציה לקבלת המלצה ספציפית לכל שאלה
+const getSpecificRecommendation = (questionText: string, dimension: string): string => {
+  const keywords = {
+    'אסטרטג': [
+      { keyword: 'הנחות פעולה', recommendation: 'קבע זמן שבועי לבחינת הנחות יסוד ובדוק אם הן עדיין רלוונטיות' },
+      { keyword: 'חזון', recommendation: 'פתח חזון ברור ותקשר אותו באופן עקבי לכל הצוות' },
+      { keyword: 'תכנון ארוך טווח', recommendation: 'השקע בכלים לתכנון אסטרטגי והגדר יעדים ארוכי טווח' },
+      { keyword: 'משבר', recommendation: 'פתח תכניות חירום ותרגל קבלת החלטות בלחץ' },
+      { keyword: 'רפורמות', recommendation: 'למד לזהות שינויים בסביבה ויזום התאמות מהירות' }
+    ],
+    'לומד': [
+      { keyword: 'רעיונות חדשים', recommendation: 'הקדש זמן יומי לחקר רעיונות חדשים ופתח סקרנות אינטלקטואלית' },
+      { keyword: 'למידה', recommendation: 'בנה תכנית למידה אישית והצטרף לקהילות מקצועיות' },
+      { keyword: 'שאלות', recommendation: 'פתח תרבות של שאלות ועודד דיאלוג פתוח עם הצוות' },
+      { keyword: 'שיתוף פעולה', recommendation: 'יזום פרויקטים בין-מחלקתיים וחפש הזדמנויות ללמידה משותפת' },
+      { keyword: 'כישלונות', recommendation: 'למד לראות בכישלונות הזדמנויות למידה ושתף לקחים עם הצוות' }
+    ],
+    'השראה': [
+      { keyword: 'השראה', recommendation: 'פתח סיפור אישי משכנע ושתף אותו באופן קבוע עם הצוות' },
+      { keyword: 'דוגמה', recommendation: 'היה מודל לחיקוי ופעל בהתאם לערכים שאתה מטיף להם' },
+      { keyword: 'מוטיבציה', recommendation: 'למד טכניקות להנעת אנשים וחבר אותם לחזון משותף' },
+      { keyword: 'מלהיב', recommendation: 'פתח כישורי תקשורת מעוררי השראה ושתף חזון חיובי על העתיד' },
+      { keyword: 'ביטחון', recommendation: 'בנה ביטחון דרך הצלחות קטנות והדגש את היכולות של הצוות' }
+    ],
+    'משמעות': [
+      { keyword: 'משמעות', recommendation: 'חבר כל משימה למטרה גדולה יותר והסבר את הערך החברתי של העבודה' },
+      { keyword: 'ערכים', recommendation: 'הגדר ערכים ברורים ופעל בהתאם להם באופן עקבי' },
+      { keyword: 'שליחות', recommendation: 'פתח תחושת שליחות משותפת ושתף סיפורי השפעה חיוביים' },
+      { keyword: 'ETYPE', recommendation: 'השקע בפיתוח אישי של העובדים וקשר זאת למטרות הארגון' },
+      { keyword: 'שינוי אמיתי', recommendation: 'הדגש את ההשפעה החיובית של העבודה על הקהילה והחברה' }
+    ],
+    'אדפטיבי': [
+      { keyword: 'שינויים', recommendation: 'פתח גמישות מחשבתית ותרגל קבלת החלטות בתנאי אי-ודאות' },
+      { keyword: 'שיתוף', recommendation: 'שלב את הצוות בתהליכי קבלת החלטות וערך דיונים פתוחים' },
+      { keyword: 'הקשבה', recommendation: 'פתח כישורי הקשבה פעילה ותן מקום לדעות שונות' },
+      { keyword: 'שיתוף פעולה', recommendation: 'בנה גשרים בין יחידות שונות ועודד עבודת צוות' },
+      { keyword: 'גמישות', recommendation: 'למד לזהות מתי נדרש שינוי כיוון ופעל במהירות' }
+    ],
+    'אותנטיות': [
+      { keyword: 'שקיפות', recommendation: 'פעל בשקיפות מלאה ושתף מידע רלוונטי עם הצוות' },
+      { keyword: 'אחריות', recommendation: 'קח אחריות אישית על כישלונות ושתף לקחים שלמדת' },
+      { keyword: 'עקרונות', recommendation: 'הגדר עקרונות ברורים ועמד עליהם גם בזמנים קשים' },
+      { keyword: 'סיפור אישי', recommendation: 'שתף סיפורים אישיים לחיזוק הקשר עם הצוות' },
+      { keyword: 'רגשות', recommendation: 'הכר ברגשות של אחרים והראה אמפתיה אמיתית' }
+    ]
   };
 
-  const dimRec = recommendations[dimension as keyof typeof recommendations];
-  if (score >= 3.7) return dimRec.high;
-  if (score >= 2.7) return dimRec.medium;
-  return dimRec.low;
+  const dimensionKeywords = keywords[dimension as keyof typeof keywords] || [];
+  
+  for (const item of dimensionKeywords) {
+    if (questionText.includes(item.keyword)) {
+      return item.recommendation;
+    }
+  }
+  
+  return 'עבוד על פיתוח היבט זה באופן ממוקד עם מנטור או קורס מקצועי';
+};
+
+// פונקציה לקבלת תכנית פעולה
+const getActionPlan = (dimension: string, lowScoreQuestions: any[]): string => {
+  const actionPlans = {
+    'S': 'התחל בבניית תכנית אסטרטגית רבעונית, קיים פגישות חזון חודשיות, והתרגל ניתוח סביבה עסקית.',
+    'L': 'הקדש 30 דקות יומיות ללמידה, הצטרף לקהילה מקצועית, ובקש משוב שוטף מעמיתים.',
+    'I': 'פתח סיפור אישי, תרגל נאומים קצרים, וחפש הזדמנויות להנחות אחרים.',
+    'M': 'הגדר את הערכים האישיים, קשר משימות למטרות גדולות, וארגן דיונים על משמעות העבודה.',
+    'A': 'תרגל חשיבה יצירתית, חפש הזדמנויות לשיתוף פעולה, ופתח סובלנות לאי-ודאות.',
+    'A2': 'עבוד על מודעות עצמית, תרגל שיתוף אישי מבוקר, ובנה אמון דרך עקביות.'
+  };
+  
+  return actionPlans[dimension as keyof typeof actionPlans] || 'פתח תכנית פעולה אישית עם יעדים ברורים ומדידים.';
 };
 
 // פונקציה לקביעת צבע הספקטרום
@@ -105,7 +175,13 @@ const getSpectrumColor = (score: number, colors: any) => {
 const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answers = [] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = evaluateDimensionLevel(dimension.score);
-  const recommendations = getDetailedRecommendations(dimension.dimension, dimension.score);
+  
+  // סינון התשובות הרלוונטיות לממד זה
+  const dimensionAnswers = answers.filter(answer => 
+    dimension.questions.includes(answer.questionId)
+  );
+  
+  const recommendations = getPersonalizedRecommendations(dimension.dimension, dimensionAnswers);
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
   const intensityColor = getColorIntensity(dimension.score, baseColors);
 
@@ -188,12 +264,12 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             }}
           >
             <h4 
-              className="font-semibold mb-2"
+              className="font-semibold mb-3"
               style={{ color: intensityColor }}
             >
-              המלצות לפיתוח:
+              המלצות מותאמות אישית לפיתוח:
             </h4>
-            <p className="text-sm leading-relaxed">{recommendations}</p>
+            <div className="text-sm leading-relaxed whitespace-pre-line">{recommendations}</div>
           </div>
 
           {/* נתונים נוספים */}
@@ -210,7 +286,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
                 className="font-bold text-lg"
                 style={{ color: intensityColor }}
               >
-                {dimension.questions.length}
+                15
               </p>
             </div>
             <div 
