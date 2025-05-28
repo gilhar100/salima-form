@@ -42,8 +42,8 @@ export const getColorIntensity = (score: number, baseColors: any) => {
   return baseColors.weakest;
 };
 
-// פונקציה מחודשת לקבלת המלצות מפורטות כולל הכרה בחוזקות
-export const getPersonalizedAnalysis = (dimension: string, answers: { questionId: number; value: number }[]) => {
+// פונקציה לקבלת נקודות שימור בהתאם לתשובות הגבוהות
+export const getPreservationPoints = (dimension: string, answers: { questionId: number; value: number }[]): string[] => {
   // מציאת השאלות עם הציונים הגבוהים ביותר (4 או 5)
   const highScoreQuestions = answers
     .filter(answer => {
@@ -62,8 +62,30 @@ export const getPersonalizedAnalysis = (dimension: string, answers: { questionId
       };
     })
     .sort((a, b) => b.adjustedValue - a.adjustedValue)
-    .slice(0, 3); // לקחת את 3 השאלות עם הציונים הגבוהים ביותר
+    .slice(0, 3);
 
+  if (highScoreQuestions.length === 0) {
+    // אם אין שאלות עם ציון גבוה, נבחר את הגבוהות ביותר
+    const topQuestions = answers
+      .map(answer => {
+        const question = questions.find(q => q.id === answer.questionId);
+        return {
+          questionId: answer.questionId,
+          text: question?.text || "",
+          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
+        };
+      })
+      .sort((a, b) => b.adjustedValue - a.adjustedValue)
+      .slice(0, 3);
+    
+    return topQuestions.map(item => getStrengthRecognition(item.text, dimension));
+  }
+
+  return highScoreQuestions.map(item => getStrengthRecognition(item.text, dimension));
+};
+
+// פונקציה לקבלת נקודות שיפור בהתאם לתשובות הנמוכות
+export const getImprovementPoints = (dimension: string, answers: { questionId: number; value: number }[]): string[] => {
   // מציאת השאלות עם הציונים הנמוכים ביותר (1, 2 או 3)
   const lowScoreQuestions = answers
     .filter(answer => {
@@ -82,43 +104,9 @@ export const getPersonalizedAnalysis = (dimension: string, answers: { questionId
       };
     })
     .sort((a, b) => a.adjustedValue - b.adjustedValue)
-    .slice(0, 3); // לקחת את 3 השאלות עם הציונים הנמוכים ביותר
+    .slice(0, 3);
 
-  let analysis = "";
-
-  // נקודות לשימור (תמיד יהיו)
-  analysis += "**נקודות לשימור והעמקה:**\n\n";
-  if (highScoreQuestions.length > 0) {
-    highScoreQuestions.forEach((item, index) => {
-      analysis += `${index + 1}. **${getStrengthRecognition(item.text, dimension)}**\n`;
-    });
-  } else {
-    // אם אין שאלות עם ציון גבוה, נבחר את הגבוהות ביותר
-    const topQuestions = answers
-      .map(answer => {
-        const question = questions.find(q => q.id === answer.questionId);
-        return {
-          questionId: answer.questionId,
-          text: question?.text || "",
-          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
-        };
-      })
-      .sort((a, b) => b.adjustedValue - a.adjustedValue)
-      .slice(0, 2);
-    
-    topQuestions.forEach((item, index) => {
-      analysis += `${index + 1}. **${getStrengthRecognition(item.text, dimension)}**\n`;
-    });
-  }
-  analysis += "\n";
-
-  // נקודות לשיפור (תמיד יהיו)
-  analysis += "**נקודות לשיפור והתפתחות:**\n\n";
-  if (lowScoreQuestions.length > 0) {
-    lowScoreQuestions.forEach((item, index) => {
-      analysis += `${index + 1}. **${getSpecificRecommendation(item.text, dimension)}**\n`;
-    });
-  } else {
+  if (lowScoreQuestions.length === 0) {
     // אם אין שאלות עם ציון נמוך, נבחר את הנמוכות ביותר
     const bottomQuestions = answers
       .map(answer => {
@@ -130,12 +118,51 @@ export const getPersonalizedAnalysis = (dimension: string, answers: { questionId
         };
       })
       .sort((a, b) => a.adjustedValue - b.adjustedValue)
-      .slice(0, 2);
+      .slice(0, 3);
     
-    bottomQuestions.forEach((item, index) => {
-      analysis += `${index + 1}. **${getSpecificRecommendation(item.text, dimension)}**\n`;
-    });
+    return bottomQuestions.map(item => getSpecificRecommendation(item.text, dimension));
   }
+
+  return lowScoreQuestions.map(item => getSpecificRecommendation(item.text, dimension));
+};
+
+// פונקציה מחודשת לקבלת המלצות מפורטות כולל הכרה בחוזקות
+export const getPersonalizedAnalysis = (dimension: string, answers: { questionId: number; value: number }[]) => {
+  const preservationPoints = getPreservationPoints(dimension, answers);
+  const improvementPoints = getImprovementPoints(dimension, answers);
+
+  let analysis = "";
+
+  // נקודות לשימור (תמיד יהיו)
+  analysis += "**נקודות לשימור והעמקה:**\n\n";
+  preservationPoints.forEach((point, index) => {
+    analysis += `${index + 1}. **${point}**\n`;
+  });
+  analysis += "\n";
+
+  // נקודות לשיפור (תמיד יהיו)
+  analysis += "**נקודות לשיפור והתפתחות:**\n\n";
+  improvementPoints.forEach((point, index) => {
+    analysis += `${index + 1}. **${point}**\n`;
+  });
+
+  const lowScoreQuestions = answers
+    .filter(answer => {
+      const question = questions.find(q => q.id === answer.questionId);
+      if (!question) return false;
+      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
+      return adjustedValue <= 3;
+    })
+    .slice(0, 3);
+
+  const highScoreQuestions = answers
+    .filter(answer => {
+      const question = questions.find(q => q.id === answer.questionId);
+      if (!question) return false;
+      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
+      return adjustedValue >= 4;
+    })
+    .slice(0, 3);
 
   analysis += `\n**תכנית פעולה מומלצת:**\n${getActionPlan(dimension, lowScoreQuestions, highScoreQuestions)}`;
   
