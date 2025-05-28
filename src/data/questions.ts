@@ -29,7 +29,7 @@ export const dimensionInfo = {
   }
 };
 
-// מיפוי של הממדים והסימון אם השאלה הפוכה לפי שאלות
+// מיפוי של הממדים והסימון אם השאלה הפוכה לפי השאלות המקוריות
 export const dimensionMapping: Record<number, { dimension: Question["dimension"], isReversed: boolean }> = {
   // אסטרטג (S)
   1: { dimension: "S", isReversed: false },
