@@ -1,10 +1,10 @@
 
 import { DimensionResult } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { dimensionColors } from "./ResultsRadar";
 import { questions, dimensionMapping } from "@/data/questions";
 import { getAdjustedValue } from "@/lib/calculations";
+import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 
 interface SubDimensionAnalysisProps {
   dimension: DimensionResult;
@@ -64,22 +64,53 @@ const calculateSubDimensionScore = (questionIds: number[], answers: { questionId
   return Number((totalScore / relevantAnswers.length).toFixed(2));
 };
 
-// פונקציה לקבלת צבע לפי ציון
-const getScoreColor = (score: number, colors: any) => {
-  if (score >= 4.5) return colors.primary;
-  if (score >= 3.7) return colors.medium;
-  if (score >= 2.7) return "#fbbf24";
-  if (score >= 1.7) return "#fb923c";
-  return "#ef4444";
-};
+// פונקציה לזיהוי חוזקות וחולשות בתוך הממד
+const analyzeSubDimensions = (dimSubDimensions: Record<string, number[]>, answers: { questionId: number; value: number }[]) => {
+  const subDimensionScores = Object.entries(dimSubDimensions).map(([name, questionIds]) => ({
+    name,
+    score: calculateSubDimensionScore(questionIds, answers),
+    questionCount: questionIds.length
+  }));
 
-// פונקציה לקבלת תיאור רמה
-const getScoreLevel = (score: number): string => {
-  if (score >= 4.5) return "מצוין";
-  if (score >= 3.7) return "גבוה";
-  if (score >= 2.7) return "בינוני";
-  if (score >= 1.7) return "נמוך";
-  return "נמוך מאוד";
+  // מיון לפי ציון
+  subDimensionScores.sort((a, b) => b.score - a.score);
+  
+  const highest = subDimensionScores[0];
+  const lowest = subDimensionScores[subDimensionScores.length - 1];
+  const gap = highest.score - lowest.score;
+  
+  let analysis = "";
+  let recommendations = "";
+  let icon = null;
+  let iconColor = "";
+
+  if (gap >= 1.5) {
+    analysis = `נמצא פער משמעותי בתוך הממד: בעוד שקיימת חוזקה ב${highest.name} (${highest.score}), יש מקום משמעותי לשיפור ב${lowest.name} (${lowest.score}).`;
+    recommendations = `מומלץ להתמקד בחיזוק ${lowest.name} תוך ניצול החוזקה הקיימת ב${highest.name}.`;
+    icon = <AlertCircle className="h-4 w-4" />;
+    iconColor = "#f59e0b";
+  } else if (gap >= 0.8) {
+    analysis = `קיים פער בינוני בתוך הממד: ${highest.name} מהווה נקודת חוזקה יחסית, בעוד ש${lowest.name} זקוק לתשומת לב נוספת.`;
+    recommendations = `כדאי להשקיע במיתוח ${lowest.name} תוך שמירה על הרמה הטובה ב${highest.name}.`;
+    icon = <TrendingDown className="h-4 w-4" />;
+    iconColor = "#fb923c";
+  } else {
+    analysis = `הממד מציג עקביות טובה: כל תתי-התחומים נמצאים ברמה דומה, כאשר ${highest.name} בולט מעט כנקודת חוזקה.`;
+    recommendations = `המשך לפתח את כל תתי-התחומים באופן מאוזן תוך ניצול החוזקה ב${highest.name}.`;
+    icon = <TrendingUp className="h-4 w-4" />;
+    iconColor = "#10b981";
+  }
+
+  return {
+    analysis,
+    recommendations,
+    highest,
+    lowest,
+    gap,
+    icon,
+    iconColor,
+    subDimensionScores
+  };
 };
 
 const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, answers }) => {
@@ -88,93 +119,122 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
   
   if (!dimSubDimensions) return null;
 
-  const subDimensionScores = Object.entries(dimSubDimensions).map(([name, questionIds]) => ({
-    name,
-    score: calculateSubDimensionScore(questionIds, answers),
-    questionCount: questionIds.length
-  }));
-
-  // מיון לפי ציון - הכי גבוה קודם
-  subDimensionScores.sort((a, b) => b.score - a.score);
+  const {
+    analysis,
+    recommendations,
+    highest,
+    lowest,
+    gap,
+    icon,
+    iconColor,
+    subDimensionScores
+  } = analyzeSubDimensions(dimSubDimensions, answers);
 
   return (
     <Card className="mt-4">
       <CardHeader className="pb-3" style={{ backgroundColor: colors.light }}>
-        <CardTitle className="text-lg" style={{ color: colors.primary }}>
+        <CardTitle className="text-lg flex items-center gap-2" style={{ color: colors.primary }}>
           ניתוח מפורט - {dimension.title}
+          <div style={{ color: iconColor }}>
+            {icon}
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
         <div className="space-y-4">
-          {subDimensionScores.map((subDim, index) => {
-            const scoreColor = getScoreColor(subDim.score, colors);
-            const level = getScoreLevel(subDim.score);
+          
+          {/* ניתוח כללי */}
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-semibold text-sm mb-2 text-gray-800">
+              תובנת מפתח:
+            </h4>
+            <p className="text-sm text-gray-700 leading-relaxed mb-3">
+              {analysis}
+            </p>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              <span className="font-medium">המלצה:</span> {recommendations}
+            </p>
+          </div>
+
+          {/* פירוט תתי-התחומים */}
+          <div className="grid gap-3">
+            <h4 className="font-semibold text-sm" style={{ color: colors.primary }}>
+              פירוט תתי-התחומים:
+            </h4>
             
-            return (
-              <div key={subDim.name} className="border rounded-lg p-4" style={{ backgroundColor: colors.light }}>
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="font-semibold text-sm" style={{ color: colors.primary }}>
-                    {subDim.name}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-600">
-                      ({subDim.questionCount} שאלות)
-                    </span>
-                    <div 
-                      className="px-2 py-1 rounded text-white text-xs font-bold"
-                      style={{ backgroundColor: scoreColor }}
-                    >
-                      {subDim.score}
-                    </div>
+            {subDimensionScores.map((subDim, index) => {
+              let statusColor = "";
+              let statusText = "";
+              let statusIcon = null;
+              
+              if (subDim.name === highest.name && gap >= 0.8) {
+                statusColor = "#10b981";
+                statusText = "נקודת חוזקה";
+                statusIcon = <TrendingUp className="h-3 w-3" />;
+              } else if (subDim.name === lowest.name && gap >= 0.8) {
+                statusColor = "#f59e0b";
+                statusText = "לפיתוח";
+                statusIcon = <TrendingDown className="h-3 w-3" />;
+              } else {
+                statusColor = "#6b7280";
+                statusText = "ברמה סבירה";
+              }
+              
+              return (
+                <div 
+                  key={subDim.name} 
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                  style={{ backgroundColor: colors.light, borderColor: colors.medium }}
+                >
+                  <div className="flex-1">
+                    <h5 className="font-medium text-sm" style={{ color: colors.primary }}>
+                      {subDim.name}
+                    </h5>
+                    <p className="text-xs text-gray-600">
+                      {subDim.questionCount} שאלות
+                    </p>
+                  </div>
+                  
+                  <div 
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium"
+                    style={{ 
+                      backgroundColor: `${statusColor}20`,
+                      color: statusColor 
+                    }}
+                  >
+                    {statusIcon}
+                    {statusText}
                   </div>
                 </div>
-                
-                <div className="mb-2">
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>1.0</span>
-                    <span>5.0</span>
-                  </div>
-                  <div className="relative">
-                    <Progress value={20} className="h-2" />
-                    <div 
-                      className="absolute top-0 h-2 rounded-full"
-                      style={{ 
-                        width: `${(subDim.score / 5) * 100}%`,
-                        backgroundColor: scoreColor
-                      }}
-                    />
-                  </div>
-                </div>
-                
-                <p className="text-xs text-gray-600">
-                  רמה: <span className="font-semibold" style={{ color: scoreColor }}>{level}</span>
-                  {index === 0 && subDim.score === Math.max(...subDimensionScores.map(s => s.score)) && (
-                    <span className="mr-2 text-green-600">🌟 נקודת חוזק</span>
-                  )}
-                  {index === subDimensionScores.length - 1 && subDim.score === Math.min(...subDimensionScores.map(s => s.score)) && (
-                    <span className="mr-2 text-orange-600">📈 לפיתוח</span>
-                  )}
+              );
+            })}
+          </div>
+          
+          {/* סיכום מספרי */}
+          <div 
+            className="p-3 rounded-lg text-center"
+            style={{ backgroundColor: colors.light }}
+          >
+            <div className="grid grid-cols-3 gap-3 text-xs">
+              <div>
+                <p className="text-gray-600">החזק ביותר</p>
+                <p className="font-semibold" style={{ color: colors.primary }}>
+                  {highest.name}
                 </p>
               </div>
-            );
-          })}
-        </div>
-        
-        {/* סיכום תובנות */}
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <h5 className="font-semibold text-sm mb-2" style={{ color: colors.primary }}>
-            תובנות מרכזיות:
-          </h5>
-          <div className="text-xs space-y-1">
-            <p>
-              <span className="font-semibold text-green-600">נקודת החוזק:</span> {subDimensionScores[0].name} ({subDimensionScores[0].score})
-            </p>
-            <p>
-              <span className="font-semibold text-orange-600">לפיתוח:</span> {subDimensionScores[subDimensionScores.length - 1].name} ({subDimensionScores[subDimensionScores.length - 1].score})
-            </p>
-            <p>
-              <span className="font-semibold">פער:</span> {(subDimensionScores[0].score - subDimensionScores[subDimensionScores.length - 1].score).toFixed(2)} נקודות
-            </p>
+              <div>
+                <p className="text-gray-600">פער</p>
+                <p className="font-semibold" style={{ color: iconColor }}>
+                  {gap.toFixed(1)} נקודות
+                </p>
+              </div>
+              <div>
+                <p className="text-gray-600">לפיתוח</p>
+                <p className="font-semibold" style={{ color: colors.primary }}>
+                  {lowest.name}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
