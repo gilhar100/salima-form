@@ -16,7 +16,7 @@ export const evaluateDimensionLevel = (score: number) => {
   };
   if (score >= 2.7) return {
     level: "בינוני",
-    description: "ביצוע סביר עם מקום משמעותי לשיפור",
+    description: "",
     percentage: 60
   };
   if (score >= 1.7) return {
@@ -86,27 +86,55 @@ export const getPersonalizedAnalysis = (dimension: string, answers: { questionId
 
   let analysis = "";
 
-  // הכרה בחוזקות
+  // נקודות לשימור (תמיד יהיו)
+  analysis += "**נקודות לשימור והעמקה:**\n\n";
   if (highScoreQuestions.length > 0) {
-    analysis += "**נקודות החוזקה שלך:**\n\n";
     highScoreQuestions.forEach((item, index) => {
       analysis += `${index + 1}. **${getStrengthRecognition(item.text, dimension)}**\n`;
     });
-    analysis += "\n";
+  } else {
+    // אם אין שאלות עם ציון גבוה, נבחר את הגבוהות ביותר
+    const topQuestions = answers
+      .map(answer => {
+        const question = questions.find(q => q.id === answer.questionId);
+        return {
+          questionId: answer.questionId,
+          text: question?.text || "",
+          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
+        };
+      })
+      .sort((a, b) => b.adjustedValue - a.adjustedValue)
+      .slice(0, 2);
+    
+    topQuestions.forEach((item, index) => {
+      analysis += `${index + 1}. **${getStrengthRecognition(item.text, dimension)}**\n`;
+    });
   }
+  analysis += "\n";
 
-  // המלצות לשיפור
+  // נקודות לשיפור (תמיד יהיו)
+  analysis += "**נקודות לשיפור והתפתחות:**\n\n";
   if (lowScoreQuestions.length > 0) {
-    analysis += "**תחומים לפיתוח והשבחה:**\n\n";
     lowScoreQuestions.forEach((item, index) => {
       analysis += `${index + 1}. **${getSpecificRecommendation(item.text, dimension)}**\n`;
     });
   } else {
-    analysis += "**תחומים לפיתוח והעמקה:**\n\n";
-    analysis += "הביצועים בממד זה מצוינים! עכשיו זה הזמן להעמיק ולהנחות אחרים:\n";
-    analysis += "• שתף את הידע והניסיון שלך עם חברי הצוות\n";
-    analysis += "• הפוך למנטור בתחום זה עבור עמיתים\n";
-    analysis += "• חפש דרכים חדשניות להוביל בתחום זה\n";
+    // אם אין שאלות עם ציון נמוך, נבחר את הנמוכות ביותר
+    const bottomQuestions = answers
+      .map(answer => {
+        const question = questions.find(q => q.id === answer.questionId);
+        return {
+          questionId: answer.questionId,
+          text: question?.text || "",
+          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
+        };
+      })
+      .sort((a, b) => a.adjustedValue - b.adjustedValue)
+      .slice(0, 2);
+    
+    bottomQuestions.forEach((item, index) => {
+      analysis += `${index + 1}. **${getSpecificRecommendation(item.text, dimension)}**\n`;
+    });
   }
 
   analysis += `\n**תכנית פעולה מומלצת:**\n${getActionPlan(dimension, lowScoreQuestions, highScoreQuestions)}`;
