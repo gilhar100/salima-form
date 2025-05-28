@@ -9,37 +9,72 @@ interface ResultsRadarProps {
   result: SurveyResult;
 }
 
-// צבעים ייחודיים לכל ממד
+// פונקציה לקבלת עוצמת צבע בהתאם לציון
+const getColorIntensity = (score: number, baseColors: any) => {
+  const normalizedScore = Math.max(0, Math.min(5, score)) / 5; // נרמול לטווח 0-1
+  
+  if (normalizedScore >= 0.9) return baseColors.strongest;
+  if (normalizedScore >= 0.75) return baseColors.strong;
+  if (normalizedScore >= 0.55) return baseColors.medium;
+  if (normalizedScore >= 0.35) return baseColors.weak;
+  return baseColors.weakest;
+};
+
+// צבעים ייחודיים לכל ממד עם דרגות עוצמה
 export const dimensionColors = {
   S: { 
-    primary: "#1e40af", // כחול עמוק לאסטרטגיה
-    light: "#dbeafe",
-    medium: "#93c5fd"
+    strongest: "#1e3a8a", // כחול עמוק מאוד
+    strong: "#1e40af",    // כחול עמוק
+    medium: "#3b82f6",    // כחול בינוני
+    weak: "#93c5fd",      // כחול בהיר
+    weakest: "#dbeafe",   // כחול בהיר מאוד
+    light: "#eff6ff",
+    primary: "#1e40af"
   },
   L: { 
-    primary: "#059669", // ירוק ללמידה
-    light: "#d1fae5",
-    medium: "#6ee7b7"
+    strongest: "#14532d", // ירוק עמוק מאוד
+    strong: "#166534",    // ירוק עמוק
+    medium: "#16a34a",    // ירוק בינוני
+    weak: "#4ade80",      // ירוק בהיר
+    weakest: "#bbf7d0",   // ירוק בהיר מאוד
+    light: "#f0fdf4",
+    primary: "#166534"
   },
   I: { 
-    primary: "#dc2626", // אדום להשראה
-    light: "#fee2e2",
-    medium: "#fca5a5"
+    strongest: "#7f1d1d", // אדום עמוק מאוד
+    strong: "#b91c1c",    // אדום עמוק
+    medium: "#dc2626",    // אדום בינוני
+    weak: "#f87171",      // אדום בהיר
+    weakest: "#fecaca",   // אדום בהיר מאוד
+    light: "#fef2f2",
+    primary: "#b91c1c"
   },
   M: { 
-    primary: "#7c3aed", // סגול למשמעות
-    light: "#ede9fe",
-    medium: "#c4b5fd"
+    strongest: "#581c87", // סגול עמוק מאוד
+    strong: "#7c2d12",    // חום-סגול עמוק
+    medium: "#a855f7",    // סגול בינוני
+    weak: "#c084fc",      // סגול בהיר
+    weakest: "#e9d5ff",   // סגול בהיר מאוד
+    light: "#faf5ff",
+    primary: "#7c2d12"
   },
   A: { 
-    primary: "#ea580c", // כתום להסתגלות
-    light: "#fed7aa",
-    medium: "#fdba74"
+    strongest: "#9a3412", // כתום עמוק מאוד
+    strong: "#c2410c",    // כתום עמוק
+    medium: "#ea580c",    // כתום בינוני
+    weak: "#fb923c",      // כתום בהיר
+    weakest: "#fed7aa",   // כתום בהיר מאוד
+    light: "#fff7ed",
+    primary: "#c2410c"
   },
   A2: { 
-    primary: "#be185d", // ורוד לאותנטיות
-    light: "#fce7f3",
-    medium: "#f9a8d4"
+    strongest: "#831843", // ורוד עמוק מאוד
+    strong: "#be185d",    // ורוד עמוק
+    medium: "#db2777",    // ורוד בינוני
+    weak: "#f472b6",      // ורוד בהיר
+    weakest: "#fce7f3",   // ורוד בהיר מאוד
+    light: "#fdf2f8",
+    primary: "#be185d"
   }
 };
 
@@ -49,12 +84,12 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({ result }) => {
   
   // הכנת הנתונים לתצוגה בגרף
   const radarData = [
-    { dimension: dimensionInfo.S.title, value: dimensions.S.score, fullMark: 5, color: dimensionColors.S.primary },
-    { dimension: dimensionInfo.L.title, value: dimensions.L.score, fullMark: 5, color: dimensionColors.L.primary },
-    { dimension: dimensionInfo.I.title, value: dimensions.I.score, fullMark: 5, color: dimensionColors.I.primary },
-    { dimension: dimensionInfo.M.title, value: dimensions.M.score, fullMark: 5, color: dimensionColors.M.primary },
-    { dimension: dimensionInfo.A.title, value: dimensions.A.score, fullMark: 5, color: dimensionColors.A.primary },
-    { dimension: dimensionInfo.A2.title, value: dimensions.A2.score, fullMark: 5, color: dimensionColors.A2.primary }
+    { dimension: dimensionInfo.S.title, value: dimensions.S.score, fullMark: 5, color: getColorIntensity(dimensions.S.score, dimensionColors.S) },
+    { dimension: dimensionInfo.L.title, value: dimensions.L.score, fullMark: 5, color: getColorIntensity(dimensions.L.score, dimensionColors.L) },
+    { dimension: dimensionInfo.I.title, value: dimensions.I.score, fullMark: 5, color: getColorIntensity(dimensions.I.score, dimensionColors.I) },
+    { dimension: dimensionInfo.M.title, value: dimensions.M.score, fullMark: 5, color: getColorIntensity(dimensions.M.score, dimensionColors.M) },
+    { dimension: dimensionInfo.A.title, value: dimensions.A.score, fullMark: 5, color: getColorIntensity(dimensions.A.score, dimensionColors.A) },
+    { dimension: dimensionInfo.A2.title, value: dimensions.A2.score, fullMark: 5, color: getColorIntensity(dimensions.A2.score, dimensionColors.A2) }
   ];
 
   return (
@@ -95,20 +130,21 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({ result }) => {
         
         <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
           {Object.values(dimensions).map((dimension) => {
-            const colors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+            const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+            const intensityColor = getColorIntensity(dimension.score, baseColors);
             return (
               <div 
                 key={dimension.dimension} 
-                className="text-center p-2 sm:p-3 border rounded-lg transition-colors"
+                className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors"
                 style={{ 
-                  backgroundColor: colors.light,
-                  borderColor: colors.medium
+                  backgroundColor: baseColors.light,
+                  borderColor: intensityColor
                 }}
               >
                 <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
                 <p 
                   className="text-lg sm:text-2xl font-bold mt-1"
-                  style={{ color: colors.primary }}
+                  style={{ color: intensityColor }}
                 >
                   {dimension.score}
                 </p>

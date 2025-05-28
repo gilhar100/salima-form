@@ -1,4 +1,3 @@
-
 import { DimensionResult } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -12,6 +11,17 @@ interface ResultsDetailCardProps {
   dimension: DimensionResult;
   answers?: { questionId: number; value: number }[];
 }
+
+// פונקציה לקבלת עוצמת צבע בהתאם לציון
+const getColorIntensity = (score: number, baseColors: any) => {
+  const normalizedScore = Math.max(0, Math.min(5, score)) / 5; // נרמול לטווח 0-1
+  
+  if (normalizedScore >= 0.9) return baseColors.strongest;
+  if (normalizedScore >= 0.75) return baseColors.strong;
+  if (normalizedScore >= 0.55) return baseColors.medium;
+  if (normalizedScore >= 0.35) return baseColors.weak;
+  return baseColors.weakest;
+};
 
 // פונקציה להערכת רמת הביצוע עם תיאורים מפורטים
 const evaluateDimensionLevel = (score: number) => {
@@ -96,20 +106,20 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
   const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = evaluateDimensionLevel(dimension.score);
   const recommendations = getDetailedRecommendations(dimension.dimension, dimension.score);
-  const colors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-  const spectrumColor = getSpectrumColor(dimension.score, colors);
+  const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+  const intensityColor = getColorIntensity(dimension.score, baseColors);
 
   return (
-    <Card className="mb-4 overflow-hidden">
+    <Card className="mb-4 overflow-hidden border-2" style={{ borderColor: intensityColor }}>
       <CardHeader 
         className="pb-4"
-        style={{ backgroundColor: colors.light }}
+        style={{ backgroundColor: baseColors.light }}
       >
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <CardTitle 
               className="text-xl mb-2"
-              style={{ color: colors.primary }}
+              style={{ color: intensityColor }}
             >
               {dimension.title}
             </CardTitle>
@@ -119,14 +129,17 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
           </div>
           <div className="text-center ml-4">
             <div 
-              className="text-3xl font-bold rounded-full w-16 h-16 flex items-center justify-center text-white shadow-lg"
-              style={{ backgroundColor: spectrumColor }}
+              className="text-3xl font-bold rounded-full w-16 h-16 flex items-center justify-center text-white shadow-lg border-2"
+              style={{ 
+                backgroundColor: intensityColor,
+                borderColor: baseColors.strongest
+              }}
             >
               {dimension.score}
             </div>
             <p 
               className="text-sm font-semibold mt-1"
-              style={{ color: colors.primary }}
+              style={{ color: intensityColor }}
             >
               {levelInfo.level}
             </p>
@@ -143,35 +156,40 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
               <span>2.5</span>
               <span>5.0</span>
             </div>
-            <div className="relative">
-              <Progress 
-                value={levelInfo.percentage} 
-                className="h-3"
-                style={{ 
-                  backgroundColor: colors.light,
+            <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+              {/* רקע הספקטרום */}
+              <div 
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background: `linear-gradient(to right, ${baseColors.weakest} 0%, ${baseColors.weak} 25%, ${baseColors.medium} 50%, ${baseColors.strong} 75%, ${baseColors.strongest} 100%)`
                 }}
               />
+              {/* מחוון המיקום הנוכחי */}
               <div 
-                className="absolute top-0 h-3 rounded-full transition-all"
+                className="absolute top-1/2 transform -translate-y-1/2 w-1 h-6 bg-white border-2 rounded-full shadow-lg"
                 style={{ 
-                  width: `${(dimension.score / 5) * 100}%`,
-                  backgroundColor: spectrumColor
+                  left: `${(dimension.score / 5) * 100}%`,
+                  borderColor: intensityColor,
+                  marginLeft: '-2px'
                 }}
               />
             </div>
-            <p className="text-sm text-gray-600 mt-1 text-center">
+            <p className="text-sm text-gray-600 mt-2 text-center">
               {levelInfo.description}
             </p>
           </div>
           
           {/* המלצות מפורטות */}
           <div 
-            className="p-4 rounded-lg"
-            style={{ backgroundColor: colors.light }}
+            className="p-4 rounded-lg border-2"
+            style={{ 
+              backgroundColor: baseColors.light,
+              borderColor: intensityColor + '40'
+            }}
           >
             <h4 
               className="font-semibold mb-2"
-              style={{ color: colors.primary }}
+              style={{ color: intensityColor }}
             >
               המלצות לפיתוח:
             </h4>
@@ -181,25 +199,31 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
           {/* נתונים נוספים */}
           <div className="grid grid-cols-2 gap-3 text-center">
             <div 
-              className="p-2 rounded"
-              style={{ backgroundColor: colors.light }}
+              className="p-3 rounded border-2"
+              style={{ 
+                backgroundColor: baseColors.light,
+                borderColor: intensityColor + '60'
+              }}
             >
               <p className="text-xs text-gray-600">מספר שאלות</p>
               <p 
-                className="font-bold"
-                style={{ color: colors.primary }}
+                className="font-bold text-lg"
+                style={{ color: intensityColor }}
               >
                 {dimension.questions.length}
               </p>
             </div>
             <div 
-              className="p-2 rounded"
-              style={{ backgroundColor: colors.light }}
+              className="p-3 rounded border-2"
+              style={{ 
+                backgroundColor: baseColors.light,
+                borderColor: intensityColor + '60'
+              }}
             >
               <p className="text-xs text-gray-600">אחוזון</p>
               <p 
-                className="font-bold"
-                style={{ color: colors.primary }}
+                className="font-bold text-lg"
+                style={{ color: intensityColor }}
               >
                 {Math.round((dimension.score / 5) * 100)}%
               </p>
@@ -211,8 +235,11 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
               <CollapsibleTrigger asChild>
                 <div 
-                  className="flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                  style={{ backgroundColor: colors.medium }}
+                  className="flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity border-2"
+                  style={{ 
+                    backgroundColor: intensityColor,
+                    borderColor: baseColors.strongest
+                  }}
                 >
                   <span className="text-sm font-semibold text-white">
                     ניתוח מפורט לתתי-תחומים
