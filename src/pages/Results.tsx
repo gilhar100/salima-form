@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -8,30 +7,31 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, BarChart3 } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
-
 const Results = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [answers, setAnswers] = useState<{ questionId: number; value: number }[]>([]);
-
+  const [answers, setAnswers] = useState<{
+    questionId: number;
+    value: number;
+  }[]>([]);
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
-    
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
-      
+
       // טעינת התשובות לניתוח מפורט
       if (savedAnswers) {
         const parsedAnswers = JSON.parse(savedAnswers);
         setAnswers(parsedAnswers);
       }
-      
       toast({
         title: "תוצאות השאלון",
-        description: "הנתונים כבר נשמרו במערכת בהצלחה",
+        description: "הנתונים כבר נשמרו במערכת בהצלחה"
       });
     } else {
       toast({
@@ -42,26 +42,17 @@ const Results = () => {
       navigate('/');
     }
   }, [navigate, toast]);
-
   if (!results) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
+    return <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
+      </div>;
   }
 
   // חישוב סטטיסטיקות נוספות
   const averageScore = results.slq;
-  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => 
-    prev.score > current.score ? prev : current
-  );
-  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => 
-    prev.score < current.score ? prev : current
-  );
-
-  return (
-    <div className="container py-6 max-w-6xl mx-auto px-4">
+  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score > current.score ? prev : current);
+  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score < current.score ? prev : current);
+  return <div className="container py-6 max-w-6xl mx-auto px-4">
       <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-salima-800 mb-2">
@@ -111,13 +102,7 @@ const Results = () => {
               ניתוח מפורט לכל ממד
             </h2>
             <div className="grid gap-6 lg:grid-cols-2">
-              {Object.values(results.dimensions).map((dimension) => (
-                <ResultsDetailCard 
-                  key={dimension.dimension} 
-                  dimension={dimension} 
-                  answers={answers}
-                />
-              ))}
+              {Object.values(results.dimensions).map(dimension => <ResultsDetailCard key={dimension.dimension} dimension={dimension} answers={answers} />)}
             </div>
           </div>
           
@@ -128,32 +113,17 @@ const Results = () => {
       </Card>
       
       <div className="flex gap-4 justify-center flex-wrap">
-        <Button
-          onClick={() => navigate('/statistics')}
-          variant="outline"
-          className="w-auto bg-blue-50 hover:bg-blue-100 border-blue-200"
-        >
+        <Button onClick={() => navigate('/statistics')} variant="outline" className="w-auto bg-blue-50 hover:bg-blue-100 border-blue-200">
           <BarChart3 className="mr-2 h-4 w-4" />
           השוואה סטטיסטית
         </Button>
         
-        <Button
-          onClick={() => navigate('/survey')}
-          variant="outline"
-          className="w-auto"
-        >
-          מלא/י שאלון חדש
-        </Button>
         
-        <Button
-          onClick={() => navigate('/')}
-          className="bg-salima-600 hover:bg-salima-700 w-auto"
-        >
+        
+        <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-auto">
           חזור לעמוד הבית
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Results;
