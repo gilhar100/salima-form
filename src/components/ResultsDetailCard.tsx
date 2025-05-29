@@ -2,10 +2,6 @@
 import { DimensionResult } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { dimensionColors } from "./ResultsRadar";
-import SubDimensionAnalysis from "./SubDimensionAnalysis";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
 import { 
   evaluateDimensionLevel, 
   getColorIntensity
@@ -19,7 +15,6 @@ interface ResultsDetailCardProps {
 }
 
 const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answers = [] }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = evaluateDimensionLevel(dimension.score);
   
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
@@ -44,33 +39,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             intensityColor={intensityColor}
             levelDescription={levelInfo.description}
           />
-
-          {/* כפתור להצגת ניתוח מפורט */}
-          {answers.length > 0 && (
-            <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-              <CollapsibleTrigger asChild>
-                <div 
-                  className="flex items-center justify-center gap-2 p-3 rounded-lg cursor-pointer hover:opacity-80 transition-opacity border-2"
-                  style={{ 
-                    backgroundColor: intensityColor,
-                    borderColor: baseColors.strongest
-                  }}
-                >
-                  <span className="text-sm font-semibold text-white">
-                    ניתוח מפורט לתתי-תחומים
-                  </span>
-                  {isExpanded ? (
-                    <ChevronUp className="h-4 w-4 text-white" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-white" />
-                  )}
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SubDimensionAnalysis dimension={dimension} answers={answers} />
-              </CollapsibleContent>
-            </Collapsible>
-          )}
         </div>
       </CardContent>
     </Card>
