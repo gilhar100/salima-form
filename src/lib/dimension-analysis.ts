@@ -33,7 +33,7 @@ export const evaluateDimensionLevel = (score: number) => {
 
 // פונקציה לקבלת עוצמת צבע בהתאם לציון
 export const getColorIntensity = (score: number, baseColors: any) => {
-  const normalizedScore = Math.max(0, Math.min(5, score)) / 5; // נרמול לטווח 0-1
+  const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
   
   if (normalizedScore >= 0.9) return baseColors.strongest;
   if (normalizedScore >= 0.75) return baseColors.strong;
@@ -42,271 +42,229 @@ export const getColorIntensity = (score: number, baseColors: any) => {
   return baseColors.weakest;
 };
 
-// פונקציה לקבלת נקודות שימור בהתאם לתשובות הגבוהות
-export const getPreservationPoints = (dimension: string, answers: { questionId: number; value: number }[]): string[] => {
-  // מציאת השאלות עם הציונים הגבוהים ביותר (4 או 5)
-  const highScoreQuestions = answers
-    .filter(answer => {
-      const question = questions.find(q => q.id === answer.questionId);
-      if (!question) return false;
-      
-      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
-      return adjustedValue >= 4;
-    })
+// פונקציה לניתוח מפורט של תשובות
+const analyzeSpecificAnswers = (dimension: string, answers: { questionId: number; value: number }[]): string => {
+  if (answers.length === 0) {
+    return "לא נמצאו תשובות לניתוח מפורט.";
+  }
+
+  // מיון התשובות לפי ציון מותאם
+  const sortedAnswers = answers
     .map(answer => {
       const question = questions.find(q => q.id === answer.questionId);
       return {
         questionId: answer.questionId,
         text: question?.text || "",
-        adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
+        originalValue: answer.value,
+        adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false),
+        isReversed: question?.isReversed || false
       };
     })
-    .sort((a, b) => b.adjustedValue - a.adjustedValue)
-    .slice(0, 3);
-
-  if (highScoreQuestions.length === 0) {
-    // אם אין שאלות עם ציון גבוה, נבחר את הגבוהות ביותר
-    const topQuestions = answers
-      .map(answer => {
-        const question = questions.find(q => q.id === answer.questionId);
-        return {
-          questionId: answer.questionId,
-          text: question?.text || "",
-          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
-        };
-      })
-      .sort((a, b) => b.adjustedValue - a.adjustedValue)
-      .slice(0, 3);
-    
-    return topQuestions.map(item => getStrengthRecognition(item.text, dimension));
-  }
-
-  return highScoreQuestions.map(item => getStrengthRecognition(item.text, dimension));
-};
-
-// פונקציה לקבלת נקודות שיפור בהתאם לתשובות הנמוכות
-export const getImprovementPoints = (dimension: string, answers: { questionId: number; value: number }[]): string[] => {
-  // מציאת השאלות עם הציונים הנמוכים ביותר (1, 2 או 3)
-  const lowScoreQuestions = answers
-    .filter(answer => {
-      const question = questions.find(q => q.id === answer.questionId);
-      if (!question) return false;
-      
-      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
-      return adjustedValue <= 3;
-    })
-    .map(answer => {
-      const question = questions.find(q => q.id === answer.questionId);
-      return {
-        questionId: answer.questionId,
-        text: question?.text || "",
-        adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
-      };
-    })
-    .sort((a, b) => a.adjustedValue - b.adjustedValue)
-    .slice(0, 3);
-
-  if (lowScoreQuestions.length === 0) {
-    // אם אין שאלות עם ציון נמוך, נבחר את הנמוכות ביותר
-    const bottomQuestions = answers
-      .map(answer => {
-        const question = questions.find(q => q.id === answer.questionId);
-        return {
-          questionId: answer.questionId,
-          text: question?.text || "",
-          adjustedValue: getAdjustedValue(answer.value, question?.isReversed || false)
-        };
-      })
-      .sort((a, b) => a.adjustedValue - b.adjustedValue)
-      .slice(0, 3);
-    
-    return bottomQuestions.map(item => getSpecificRecommendation(item.text, dimension));
-  }
-
-  return lowScoreQuestions.map(item => getSpecificRecommendation(item.text, dimension));
-};
-
-// פונקציה מחודשת לקבלת המלצות מפורטות כולל הכרה בחוזקות
-export const getPersonalizedAnalysis = (dimension: string, answers: { questionId: number; value: number }[]) => {
-  const preservationPoints = getPreservationPoints(dimension, answers);
-  const improvementPoints = getImprovementPoints(dimension, answers);
+    .sort((a, b) => b.adjustedValue - a.adjustedValue);
 
   let analysis = "";
 
-  // נקודות לשימור (תמיד יהיו)
-  analysis += "**נקודות לשימור והעמקה:**\n\n";
-  preservationPoints.forEach((point, index) => {
-    analysis += `${index + 1}. **${point}**\n`;
-  });
-  analysis += "\n";
+  // חלוקה לקטגוריות
+  const strongAreas = sortedAnswers.filter(a => a.adjustedValue >= 4);
+  const moderateAreas = sortedAnswers.filter(a => a.adjustedValue >= 3 && a.adjustedValue < 4);
+  const developmentAreas = sortedAnswers.filter(a => a.adjustedValue < 3);
 
-  // נקודות לשיפור (תמיד יהיו)
-  analysis += "**נקודות לשיפור והתפתחות:**\n\n";
-  improvementPoints.forEach((point, index) => {
-    analysis += `${index + 1}. **${point}**\n`;
-  });
+  // ניתוח התחומים החזקים
+  if (strongAreas.length > 0) {
+    analysis += "**תחומי חוזקה מובהקים:**\n\n";
+    strongAreas.forEach((area, index) => {
+      const insight = getSpecificInsight(area.text, dimension, area.adjustedValue, 'strength');
+      analysis += `${index + 1}. **${getQuestionSummary(area.text)}** (ציון: ${area.adjustedValue})\n   ${insight}\n\n`;
+    });
+  }
 
-  const lowScoreQuestions = answers
-    .filter(answer => {
-      const question = questions.find(q => q.id === answer.questionId);
-      if (!question) return false;
-      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
-      return adjustedValue <= 3;
-    })
-    .slice(0, 3);
+  // ניתוח התחומים הבינוניים
+  if (moderateAreas.length > 0) {
+    analysis += "**תחומים בינוניים עם פוטנציאל:**\n\n";
+    moderateAreas.forEach((area, index) => {
+      const insight = getSpecificInsight(area.text, dimension, area.adjustedValue, 'moderate');
+      analysis += `${index + 1}. **${getQuestionSummary(area.text)}** (ציון: ${area.adjustedValue})\n   ${insight}\n\n`;
+    });
+  }
 
-  const highScoreQuestions = answers
-    .filter(answer => {
-      const question = questions.find(q => q.id === answer.questionId);
-      if (!question) return false;
-      const adjustedValue = getAdjustedValue(answer.value, question.isReversed);
-      return adjustedValue >= 4;
-    })
-    .slice(0, 3);
+  // ניתוח תחומי פיתוח
+  if (developmentAreas.length > 0) {
+    analysis += "**תחומים הזקוקים לפיתוח:**\n\n";
+    developmentAreas.forEach((area, index) => {
+      const insight = getSpecificInsight(area.text, dimension, area.adjustedValue, 'development');
+      analysis += `${index + 1}. **${getQuestionSummary(area.text)}** (ציון: ${area.adjustedValue})\n   ${insight}\n\n`;
+    });
+  }
 
-  analysis += `\n**תכנית פעולה מומלצת:**\n${getActionPlan(dimension, lowScoreQuestions, highScoreQuestions)}`;
-  
+  // ניתוח כללי
+  analysis += "**ניתוח כללי:**\n";
+  analysis += getDimensionOverallAnalysis(dimension, sortedAnswers);
+
   return analysis;
 };
 
-// פונקציה חדשה להכרה בחוזקות
-const getStrengthRecognition = (questionText: string, dimension: string): string => {
-  const strengthKeywords = {
-    'אסטרטג': [
-      { keyword: 'הנחות פעולה', recognition: 'אתה מצוין בבחינת הנחות יסוד - זוהי יכולת חשובה שמבדילה מנהיגים אסטרטגיים' },
-      { keyword: 'חזון', recognition: 'יש לך יכולת מעולה לפתח ולתקשר חזון - כישור מפתח של מנהיגות אסטרטגית' },
-      { keyword: 'תכנון ארוך טווח', recognition: 'החשיבה הארוכת טווח שלך מצוינת - זה מאפיין מנהיגים אסטרטגיים מוצלחים' },
-      { keyword: 'משבר', recognition: 'יש לך יכולת חזקה לקבל החלטות במצבי לחץ - כישור קריטי למנהיגות' },
-      { keyword: 'רפורמות', recognition: 'אתה מוכן ומסוגל לנהל שינויים - זוהי חוזקה אסטרטגית חשובה' }
-    ],
-    'לומד': [
-      { keyword: 'רעיונות חדשים', recognition: 'הפתיחות שלך לרעיונות חדשים מעולה - זה מאפיין מנהיגים לומדים' },
-      { keyword: 'למידה', recognition: 'המחויבות שלך ללמידה רצינית מרשימה - זה הבסיס למנהיגות מתפתחת' },
-      { keyword: 'שאלות', recognition: 'היכולת שלך לשאול שאלות חשובות מצוינת - זה מניע צמיחה וחדשנות' },
-      { keyword: 'שיתוף פעולה', recognition: 'אתה יוצר סביבה של למידה משותפת - כישור מפתח למנהיגות' },
-      { keyword: 'כישלונות', recognition: 'הגישה שלך ללמידה מכישלונות מעוררת השראה - זה מבדיל מנהיגים אמיתיים' }
-    ],
-    'השראה': [
-      { keyword: 'השראה', recognition: 'יש לך יכולת טבעית להעניק השראה - זוהי חוזקה מרכזית במנהיגות' },
-      { keyword: 'דוגמה', recognition: 'אתה מהווה דוגמה אישית מעוררת השראה - זה הבסיס למנהיגות אותנטית' },
-      { keyword: 'מוטיבציה', recognition: 'היכולת שלך להניע אנשים מרשימה - כישור מפתח במנהיגות' },
-      { keyword: 'מלהיב', recognition: 'יש לך כריזמה וכושר להלהיב - זה מאפיין מנהיגים מעוררי השראה' },
-      { keyword: 'ביטחון', recognition: 'אתה מצליח לבנות ביטחון באנשים - זוהי יכולת יקרת ערך במנהיגות' }
-    ],
-    'משמעות': [
-      { keyword: 'משמעות', recognition: 'אתה מצוין ביצירת תחושת משמעות - זה מניע מוטיבציה עמוקה' },
-      { keyword: 'ערכים', recognition: 'המחויבות שלך לערכים ברורה וחזקה - זה יוצר אמינות ואמון' },
-      { keyword: 'שליחות', recognition: 'יש לך תחושת שליחות חזקה - זה מדבק ומניע את הסביבה' },
-      { keyword: 'פיתוח', recognition: 'ההשקעה שלך בפיתוח אנשים מרשימה - זוהי חוזקה מנהיגותית חשובה' },
-      { keyword: 'שינוי אמיתי', recognition: 'אתה מחובר למטרות גדולות - זה מאפיין מנהיגות משמעותית' }
-    ],
-    'אדפטיבי': [
-      { keyword: 'שינויים', recognition: 'הגמישות שלך מול שינויים מעולה - זה מאפיין מנהיגות מתקדמת' },
-      { keyword: 'שיתוף', recognition: 'אתה מעורב אחרים בקבלת החלטות - זה יוצר מחויבות וחדשנות' },
-      { keyword: 'הקשבה', recognition: 'כישורי ההקשבה שלך מצוינים - זה בסיס למנהיגות רגישה' },
-      { keyword: 'שיתוף פעולה', recognition: 'אתה מעולה ביצירת שיתופי פעולה - כישור קריטי במנהיגות מודרנית' },
-      { keyword: 'גמישות', recognition: 'הגמישות המחשבתית שלך מרשימה - זה מאפשר חדשנות והסתגלות' }
-    ],
-    'אותנטיות': [
-      { keyword: 'שקיפות', recognition: 'השקיפות שלך יוצרת אמון - זוהי חוזקה מנהיגותית יסודית' },
-      { keyword: 'אחריות', recognition: 'נטילת האחריות שלך מעוררת כבוד - זה מאפיין מנהיגות אמינה' },
-      { keyword: 'עקרונות', recognition: 'העמידה שלך על עקרונות יוצרת יציבות - זוהי חוזקה אותנטית' },
-      { keyword: 'סיפור אישי', recognition: 'הנכונות שלך להיות אישי יוצרת קשר - זה מאפיין מנהיגות אנושית' },
-      { keyword: 'רגשות', recognition: 'הרגישות הרגשית שלך מעוררת הערכה - זוהי יכולת מנהיגותית חשובה' }
-    ]
+// פונקציה לקבלת תובנה ספציפית לכל שאלה
+const getSpecificInsight = (questionText: string, dimension: string, score: number, category: 'strength' | 'moderate' | 'development'): string => {
+  const insights = {
+    'S': {
+      'הנחות פעולה': {
+        strength: 'מראה יכולת מעולה לבחינה ביקורתית של הנחות יסוד ואתגור הסטטוס קוו - תכונה מרכזית של מנהיגות אסטרטגית.',
+        moderate: 'יש מודעות להנחות פעולה אך ניתן לפתח עוד את היכולת לאתגר אותן באופן שיטתי.',
+        development: 'חשוב לפתח יכולת זיהוי ובחינה של הנחות יסוד כבסיס לחשיבה אסטרטגית.'
+      },
+      'חזון': {
+        strength: 'מציג יכולת חזקה לפיתוח וניסוח חזון אסטרטגי ברור - יכולת מפתח למנהיגות מעוררת השראה.',
+        moderate: 'יש בסיס טוב לפיתוח חזון אך ניתן לחזק את הבהירות והכוח המניע של החזון.',
+        development: 'נדרש פיתוח ביכולת ניסוח חזון אסטרטגי ברור ומעורר השראה.'
+      },
+      'תכנון ארוך טווח': {
+        strength: 'מפגין יכולת מצוינת לחשיבה אסטרטגית ארוכת טווח ותכנון מתוחכם.',
+        moderate: 'יש יכולת בסיסית לתכנון ארוך טווח אך ניתן לפתח עוד את העומק האסטרטגי.',
+        development: 'חשוב לפתח כישורי תכנון אסטרטגי ויכולת ראייה ארוכת טווח.'
+      }
+    },
+    'L': {
+      'רעיונות חדשים': {
+        strength: 'מפגין סקרנות אינטלקטואלית גבוהה ופתיחות מעולה לרעיונות חדשים - בסיס חזק למנהיגות לומדת.',
+        moderate: 'יש פתיחות בסיסית לרעיונות חדשים אך ניתן לפתח עוד את הסקרנות האקטיבית.',
+        development: 'נדרש פיתוח בפתיחות לרעיונות חדשים וסקרנות אינטלקטואלית.'
+      },
+      'למידה': {
+        strength: 'מציג מחויבות חזקה ללמידה מתמשכת ופיתוח עצמי - תכונה מרכזית של מנהיגות מתפתחת.',
+        moderate: 'יש מחויבות בסיסית ללמידה אך ניתן להעמיק את השיטתיות והעקביות.',
+        development: 'חשוב לפתח תרבות למידה אישית ומחויבות לפיתוח מתמשך.'
+      },
+      'שאלות': {
+        strength: 'מפגין יכולת מעולה לשאול שאלות חשובות ועמוקות - מניע למידה וחדשנות.',
+        moderate: 'יש יכולת בסיסית לשאול שאלות אך ניתן לפתח עוד את העומק והמיקוד.',
+        development: 'נדרש פיתוח ביכולת לשאול שאלות מהותיות ומעוררות חשיבה.'
+      }
+    },
+    'I': {
+      'השראה': {
+        strength: 'מפגין יכולת טבעית וחזקה להעניק השראה לאחרים - כוח מניע מרכזי במנהיגות.',
+        moderate: 'יש פוטנציאל להעניק השראה אך ניתן לפתח עוד את הכריזמה והמסר.',
+        development: 'חשוב לפתח יכולת להעניק השראה ולהניע אנשים סביב חזון משותף.'
+      },
+      'דוגמה אישית': {
+        strength: 'מהווה דוגמה אישית מעוררת השראה ופועל בהתאם לערכים שמטיף להם.',
+        moderate: 'יש בסיס טוב להיות דוגמה אישית אך ניתן לחזק את העקביות.',
+        development: 'נדרש פיתוח ביכולת להיות דוגמה אישית ולהוביל באמצעות מעשה.'
+      },
+      'מוטיבציה': {
+        strength: 'מציג יכולת מעולה להניע ולהלהיב אנשים - כישור מפתח במנהיגות מעוררת השראה.',
+        moderate: 'יש יכולת בסיסית להניע אך ניתן לפתח עוד את הכוח המניע.',
+        development: 'חשוב לפתח כישורי הנעה ויכולת לעורר מוטיבציה באחרים.'
+      }
+    },
+    'M': {
+      'משמעות': {
+        strength: 'מפגין יכולת מעולה ליצור תחושת משמעות ולחבר אנשים למטרה גדולה יותר.',
+        moderate: 'יש מודעות למשמעות אך ניתן לחזק את היכולת לתרגם אותה לפעולה.',
+        development: 'נדרש פיתוח ביכולת ליצור תחושת משמעות ומטרה בעבודה.'
+      },
+      'ערכים': {
+        strength: 'מציג מחויבות חזקה לערכים ופועל בהתאם להם באופן עקבי.',
+        moderate: 'יש בסיס ערכי טוב אך ניתן לחזק את הביטוי והיישום שלו.',
+        development: 'חשוב לפתח בהירות ערכית ולפעול בהתאם לעקרונות ברורים.'
+      },
+      'פיתוח אנשים': {
+        strength: 'מפגין השקעה מעוררת השראה בפיתוח אנשים ובמימוש הפוטנציאל שלהם.',
+        moderate: 'יש מודעות לחשיבות פיתוח אנשים אך ניתן להעמיק את ההשקעה.',
+        development: 'נדרש פיתוח ביכולת להשקיע בצמיחה ופיתוח של אחרים.'
+      }
+    },
+    'A': {
+      'גמישות': {
+        strength: 'מפגין גמישות מחשבתית ויכולת הסתגלות מעולה לשינויים ולאתגרים חדשים.',
+        moderate: 'יש יכולת בסיסית להסתגלות אך ניתן לפתח עוד את הגמישות.',
+        development: 'חשוב לפתח גמישות מחשבתית ויכולת הסתגלות מהירה.'
+      },
+      'שיתוף פעולה': {
+        strength: 'מציג יכולת מעולה לעבודת צוות ושיתוף פעולה - בסיס למנהיגות שיתופית.',
+        moderate: 'יש יכולת טובה לשיתוף פעולה אך ניתן לפתח עוד את העומק.',
+        development: 'נדרש פיתוח בכישורי שיתוף פעולה ועבודת צוות.'
+      },
+      'הקשבה': {
+        strength: 'מפגין כישורי הקשבה מעולים ויכולת להבין נקודות מבט שונות.',
+        moderate: 'יש יכולת הקשבה בסיסית אך ניתן לפתח עוד את העומק והרגישות.',
+        development: 'חשוב לפתח כישורי הקשבה פעילה ורגישות לאחרים.'
+      }
+    },
+    'A2': {
+      'שקיפות': {
+        strength: 'מפגין שקיפות מעוררת אמון ויכולת לחלוק מידע באופן פתוח ואמין.',
+        moderate: 'יש נטייה לשקיפות אך ניתן לפתח עוד את הפתיחות.',
+        development: 'נדרש פיתוח בשקיפות וביכולת לחלוק מידע באופן פתוח.'
+      },
+      'אחריות אישית': {
+        strength: 'מציג נטילת אחריות אישית מעוררת כבוד ויכולת להתמודד עם טעויות.',
+        moderate: 'יש מודעות לאחריות אישית אך ניתן לחזק את היישום.',
+        development: 'חשוב לפתח יכולת נטילת אחריות אישית ולהכיר בטעויות.'
+      },
+      'אותנטיות': {
+        strength: 'מפגין אותנטיות מעוררת השראה ויכולת להיות אמיתי ואמין.',
+        moderate: 'יש בסיס של אותנטיות אך ניתן לפתח עוד את הביטוי האישי.',
+        development: 'נדרש פיתוח באותנטיות ובהיותך אמיתי עם עצמך ואחרים.'
+      }
+    }
   };
 
-  const dimensionKeywords = strengthKeywords[dimension as keyof typeof strengthKeywords] || [];
-  
-  for (const item of dimensionKeywords) {
-    if (questionText.includes(item.keyword)) {
-      return item.recognition;
+  // חיפוש תובנה רלוונטית
+  const dimensionInsights = insights[dimension as keyof typeof insights];
+  if (dimensionInsights) {
+    for (const [key, insight] of Object.entries(dimensionInsights)) {
+      if (questionText.includes(key)) {
+        return insight[category];
+      }
     }
   }
-  
-  return 'הציון הגבוה בהיבט זה מצביע על חוזקה מנהיגותית חשובה - המשך לפתח אותה';
-};
 
-// פונקציה לקבלת המלצה ספציפית לכל שאלה
-const getSpecificRecommendation = (questionText: string, dimension: string): string => {
-  const keywords = {
-    'אסטרטג': [
-      { keyword: 'הנחות פעולה', recommendation: 'קבע זמן שבועי לבחינת הנחות יסוד ובדוק אם הן עדיין רלוונטיות' },
-      { keyword: 'חזון', recommendation: 'פתח חזון ברור ותקשר אותו באופן עקבי לכל הצוות' },
-      { keyword: 'תכנון ארוך טווח', recommendation: 'השקע בכלים לתכנון אסטרטגי והגדר יעדים ארוכי טווח' },
-      { keyword: 'משבר', recommendation: 'פתח תכניות חירום ותרגל קבלת החלטות בלחץ' },
-      { keyword: 'רפורמות', recommendation: 'למד לזהות שינויים בסביבה ויזום התאמות מהירות' }
-    ],
-    'לומד': [
-      { keyword: 'רעיונות חדשים', recommendation: 'הקדש זמן יומי לחקר רעיונות חדשים ופתח סקרנות אינטלקטואלית' },
-      { keyword: 'למידה', recommendation: 'בנה תכנית למידה אישית והצטרף לקהילות מקצועיות' },
-      { keyword: 'שאלות', recommendation: 'פתח תרבות של שאלות ועודד דיאלוג פתוח עם הצוות' },
-      { keyword: 'שיתוף פעולה', recommendation: 'יזום פרויקטים בין-מחלקתיים וחפש הזדמנויות ללמידה משותפת' },
-      { keyword: 'כישלונות', recommendation: 'למד לראות בכישלונות הזדמנויות למידה ושתף לקחים עם הצוות' }
-    ],
-    'השראה': [
-      { keyword: 'השראה', recommendation: 'פתח סיפור אישי משכנע ושתף אותו באופן קבוע עם הצוות' },
-      { keyword: 'דוגמה', recommendation: 'היה מודל לחיקוי ופעל בהתאם לערכים שאתה מטיף להם' },
-      { keyword: 'מוטיבציה', recommendation: 'למד טכניקות להנעת אנשים וחבר אותם לחזון משותף' },
-      { keyword: 'מלהיב', recommendation: 'פתח כישורי תקשורת מעוררי השראה ושתף חזון חיובי על העתיד' },
-      { keyword: 'ביטחון', recommendation: 'בנה ביטחון דרך הצלחות קטנות והדגש את היכולות של הצוות' }
-    ],
-    'משמעות': [
-      { keyword: 'משמעות', recommendation: 'חבר כל משימה למטרה גדולה יותר והסבר את הערך החברתי של העבודה' },
-      { keyword: 'ערכים', recommendation: 'הגדר ערכים ברורים ופעל בהתאם להם באופן עקבי' },
-      { keyword: 'שליחות', recommendation: 'פתח תחושת שליחות משותפת ושתף סיפורי השפעה חיוביים' },
-      { keyword: 'ETYPE', recommendation: 'השקע בפיתוח אישי של העובדים וקשר זאת למטרות הארגון' },
-      { keyword: 'שינוי אמיתי', recommendation: 'הדגש את ההשפעה החיובית של העבודה על הקהילה והחברה' }
-    ],
-    'אדפטיבי': [
-      { keyword: 'שינויים', recommendation: 'פתח גמישות מחשבתית ותרגל קבלת החלטות בתנאי אי-ודאות' },
-      { keyword: 'שיתוף', recommendation: 'שלב את הצוות בתהליכי קבלת החלטות וערך דיונים פתוחים' },
-      { keyword: 'הקשבה', recommendation: 'פתח כישורי הקשבה פעילה ותן מקום לדעות שונות' },
-      { keyword: 'שיתוף פעולה', recommendation: 'בנה גשרים בין יחידות שונות ועודד עבודת צוות' },
-      { keyword: 'גמישות', recommendation: 'למד לזהות מתי נדרש שינוי כיוון ופעל במהירות' }
-    ],
-    'אותנטיות': [
-      { keyword: 'שקיפות', recommendation: 'פעל בשקיפות מלאה ושתף מידע רלוונטי עם הצוות' },
-      { keyword: 'אחריות', recommendation: 'קח אחריות אישית על כישלונות ושתף לקחים שלמדת' },
-      { keyword: 'עקרונות', recommendation: 'הגדר עקרונות ברורים ועמד עליהם גם בזמנים קשים' },
-      { keyword: 'סיפור אישי', recommendation: 'שתף סיפורים אישיים לחיזוק הקשר עם הצוות' },
-      { keyword: 'רגשות', recommendation: 'הכר ברגשות של אחרים והראה אמפתיה אמיתית' }
-    ]
+  // תובנה כללית אם לא נמצאה התאמה ספציפית
+  const genericInsights = {
+    strength: `התוצאה המעולה (${score}) מצביעה על יכולת מפותחת בתחום זה.`,
+    moderate: `התוצאה הבינונית (${score}) מצביעה על בסיס טוב עם מקום לפיתוח.`,
+    development: `התוצאה (${score}) מצביעה על הזדמנות לפיתוח משמעותי בתחום זה.`
   };
 
-  const dimensionKeywords = keywords[dimension as keyof typeof keywords] || [];
-  
-  for (const item of dimensionKeywords) {
-    if (questionText.includes(item.keyword)) {
-      return item.recommendation;
-    }
+  return genericInsights[category];
+};
+
+// פונקציה לקבלת סיכום השאלה
+const getQuestionSummary = (questionText: string): string => {
+  if (questionText.length > 80) {
+    return questionText.substring(0, 80) + "...";
   }
-  
-  return 'עבוד על פיתוח היבט זה באופן ממוקד עם מנטור או קורס מקצועי';
+  return questionText;
 };
 
-// פונקציה מעודכנת לקבלת תכנית פעולה
-const getActionPlan = (dimension: string, lowScoreQuestions: any[], highScoreQuestions: any[]): string => {
-  const actionPlans = {
-    'S': highScoreQuestions.length > 0 
-      ? 'בנה על החוזקות האסטרטגיות שלך: שתף את החזון עם צוותים נוספים, הנח פרויקטים אסטרטגיים, ופתח את היכולות התכנוניות בתחומים הזקוקים לחיזוק.'
-      : 'התחל בבניית תכנית אסטרטגית רבעונית, קיים פגישות חזון חודשיות, והתרגל ניתוח סביבה עסקית.',
-    'L': highScoreQuestions.length > 0
-      ? 'נצל את התשוקה שלך ללמידה: הפוך למנטור למידה לעמיתים, יזום קהילות למידה בארגון, ושתף ידע בתחומים שפחות מפותחים.'
-      : 'הקדש 30 דקות יומיות ללמידה, הצטרף לקהילה מקצועית, ובקש משוב שוטף מעמיתים.',
-    'I': highScoreQuestions.length > 0
-      ? 'בנה על הכושר המעורר השראה שלך: הנח צוותים נוספים, פתח תכניות מנטורינג, והעמק את ההשפעה בתחומים הזקוקים לחיזוק.'
-      : 'פתח סיפור אישי, תרגל נאומים קצרים, וחפש הזדמנויות להנחות אחרים.',
-    'M': highScoreQuestions.length > 0
-      ? 'החבר את יכולתך ליצור משמעות: הובל פרויקטים משמעותיים, פתח תכניות פיתוח עובדים, והעמק את החיבור לערכים בתחומים הזקוקים לכך.'
-      : 'הגדר את הערכים האישיים, קשר משימות למטרות גדולות, וארגן דיונים על משמעות העבודה.',
-    'A': highScoreQuestions.length > 0
-      ? 'נצל את הגמישות שלך: הוב תהליכי שינוי, בנה גשרים בין יחידות, והעמק את השיתוף בתחומים הזקוקים לפיתוח.'
-      : 'תרגל חשיבה יצירתית, חפש הזדמנויות לשיתוף פעולה, ופתח סובלנות לאי-ודאות.',
-    'A2': highScoreQuestions.length > 0
-      ? 'בנה על האותנטיות שלך: הפוך למודל לחיקוי בתחומים נוספים, שתף סיפורים אישיים להשראה, והעמק את האמינות בכל ההיבטים.'
-      : 'עבוד על מודעות עצמית, תרגל שיתוף אישי מבוקר, ובנה אמון דרך עקביות.'
-  };
-  
-  return actionPlans[dimension as keyof typeof actionPlans] || 'פתח תכנית פעולה אישית עם יעדים ברורים ומדידים.';
+// פונקציה לניתוח כללי של הממד
+const getDimensionOverallAnalysis = (dimension: string, sortedAnswers: any[]): string => {
+  const averageScore = sortedAnswers.reduce((sum, answer) => sum + answer.adjustedValue, 0) / sortedAnswers.length;
+  const variability = Math.max(...sortedAnswers.map(a => a.adjustedValue)) - Math.min(...sortedAnswers.map(a => a.adjustedValue));
+
+  let analysis = "";
+
+  if (averageScore >= 4) {
+    analysis += "הממד מציג ביצועים גבוהים באופן עקבי. ";
+  } else if (averageScore >= 3) {
+    analysis += "הממד מציג ביצועים בינוניים עם פוטנציאל לשיפור. ";
+  } else {
+    analysis += "הממד זקוק לתשומת לב ופיתוח מעמיק. ";
+  }
+
+  if (variability <= 1) {
+    analysis += "הביצועים עקביים בכל ההיבטים של הממד.";
+  } else if (variability <= 2) {
+    analysis += "יש שונות מתונה בין ההיבטים השונים של הממד.";
+  } else {
+    analysis += "יש שונות גבוהה בין ההיבטים השונים - כדאי להתמקד בתחומים החלשים תוך שימור החזקים.";
+  }
+
+  return analysis;
+};
+
+// הפונקציה המרכזית לקבלת ניתוח מותאם אישית
+export const getPersonalizedAnalysis = (dimension: string, answers: { questionId: number; value: number }[]) => {
+  return analyzeSpecificAnswers(dimension, answers);
 };
