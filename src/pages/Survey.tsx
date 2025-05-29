@@ -87,8 +87,9 @@ const Survey = () => {
           const results = calculateSurveyResults(answers, userInfo);
           console.log('תוצאות מחושבות למנהל:', results);
           
-          // שמירת התוצאות ב־localStorage תחילה
+          // שמירת התוצאות והתשובות ב־localStorage
           localStorage.setItem('salimaResults', JSON.stringify(results));
+          localStorage.setItem('salimaAnswers', JSON.stringify(answers));
           
           // שמירה במסד הנתונים
           await saveSurveyToDatabase(results, true, false);

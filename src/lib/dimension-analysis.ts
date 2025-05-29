@@ -1,4 +1,3 @@
-
 import { questions } from "@/data/questions";
 import { getAdjustedValue } from "@/lib/calculations";
 
@@ -43,15 +42,15 @@ export const getColorIntensity = (score: number, baseColors: any) => {
 };
 
 // פונקציה לניתוח מפורט של תשובות
-const analyzeSpecificAnswers = (dimension: string, answers: { questionId: number; value: number }[]): string => {
-  console.log(`Analyzing dimension ${dimension} with ${answers.length} answers:`, answers);
+const analyzeSpecificAnswers = (dimension: string, answersForDimension: { questionId: number; value: number }[]): string => {
+  console.log(`Analyzing dimension ${dimension} with ${answersForDimension.length} answers:`, answersForDimension);
   
-  if (answers.length === 0) {
+  if (answersForDimension.length === 0) {
     return "לא זוהו תשובות רלוונטיות לממד זה. אנא ודא שהשאלון הושלם במלואו.";
   }
 
   // מיון התשובות לפי ציון מותאם
-  const sortedAnswers = answers
+  const sortedAnswers = answersForDimension
     .map(answer => {
       const question = questions.find(q => q.id === answer.questionId);
       const adjustedValue = getAdjustedValue(answer.value, question?.isReversed || false);
@@ -285,7 +284,7 @@ const getDimensionOverallAnalysis = (dimension: string, sortedAnswers: any[]): s
 };
 
 // הפונקציה המרכזית לקבלת ניתוח מותאם אישית
-export const getPersonalizedAnalysis = (dimension: string, answers: { questionId: number; value: number }[]) => {
-  console.log(`Getting personalized analysis for dimension ${dimension}:`, answers);
-  return analyzeSpecificAnswers(dimension, answers);
+export const getPersonalizedAnalysis = (dimension: string, answersForDimension: { questionId: number; value: number }[]) => {
+  console.log(`Getting personalized analysis for dimension ${dimension}:`, answersForDimension);
+  return analyzeSpecificAnswers(dimension, answersForDimension);
 };
