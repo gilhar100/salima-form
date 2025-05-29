@@ -1,3 +1,4 @@
+
 import { DimensionResult } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { dimensionColors } from "./ResultsRadar";
@@ -8,14 +9,11 @@ import { useState } from "react";
 import { 
   evaluateDimensionLevel, 
   getColorIntensity, 
-  getPersonalizedAnalysis,
-  getPreservationPoints,
-  getImprovementPoints
+  getPersonalizedAnalysis
 } from "@/lib/dimension-analysis";
 import DimensionHeader from "./DimensionHeader";
 import DimensionSpectrum from "./DimensionSpectrum";
 import DimensionAnalysis from "./DimensionAnalysis";
-import DimensionStats from "./DimensionStats";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -32,8 +30,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
   );
   
   const analysis = getPersonalizedAnalysis(dimension.dimension, dimensionAnswers);
-  const preservationPoints = getPreservationPoints(dimension.dimension, dimensionAnswers);
-  const improvementPoints = getImprovementPoints(dimension.dimension, dimensionAnswers);
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
   const intensityColor = getColorIntensity(dimension.score, baseColors);
 
@@ -55,14 +51,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             baseColors={baseColors}
             intensityColor={intensityColor}
             levelDescription={levelInfo.description}
-          />
-          
-          <DimensionStats
-            score={dimension.score}
-            baseColors={baseColors}
-            intensityColor={intensityColor}
-            preservationPoints={preservationPoints}
-            improvementPoints={improvementPoints}
           />
 
           <DimensionAnalysis
