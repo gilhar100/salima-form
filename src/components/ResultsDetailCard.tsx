@@ -29,6 +29,10 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
     dimension.questions.includes(answer.questionId)
   );
   
+  console.log(`Dimension ${dimension.dimension} has ${dimensionAnswers.length} relevant answers out of ${answers.length} total answers`);
+  console.log('Dimension questions:', dimension.questions);
+  console.log('Filtered answers:', dimensionAnswers);
+  
   const analysis = getPersonalizedAnalysis(dimension.dimension, dimensionAnswers);
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
   const intensityColor = getColorIntensity(dimension.score, baseColors);
