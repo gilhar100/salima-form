@@ -8,12 +8,10 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { 
   evaluateDimensionLevel, 
-  getColorIntensity, 
-  getPersonalizedAnalysis
+  getColorIntensity
 } from "@/lib/dimension-analysis";
 import DimensionHeader from "./DimensionHeader";
 import DimensionSpectrum from "./DimensionSpectrum";
-import DimensionAnalysis from "./DimensionAnalysis";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -24,16 +22,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
   const [isExpanded, setIsExpanded] = useState(false);
   const levelInfo = evaluateDimensionLevel(dimension.score);
   
-  // סינון התשובות הרלוונטיות לממד זה
-  const dimensionAnswers = answers.filter(answer => 
-    dimension.questions.includes(answer.questionId)
-  );
-  
-  console.log(`Dimension ${dimension.dimension} has ${dimensionAnswers.length} relevant answers out of ${answers.length} total answers`);
-  console.log('Dimension questions:', dimension.questions);
-  console.log('Filtered answers:', dimensionAnswers);
-  
-  const analysis = getPersonalizedAnalysis(dimension.dimension, dimensionAnswers);
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
   const intensityColor = getColorIntensity(dimension.score, baseColors);
 
@@ -55,12 +43,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             baseColors={baseColors}
             intensityColor={intensityColor}
             levelDescription={levelInfo.description}
-          />
-
-          <DimensionAnalysis
-            analysis={analysis}
-            baseColors={baseColors}
-            intensityColor={intensityColor}
           />
 
           {/* כפתור להצגת ניתוח מפורט */}
