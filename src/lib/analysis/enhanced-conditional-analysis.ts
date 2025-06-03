@@ -1,6 +1,6 @@
 
 import { enhancedQuestionAnalyses } from './enhanced-question-analyses';
-import { selectRandomVariation } from './variation-engine';
+import { selectRandomVariation, removeNumericalReferences } from './variation-engine';
 import { getAdjustedValue } from '@/lib/calculations';
 import { questions } from '@/data/questions';
 
@@ -9,9 +9,10 @@ export interface EnhancedConditionalAnalysisResult {
   analysis: string;
   dimension: string;
   tone: 'positive' | 'negative' | 'neutral';
+  needsBalance: boolean;
 }
 
-// פונקציה לקבלת ניתוח משופר עם וריאציות
+// פונקציה לקבלת ניתוח משופר עם וריאציות - ללא חשיפת ציונים
 export const getEnhancedConditionalAnalysis = (
   questionId: number, 
   score: number, 
@@ -27,7 +28,7 @@ export const getEnhancedConditionalAnalysis = (
 
   let selectedVariations: string[] = [];
 
-  // בחירת הניתוחים המתאימים על פי הציון המותאם
+  // בחירת הניתוחים המתאימים על פי הציון המותאם - ללא חשיפה
   if (analysis.analyses.above3 && adjustedScore > 3) {
     selectedVariations = analysis.analyses.above3;
   } else if (analysis.analyses.below3 && adjustedScore < 3) {
@@ -43,21 +44,26 @@ export const getEnhancedConditionalAnalysis = (
   // בחירת וריאציה על בסיס הזרע
   const selectedAnalysis = selectRandomVariation(selectedVariations, variationSeed);
   
+  // הסרת רמזים מספריים מהטקסט הסופי
+  const cleanAnalysis = removeNumericalReferences(selectedAnalysis);
+  
   // זיהוי טון הניתוח
-  const tone = identifyTone(selectedAnalysis);
+  const tone = identifyTone(cleanAnalysis);
+  const needsBalance = tone === 'negative' && adjustedScore < 4;
 
   return {
     questionId,
-    analysis: selectedAnalysis,
+    analysis: cleanAnalysis,
     dimension: analysis.dimension,
-    tone
+    tone,
+    needsBalance
   };
 };
 
 // פונקציה לזיהוי טון הניתוח
 const identifyTone = (text: string): 'positive' | 'negative' | 'neutral' => {
-  const positiveKeywords = ["מצוין", "טוב", "חזק", "מוצלח", "יעיל", "מפותח", "מתאפיין", "מחובר", "משדר", "מהווה"];
-  const negativeKeywords = ["קושי", "חסר", "נמוך", "בעייתי", "חלש", "מתקשה", "חוסר", "ייתכן ו", "רצוי"];
+  const positiveKeywords = ["מצוין", "טוב", "חזק", "מוצלח", "יעיל", "מפותח", "מתאפיין", "מחובר", "משדר", "מהווה", "מעורר", "מלהיב"];
+  const negativeKeywords = ["קושי", "חסר", "נמוך", "בעייתי", "חלש", "מתקשה", "חוסר", "ייתכן ו", "רצוי", "מתעלם", "נמנע"];
   
   const lowercaseText = text.toLowerCase();
   const hasPositive = positiveKeywords.some(keyword => lowercaseText.includes(keyword));
@@ -68,7 +74,7 @@ const identifyTone = (text: string): 'positive' | 'negative' | 'neutral' => {
   return 'neutral';
 };
 
-// פונקציה ליצירת ניתוח מקיף עם מניעת סתירות
+// פונקציה ליצירת ניתוח מקיף עם מניעת סתירות - ללא ציונים
 export const generateEnhancedDimensionAnalysis = (
   dimensionQuestions: number[],
   answers: { questionId: number; value: number }[],
@@ -99,7 +105,7 @@ export const generateEnhancedDimensionAnalysis = (
     return consistentAnalyses[0].analysis;
   }
 
-  // חיבור הניתוחים לפסקה קוהרנטית
+  // חיבור הניתוחים לפסקה קוהרנטית ללא ציונים
   return combineAnalysesNaturally(consistentAnalyses, userSeed);
 };
 
@@ -122,10 +128,10 @@ const filterByConsistentTone = (analyses: EnhancedConditionalAnalysisResult[]): 
   );
 };
 
-// פונקציה לחיבור טבעי של ניתוחים
+// פונקציה לחיבור טבעי של ניתוחים ללא ציונים
 const combineAnalysesNaturally = (analyses: EnhancedConditionalAnalysisResult[], seed: number): string => {
   const connectors = [
-    "בנוסף,", "כמו כן,", "יחד עם זאת,", "יתרה מכך,", "במקביל,"
+    "בנוסף,", "כמו כן,", "יחד עם זאת,", "יתרה מכך,", "במקביל,", "לעומת זאת,", "בהקשר זה,"
   ];
   
   let result = analyses[0].analysis;
@@ -138,13 +144,17 @@ const combineAnalysesNaturally = (analyses: EnhancedConditionalAnalysisResult[],
     result += ` ${connector} ${analyses[i].analysis}`;
   }
   
-  return result;
+  return removeNumericalReferences(result);
 };
 
-// פונקציה לבדיקת איכות הניתוח
+// פונקציה לבדיקת איכות הניתוח - ללא ציונים
 export const validateAnalysisQuality = (analysis: string): boolean => {
   if (!analysis || analysis.trim().length < 10) return false;
   if (analysis.includes("undefined") || analysis.includes("null")) return false;
+  
+  // וידוא שאין רמזים מספריים
+  const hasNumericalReferences = /\d+\s*(ומעלה|ומטה|נקודות)|מתחת\s*ל\d+|מעל\s*\d+|ציון/.test(analysis);
+  if (hasNumericalReferences) return false;
   
   const wordCount = analysis.split(" ").length;
   return wordCount >= 5 && wordCount <= 300;

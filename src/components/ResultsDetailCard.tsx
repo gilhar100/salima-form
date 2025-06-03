@@ -47,6 +47,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
         level={levelInfo.level}
         baseColors={baseColors}
         intensityColor={intensityColor}
+        hideScore={true}
       />
       
       <CardContent className="pt-4">
@@ -56,6 +57,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             baseColors={baseColors}
             intensityColor={intensityColor}
             levelDescription={levelInfo.description}
+            hideScore={true}
           />
           
           {/* ניתוח מותאם אישית ללא ציונים */}
