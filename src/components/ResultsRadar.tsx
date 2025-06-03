@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ResultsRadarProps {
   result: SurveyResult;
+  hideScores?: boolean;
 }
 
 // פונקציה לקבלת עוצמת צבע בהתאם לציון
@@ -78,7 +79,7 @@ export const dimensionColors = {
   }
 };
 
-const ResultsRadar: React.FC<ResultsRadarProps> = ({ result }) => {
+const ResultsRadar: React.FC<ResultsRadarProps> = ({ result, hideScores = false }) => {
   const isMobile = useIsMobile();
   const { dimensions, slq } = result;
   
@@ -98,10 +99,12 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({ result }) => {
         <CardTitle className="text-center text-lg sm:text-xl leading-tight">פרופיל מנהיגות SALIMA-WOCA</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center px-3 sm:px-6">
-        <div className="text-center mb-4">
-          <p className="text-gray-600 mb-1 text-sm">ציון SLQ כללי</p>
-          <p className="text-2xl sm:text-3xl font-bold text-salima-600">{slq}</p>
-        </div>
+        {!hideScores && (
+          <div className="text-center mb-4">
+            <p className="text-gray-600 mb-1 text-sm">ציון SLQ כללי</p>
+            <p className="text-2xl sm:text-3xl font-bold text-salima-600">{slq}</p>
+          </div>
+        )}
         
         <div className={`w-full ${isMobile ? 'h-[280px]' : 'h-[350px]'}`}>
           <ResponsiveContainer width="100%" height="100%">
@@ -123,35 +126,37 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({ result }) => {
                 fill="#0369a1"
                 fillOpacity={0.5}
               />
-              <Tooltip formatter={(value) => [`${value}`, 'ציון']} />
+              {!hideScores && <Tooltip formatter={(value) => [`${value}`, 'ציון']} />}
             </RadarChart>
           </ResponsiveContainer>
         </div>
         
-        <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
-          {Object.values(dimensions).map((dimension) => {
-            const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-            const intensityColor = getColorIntensity(dimension.score, baseColors);
-            return (
-              <div 
-                key={dimension.dimension} 
-                className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors"
-                style={{ 
-                  backgroundColor: baseColors.light,
-                  borderColor: intensityColor
-                }}
-              >
-                <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
-                <p 
-                  className="text-lg sm:text-2xl font-bold mt-1"
-                  style={{ color: intensityColor }}
+        {!hideScores && (
+          <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
+            {Object.values(dimensions).map((dimension) => {
+              const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+              const intensityColor = getColorIntensity(dimension.score, baseColors);
+              return (
+                <div 
+                  key={dimension.dimension} 
+                  className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors"
+                  style={{ 
+                    backgroundColor: baseColors.light,
+                    borderColor: intensityColor
+                  }}
                 >
-                  {dimension.score}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+                  <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
+                  <p 
+                    className="text-lg sm:text-2xl font-bold mt-1"
+                    style={{ color: intensityColor }}
+                  >
+                    {dimension.score}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
