@@ -15,7 +15,7 @@ export interface VariationOptions {
 export const variationOptions: VariationOptions = {
   prefixes: [
     "ניכר כי",
-    "עולה כי",
+    "עולה כי", 
     "נראה ש",
     "מתברר כי",
     "ניתן לראות ש",
@@ -24,81 +24,86 @@ export const variationOptions: VariationOptions = {
   ],
   suffixes: [
     "",
-    " - דבר המעיד על יכולותיך",
-    " - תכונה חשובה בעבודתך",
-    " - מאפיין בולט במנהיגותך",
-    " - היבט משמעותי בפיתוחך המקצועי",
-    " - נקודה חשובה להמשך התפתחותך"
+    " - תכונה המאפיינת אותך",
+    " - היבט חשוב בעבודתך",
+    " - מאפיין בולט שלך"
   ],
   connectors: [
     "בנוסף,",
-    "כמו כן,",
+    "כמו כן,", 
     "יחד עם זאת,",
     "מאידך,",
     "יתרה מכך,",
     "עם זאת,",
-    "כתוצאה מכך,",
     "לכן,",
     "במקביל,",
     "באופן דומה,"
   ],
   pronouns: {
-    masculine: ["אתה", "הנך", "את"],
-    feminine: ["את", "הנך", "אתה"],
+    masculine: ["אתה", "הנך"],
+    feminine: ["את", "הנך"], 
     neutral: ["אתה", "הנך"]
   }
 };
 
-// פונקציה ליצירת וריאציה בניסוח
+// פונקציה ליצירת וריאציה בניסוח עם רגישות דקדוקית
 export const createVariation = (
   baseText: string, 
   variationIndex: number,
   isFirstSentence: boolean = false
 ): string => {
-  const { prefixes, suffixes, connectors } = variationOptions;
+  const { prefixes, suffixes } = variationOptions;
   
   // בחירת אלמנטים על בסיס האינדקס
   const prefixIndex = variationIndex % prefixes.length;
   const suffixIndex = Math.floor(variationIndex / prefixes.length) % suffixes.length;
-  const connectorIndex = variationIndex % connectors.length;
   
   let result = baseText;
   
-  // החלפת הפתיח אם קיים
-  if (result.startsWith("ניכר כי") || result.startsWith("עולה כי") || result.startsWith("נראה כי")) {
+  // החלפת הפתיח רק אם קיים ומתאים
+  const startsWithCommonPrefix = result.startsWith("ניכר כי") || 
+                                  result.startsWith("עולה כי") || 
+                                  result.startsWith("נראה כי");
+  
+  if (startsWithCommonPrefix) {
     const words = result.split(" ");
-    words[0] = prefixes[prefixIndex];
-    words[1] = words[1] === "כי" ? "כי" : "ש";
+    const newPrefix = prefixes[prefixIndex];
+    
+    // התאמת המילה השנייה לפתיח החדש
+    if (newPrefix.endsWith("ש")) {
+      words[0] = newPrefix;
+      words.splice(1, 1); // הסרת "כי"
+    } else {
+      words[0] = newPrefix;
+      words[1] = "כי";
+    }
+    
     result = words.join(" ");
   }
   
-  // הוספת סיומת
-  if (suffixes[suffixIndex]) {
+  // הוספת סיומת רק אם מתאימה לקונטקסט
+  if (suffixes[suffixIndex] && !result.includes("רצוי") && !result.includes("חשוב")) {
     result += suffixes[suffixIndex];
-  }
-  
-  // הוספת מחבר במקרה של משפט שאינו ראשון
-  if (!isFirstSentence) {
-    result = `${connectors[connectorIndex]} ${result}`;
   }
   
   return result;
 };
 
-// פונקציה להתאמת כינויים
+// פונקציה להתאמת כינויים עם שמירה על דקדוק
 export const adaptPronouns = (text: string, genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'): string => {
   const pronouns = variationOptions.pronouns[genderHint];
   let result = text;
   
-  // החלפות בסיסיות לכינויים
+  // החלפות זהירות לכינויים
   if (result.includes("את/ה")) {
     const replacement = pronouns[Math.floor(Math.random() * pronouns.length)];
     result = result.replace(/את\/ה/g, replacement);
   }
   
-  if (result.includes("הנך")) {
-    // שמירה על "הנך" כצורה פורמלית יותר
-    result = result.replace(/הנך/g, "הנך");
+  // התאמת צורות הפועל לכינוי
+  if (result.includes("מתאפיינ/ת")) {
+    const ending = genderHint === 'feminine' ? "מתאפיינת" : "מתאפיין";
+    result = result.replace(/מתאפיינ\/ת/g, ending);
   }
   
   return result;
@@ -106,19 +111,23 @@ export const adaptPronouns = (text: string, genderHint: 'masculine' | 'feminine'
 
 // פונקציה ליצירת מספר וריאציות לאותו טקסט
 export const generateVariations = (baseText: string, count: number = 5): string[] => {
-  const variations: string[] = [];
+  const variations: string[] = [baseText]; // כולל את הטקסט המקורי
   
-  for (let i = 0; i < count; i++) {
+  for (let i = 1; i < count; i++) {
     const variation = createVariation(baseText, i);
     const adaptedVariation = adaptPronouns(variation);
-    variations.push(adaptedVariation);
+    
+    // ודוא שהווריאציה שונה מהקיימות
+    if (!variations.includes(adaptedVariation)) {
+      variations.push(adaptedVariation);
+    }
   }
   
   return variations;
 };
 
-// פונקציה לבחירת וריאציה רנדומלית
-export const selectRandomVariation = (variations: string[]): string => {
-  const randomIndex = Math.floor(Math.random() * variations.length);
-  return variations[randomIndex];
+// פונקציה לבחירת וריאציה מבוססת זרע (לעקביות)
+export const selectRandomVariation = (variations: string[], seed: number = 0): string => {
+  const index = seed % variations.length;
+  return variations[index];
 };
