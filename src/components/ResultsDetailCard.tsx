@@ -26,8 +26,17 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
     dimension.questions.includes(answer.questionId)
   );
 
-  // יצירת ניתוח מותאם אישית
-  const personalizedAnalysis = getPersonalizedAnalysis(dimension.dimension, dimensionAnswers);
+  // יצירת מזהה ייחודי למשתמש (על בסיס התשובות)
+  const userIdentifier = dimensionAnswers
+    .map(a => `${a.questionId}-${a.value}`)
+    .join('_');
+
+  // יצירת ניתוח מותאם אישית ללא חשיפת ציונים
+  const personalizedAnalysis = getPersonalizedAnalysis(
+    dimension.dimension, 
+    dimensionAnswers, 
+    userIdentifier
+  );
 
   return (
     <Card className="mb-4 overflow-hidden border-2" style={{ borderColor: intensityColor }}>
@@ -49,7 +58,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             levelDescription={levelInfo.description}
           />
           
-          {/* ניתוח מותאם אישית */}
+          {/* ניתוח מותאם אישית ללא ציונים */}
           {personalizedAnalysis && (
             <div 
               className="p-4 rounded-lg border-2 text-sm leading-relaxed"
@@ -62,7 +71,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
                 className="font-semibold mb-3"
                 style={{ color: intensityColor }}
               >
-                ניתוח מותאם אישית:
+                תובנות אישיות:
               </h4>
               <div className="whitespace-pre-line text-right" dir="rtl">
                 {personalizedAnalysis}
