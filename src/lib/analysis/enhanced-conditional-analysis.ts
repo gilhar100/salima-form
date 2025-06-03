@@ -1,6 +1,6 @@
 
 import { enhancedQuestionAnalyses } from './enhanced-question-analyses';
-import { selectRandomVariation, removeNumericalReferences } from './variation-engine';
+import { selectAdvancedVariation, generateAdvancedVariations } from './advanced-variation-engine';
 import { getAdjustedValue } from '@/lib/calculations';
 import { questions } from '@/data/questions';
 
@@ -10,13 +10,15 @@ export interface EnhancedConditionalAnalysisResult {
   dimension: string;
   tone: 'positive' | 'negative' | 'neutral';
   needsBalance: boolean;
+  scoreCategory: 'high' | 'moderate' | 'low';
 }
 
-// פונקציה לקבלת ניתוח משופר עם וריאציות - ללא חשיפת ציונים
+// פונקציה לקבלת ניתוח משופר עם וריאציות מתקדמות
 export const getEnhancedConditionalAnalysis = (
   questionId: number, 
   score: number, 
-  variationSeed: number = 0
+  variationSeed: number = 0,
+  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
 ): EnhancedConditionalAnalysisResult | null => {
   const question = questions.find(q => q.id === questionId);
   if (!question) return null;
@@ -27,42 +29,51 @@ export const getEnhancedConditionalAnalysis = (
   if (!analysis || !analysis.analyses) return null;
 
   let selectedVariations: string[] = [];
+  let scoreCategory: 'high' | 'moderate' | 'low' = 'moderate';
 
-  // בחירת הניתוחים המתאימים על פי הציון המותאם - ללא חשיפה
+  // בחירת הניתוחים המתאימים על פי הציון המותאם
   if (analysis.analyses.above3 && adjustedScore > 3) {
     selectedVariations = analysis.analyses.above3;
+    scoreCategory = adjustedScore >= 4 ? 'high' : 'moderate';
   } else if (analysis.analyses.below3 && adjustedScore < 3) {
     selectedVariations = analysis.analyses.below3;
+    scoreCategory = 'low';
   } else if (analysis.analyses.at3AndAbove && adjustedScore >= 3) {
     selectedVariations = analysis.analyses.at3AndAbove;
+    scoreCategory = adjustedScore >= 4 ? 'high' : 'moderate';
   } else if (analysis.analyses.at3AndBelow && adjustedScore <= 3) {
     selectedVariations = analysis.analyses.at3AndBelow;
+    scoreCategory = adjustedScore < 2.5 ? 'low' : 'moderate';
   }
 
   if (selectedVariations.length === 0) return null;
 
-  // בחירת וריאציה על בסיס הזרע
-  const selectedAnalysis = selectRandomVariation(selectedVariations, variationSeed);
-  
-  // הסרת רמזים מספריים מהטקסט הסופי
-  const cleanAnalysis = removeNumericalReferences(selectedAnalysis);
+  // בחירת וריאציה על בסיס הזרע עם התאמת מגדר
+  const selectedAnalysis = selectAdvancedVariation(selectedVariations, variationSeed);
   
   // זיהוי טון הניתוח
-  const tone = identifyTone(cleanAnalysis);
-  const needsBalance = tone === 'negative' && adjustedScore < 4;
+  const tone = identifyTone(selectedAnalysis);
+  const needsBalance = (tone === 'negative' || scoreCategory === 'low') && adjustedScore < 4;
+
+  // יצירת ניתוח מאוזן עבור ציונים נמוכים עד בינוניים
+  let finalAnalysis = selectedAnalysis;
+  if (needsBalance && scoreCategory !== 'high') {
+    finalAnalysis = createBalancedAnalysis(selectedAnalysis, adjustedScore, genderHint);
+  }
 
   return {
     questionId,
-    analysis: cleanAnalysis,
+    analysis: finalAnalysis,
     dimension: analysis.dimension,
     tone,
-    needsBalance
+    needsBalance,
+    scoreCategory
   };
 };
 
 // פונקציה לזיהוי טון הניתוח
 const identifyTone = (text: string): 'positive' | 'negative' | 'neutral' => {
-  const positiveKeywords = ["מצוין", "טוב", "חזק", "מוצלח", "יעיל", "מפותח", "מתאפיין", "מחובר", "משדר", "מהווה", "מעורר", "מלהיב"];
+  const positiveKeywords = ["מצוין", "טוב", "חזק", "מוצלח", "יעיל", "מפותח", "מתאפיין", "מחובר", "משדר", "מהווה", "מעורר", "מלהיב", "מקדם"];
   const negativeKeywords = ["קושי", "חסר", "נמוך", "בעייתי", "חלש", "מתקשה", "חוסר", "ייתכן ו", "רצוי", "מתעלם", "נמנע"];
   
   const lowercaseText = text.toLowerCase();
@@ -74,11 +85,65 @@ const identifyTone = (text: string): 'positive' | 'negative' | 'neutral' => {
   return 'neutral';
 };
 
-// פונקציה ליצירת ניתוח מקיף עם מניעת סתירות - ללא ציונים
+// פונקציה ליצירת ניתוח מאוזן
+const createBalancedAnalysis = (
+  analysis: string, 
+  score: number, 
+  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
+): string => {
+  const balancingPhrases = [
+    "חשוב להמשיך ולפתח",
+    "יש מקום לחיזוק",
+    "כדאי להשקיע ב",
+    "רצוי להתמקד ב",
+    "ניתן לשפר"
+  ];
+  
+  // אם הניתוח כבר מאוזן, החזר כפי שהוא
+  if (analysis.includes("רצוי") || analysis.includes("כדאי") || analysis.includes("חשוב")) {
+    return analysis;
+  }
+  
+  // עבור ציונים נמוכים, הוסף הנחיה לפיתוח
+  if (score < 3.5) {
+    const balancePhrase = balancingPhrases[Math.floor(Math.random() * balancingPhrases.length)];
+    const skillArea = extractSkillArea(analysis);
+    
+    if (skillArea) {
+      return `${analysis} ${balancePhrase} ${skillArea}.`;
+    }
+  }
+  
+  return analysis;
+};
+
+// פונקציה לחילוץ תחום המיומנות מהניתוח
+const extractSkillArea = (analysis: string): string => {
+  const skillKeywords = {
+    "הקשבה": "כישורי הקשבה",
+    "גמישות": "גמישות מחשבתית",
+    "חזון": "קשר לחזון",
+    "למידה": "למידה מתמדת",
+    "מנהיגות": "מנהיגות אישית",
+    "שיתוף": "שיתוף פעולה",
+    "משמעות": "יצירת משמעות"
+  };
+  
+  for (const [keyword, skill] of Object.entries(skillKeywords)) {
+    if (analysis.includes(keyword)) {
+      return skill;
+    }
+  }
+  
+  return "התחום הזה";
+};
+
+// פונקציה ליצירת ניתוח מקיף עם מניעת סתירות
 export const generateEnhancedDimensionAnalysis = (
   dimensionQuestions: number[],
   answers: { questionId: number; value: number }[],
-  userSeed: number = Date.now()
+  userSeed: number = Date.now(),
+  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
 ): string => {
   const analyses: EnhancedConditionalAnalysisResult[] = [];
 
@@ -87,7 +152,7 @@ export const generateEnhancedDimensionAnalysis = (
     const answer = answers.find(a => a.questionId === questionId);
     if (answer) {
       const variationSeed = userSeed + index;
-      const analysis = getEnhancedConditionalAnalysis(questionId, answer.value, variationSeed);
+      const analysis = getEnhancedConditionalAnalysis(questionId, answer.value, variationSeed, genderHint);
       if (analysis && analysis.analysis.trim()) {
         analyses.push(analysis);
       }
@@ -96,7 +161,7 @@ export const generateEnhancedDimensionAnalysis = (
 
   if (analyses.length === 0) return "";
   
-  // סינון לפי עקביות טון
+  // סינון לפי עקביות טון ומניעת סתירות
   const consistentAnalyses = filterByConsistentTone(analyses);
   
   if (consistentAnalyses.length === 0) return "";
@@ -105,8 +170,8 @@ export const generateEnhancedDimensionAnalysis = (
     return consistentAnalyses[0].analysis;
   }
 
-  // חיבור הניתוחים לפסקה קוהרנטית ללא ציונים
-  return combineAnalysesNaturally(consistentAnalyses, userSeed);
+  // חיבור הניתוחים לפסקה קוהרנטית
+  return combineAnalysesNaturally(consistentAnalyses, userSeed, genderHint);
 };
 
 // פונקציה לסינון ניתוחים על פי טון עקבי
@@ -128,26 +193,48 @@ const filterByConsistentTone = (analyses: EnhancedConditionalAnalysisResult[]): 
   );
 };
 
-// פונקציה לחיבור טבעי של ניתוחים ללא ציונים
-const combineAnalysesNaturally = (analyses: EnhancedConditionalAnalysisResult[], seed: number): string => {
-  const connectors = [
-    "בנוסף,", "כמו כן,", "יחד עם זאת,", "יתרה מכך,", "במקביל,", "לעומת זאת,", "בהקשר זה,"
+// פונקציה לחיבור טבעי של ניתוחים
+const combineAnalysesNaturally = (
+  analyses: EnhancedConditionalAnalysisResult[], 
+  seed: number,
+  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
+): string => {
+  const naturalConnectors = [
+    "כמו כן",
+    "יחד עם זאת", 
+    "מצד אחר",
+    "יתרה מכך",
+    "במקביל",
+    "בהקשר זה"
   ];
   
   let result = analyses[0].analysis;
   
-  for (let i = 1; i < analyses.length; i++) {
-    const connectorIndex = (seed + i) % connectors.length;
-    const connector = connectors[connectorIndex];
+  for (let i = 1; i < analyses.length && i < 3; i++) { // מגביל ל-3 ניתוחים למניעת עומס
+    const connectorIndex = (seed + i) % naturalConnectors.length;
+    const connector = naturalConnectors[connectorIndex];
     
-    // הוספת מחבר והמשפט הבא
-    result += ` ${connector} ${analyses[i].analysis}`;
+    // בדיקה שהמחבר מתאים להקשר
+    if (shouldUseConnector(result, analyses[i].analysis)) {
+      result += `, ${connector}, ${analyses[i].analysis}`;
+    } else {
+      result += `. ${analyses[i].analysis}`;
+    }
   }
   
-  return removeNumericalReferences(result);
+  return result;
 };
 
-// פונקציה לבדיקת איכות הניתוח - ללא ציונים
+// פונקציה לבדיקת מתאימות מחבר
+const shouldUseConnector = (firstPart: string, secondPart: string): boolean => {
+  const firstTone = identifyTone(firstPart);
+  const secondTone = identifyTone(secondPart);
+  
+  // אל תשתמש במחבר אם יש סתירה בטון
+  return firstTone === secondTone || firstTone === 'neutral' || secondTone === 'neutral';
+};
+
+// פונקציה לבדיקת איכות הניתוח
 export const validateAnalysisQuality = (analysis: string): boolean => {
   if (!analysis || analysis.trim().length < 10) return false;
   if (analysis.includes("undefined") || analysis.includes("null")) return false;
