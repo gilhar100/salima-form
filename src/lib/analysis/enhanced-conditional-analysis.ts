@@ -1,4 +1,3 @@
-
 import { enhancedQuestionAnalyses } from './enhanced-question-analyses';
 import { selectAdvancedVariation, generateAdvancedVariations } from './advanced-variation-engine';
 import { getAdjustedValue } from '@/lib/calculations';
@@ -161,7 +160,7 @@ export const generateEnhancedDimensionAnalysis = (
 
   if (analyses.length === 0) return "";
   
-  // סינון לפי עקביות טון ומניעת סתירות
+  // סינון לפי עקביות טון
   const consistentAnalyses = filterByConsistentTone(analyses);
   
   if (consistentAnalyses.length === 0) return "";
@@ -170,8 +169,8 @@ export const generateEnhancedDimensionAnalysis = (
     return consistentAnalyses[0].analysis;
   }
 
-  // חיבור הניתוחים לפסקה קוהרנטית
-  return combineAnalysesNaturally(consistentAnalyses, userSeed, genderHint);
+  // חיבור פשוט של הניתוחים
+  return combineAnalysesSimply(consistentAnalyses, genderHint);
 };
 
 // פונקציה לסינון ניתוחים על פי טון עקבי
@@ -193,33 +192,19 @@ const filterByConsistentTone = (analyses: EnhancedConditionalAnalysisResult[]): 
   );
 };
 
-// פונקציה לחיבור טבעי של ניתוחים
-const combineAnalysesNaturally = (
+// פונקציה לחיבור פשוט של ניתוחים
+const combineAnalysesSimply = (
   analyses: EnhancedConditionalAnalysisResult[], 
-  seed: number,
   genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
 ): string => {
-  const naturalConnectors = [
-    "כמו כן",
-    "יחד עם זאת", 
-    "מצד אחר",
-    "יתרה מכך",
-    "במקביל",
-    "בהקשר זה"
-  ];
+  const simpleConnectors = ["כמו כן", "בנוסף", "יחד עם זאת"];
   
   let result = analyses[0].analysis;
   
-  for (let i = 1; i < analyses.length && i < 3; i++) { // מגביל ל-3 ניתוחים למניעת עומס
-    const connectorIndex = (seed + i) % naturalConnectors.length;
-    const connector = naturalConnectors[connectorIndex];
-    
-    // בדיקה שהמחבר מתאים להקשר
-    if (shouldUseConnector(result, analyses[i].analysis)) {
-      result += `, ${connector}, ${analyses[i].analysis}`;
-    } else {
-      result += `. ${analyses[i].analysis}`;
-    }
+  // הוספת ניתוח נוסף אחד בלבד לשמירה על פשטות
+  if (analyses.length > 1) {
+    const connector = simpleConnectors[0]; // תמיד אותו מחבר לעקביות
+    result += `. ${connector}, ${analyses[1].analysis}`;
   }
   
   return result;

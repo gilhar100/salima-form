@@ -1,10 +1,9 @@
 
-// מנוע וריאציות מתקדם עם רגישות דקדוקית והגנה מפני סתירות
+// מנוע וריאציות מתקדם עם דגש על בהירות ופשטות
 export interface AdvancedVariationOptions {
-  structuralPrefixes: string[];
-  contextualSuffixes: string[];
-  naturalConnectors: string[];
-  balancingFramework: string[];
+  simpleStarters: string[];
+  basicConnectors: string[];
+  clearEndings: string[];
   genderAdaptation: {
     masculine: Record<string, string>;
     feminine: Record<string, string>;
@@ -12,42 +11,26 @@ export interface AdvancedVariationOptions {
   };
 }
 
-// מאגר וריאציות מתקדם עם דגש על איכות לשונית
+// מאגר וריאציות פשוט וברור
 export const advancedVariationOptions: AdvancedVariationOptions = {
-  structuralPrefixes: [
-    "מתברר כי",
-    "עולה כי", 
-    "ניכר ש",
-    "נמצא כי",
-    "מתרשם כי",
+  simpleStarters: [
+    "ניכר כי",
+    "נמצא כי", 
     "נראה ש",
-    "מתגלה כי",
-    "מתאפיינ/ת ב",
-    "מציג/ה",
-    "מגלה/ה נטייה ל"
+    "מתברר כי",
+    "עולה כי"
   ],
-  contextualSuffixes: [
-    "",
-    " - מאפיין מרכזי בעבודתך",
-    " - היבט חשוב בתפקידך",
-    " - תכונה זו מבחינה אותך",
-    " - כישור בולט שלך"
-  ],
-  naturalConnectors: [
+  basicConnectors: [
     "כמו כן",
     "יחד עם זאת", 
-    "מצד אחר",
-    "יתרה מכך",
     "במקביל",
-    "באופן דומה",
-    "בהקשר זה"
+    "בנוסף"
   ],
-  balancingFramework: [
-    "חשוב לציין כי",
-    "יש לזכור ש",
-    "ראוי להדגיש כי",
-    "בהמשך, כדאי להתמקד ב",
-    "במקביל, רצוי לחזק את"
+  clearEndings: [
+    "",
+    " - דבר חשוב בעבודה",
+    " - מאפיין בולט",
+    " - נקודה מרכזית"
   ],
   genderAdaptation: {
     masculine: {
@@ -58,9 +41,7 @@ export const advancedVariationOptions: AdvancedVariationOptions = {
       "מחובר/ת": "מחובר",
       "משדר/ת": "משדר",
       "מקדם/ת": "מקדם",
-      "מצליח/ה": "מצליח",
-      "מתקשה": "מתקשה",
-      "רצוי": "רצוי"
+      "מצליח/ה": "מצליח"
     },
     feminine: {
       "את/ה": "את",
@@ -70,9 +51,7 @@ export const advancedVariationOptions: AdvancedVariationOptions = {
       "מחובר/ת": "מחוברת",
       "משדר/ת": "משדרת",
       "מקדם/ת": "מקדמת",
-      "מצליח/ה": "מצליחה",
-      "מתקשה": "מתקשה",
-      "רצוי": "רצוי"
+      "מצליח/ה": "מצליחה"
     },
     neutral: {
       "את/ה": "את/ה",
@@ -82,52 +61,41 @@ export const advancedVariationOptions: AdvancedVariationOptions = {
       "מחובר/ת": "מחובר/ת",
       "משדר/ת": "משדר/ת",
       "מקדם/ת": "מקדם/ת",
-      "מצליח/ה": "מצליח/ה",
-      "מתקשה": "מתקשה",
-      "רצוי": "רצוי"
+      "מצליח/ה": "מצליח/ה"
     }
   }
 };
 
-// פונקציה ליצירת וריאציות איכותיות עם שמירה על דקדוק
+// פונקציה ליצירת וריאציה פשוטה וברורה
 export const createAdvancedVariation = (
   baseText: string, 
   variationIndex: number,
-  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral',
-  needsBalance: boolean = false
+  genderHint: 'masculine' | 'feminine' | 'neutral' = 'neutral'
 ): string => {
-  const { structuralPrefixes, contextualSuffixes, balancingFramework, genderAdaptation } = advancedVariationOptions;
+  const { simpleStarters, clearEndings, genderAdaptation } = advancedVariationOptions;
   
   // ניקוי הטקסט מרמזים מספריים
   let result = cleanNumericalReferences(baseText);
   
-  // בחירת וריאציה על בסיס האינדקס
-  const prefixIndex = variationIndex % structuralPrefixes.length;
-  const suffixIndex = Math.floor(variationIndex / structuralPrefixes.length) % contextualSuffixes.length;
+  // בחירת התחלה פשוטה
+  const starterIndex = variationIndex % simpleStarters.length;
+  const endingIndex = Math.floor(variationIndex / simpleStarters.length) % clearEndings.length;
   
-  // החלפת פתיח רק אם מתאים דקדוקית
-  result = replacePrefix(result, structuralPrefixes[prefixIndex]);
-  
-  // הוספת איזון לטקסטים ביקורתיים
-  if (needsBalance && containsCriticalContent(result)) {
-    const balancePhrase = balancingFramework[variationIndex % balancingFramework.length];
-    if (shouldAddBalance(result)) {
-      result = `${balancePhrase} ${result}`;
-    }
-  }
+  // החלפת התחלה בזהירות
+  result = replaceSimpleStarter(result, simpleStarters[starterIndex]);
   
   // התאמת מגדר
   result = adaptGender(result, genderHint, genderAdaptation[genderHint]);
   
-  // הוספת סיומת רק אם מתאימה
-  if (shouldAddSuffix(result, contextualSuffixes[suffixIndex])) {
-    result += contextualSuffixes[suffixIndex];
+  // הוספת סיום אם מתאים
+  if (clearEndings[endingIndex] && result.length < 120) {
+    result += clearEndings[endingIndex];
   }
   
   return result.trim();
 };
 
-// פונקציה לניקוי רמזים מספריים
+// ניקוי רמזים מספריים
 const cleanNumericalReferences = (text: string): string => {
   return text
     .replace(/\d+\s*ומעלה[:\s]*/g, "")
@@ -141,39 +109,21 @@ const cleanNumericalReferences = (text: string): string => {
     .trim();
 };
 
-// פונקציה להחלפת פתיח בזהירות דקדוקית
-const replacePrefix = (text: string, newPrefix: string): string => {
-  const commonPrefixes = ["ניכר כי", "עולה כי", "נראה כי", "מתברר כי", "מתרשם כי"];
+// החלפת התחלה פשוטה
+const replaceSimpleStarter = (text: string, newStarter: string): string => {
+  const commonStarters = ["ניכר כי", "עולה כי", "נראה כי", "מתברר כי", "נמצא כי"];
   
-  for (const prefix of commonPrefixes) {
-    if (text.startsWith(prefix)) {
-      const remainder = text.substring(prefix.length).trim();
-      
-      if (newPrefix.endsWith("ש") && remainder.startsWith("כי")) {
-        return `${newPrefix} ${remainder.substring(2).trim()}`;
-      } else if (!newPrefix.endsWith("ש") && !remainder.startsWith("כי")) {
-        return `${newPrefix} כי ${remainder}`;
-      } else {
-        return `${newPrefix} ${remainder}`;
-      }
+  for (const starter of commonStarters) {
+    if (text.startsWith(starter)) {
+      const remainder = text.substring(starter.length).trim();
+      return `${newStarter} ${remainder}`;
     }
   }
   
   return text;
 };
 
-// פונקציה לזיהוי תוכן ביקורתי
-const containsCriticalContent = (text: string): boolean => {
-  const criticalKeywords = ["קושי", "חסר", "בעייתי", "מתקשה", "רצוי", "חוסר", "ייתכן ו"];
-  return criticalKeywords.some(keyword => text.includes(keyword));
-};
-
-// פונקציה לקבוע האם להוסיף איזון
-const shouldAddBalance = (text: string): boolean => {
-  return containsCriticalContent(text) && !text.includes("חשוב לציין") && !text.includes("יש לזכור");
-};
-
-// פונקציה להתאמת מגדר
+// התאמת מגדר
 const adaptGender = (text: string, genderHint: string, genderMap: Record<string, string>): string => {
   let result = text;
   
@@ -185,16 +135,7 @@ const adaptGender = (text: string, genderHint: string, genderMap: Record<string,
   return result;
 };
 
-// פונקציה לקבוע האם להוסיף סיומת
-const shouldAddSuffix = (text: string, suffix: string): boolean => {
-  return suffix !== "" && 
-         !text.includes("רצוי") && 
-         !text.includes("חשוב") && 
-         text.length < 150 &&
-         !text.endsWith(".");
-};
-
-// פונקציה ליצירת מספר וריאציות איכותיות
+// יצירת מספר וריאציות
 export const generateAdvancedVariations = (
   baseText: string, 
   count: number = 5,
@@ -202,17 +143,15 @@ export const generateAdvancedVariations = (
 ): string[] => {
   const variations: string[] = [];
   const cleanedText = cleanNumericalReferences(baseText);
-  const needsBalance = containsCriticalContent(cleanedText);
   
   // וריאציה בסיסית
   variations.push(adaptGender(cleanedText, genderHint, advancedVariationOptions.genderAdaptation[genderHint]));
   
   // יצירת וריאציות נוספות
   for (let i = 1; i < count; i++) {
-    const variation = createAdvancedVariation(cleanedText, i, genderHint, needsBalance);
+    const variation = createAdvancedVariation(cleanedText, i, genderHint);
     
-    // ודוא שהווריאציה שונה ואיכותית
-    if (!variations.includes(variation) && isQualityVariation(variation)) {
+    if (!variations.includes(variation) && variation.length > 10) {
       variations.push(variation);
     }
   }
@@ -220,15 +159,7 @@ export const generateAdvancedVariations = (
   return variations;
 };
 
-// פונקציה לבדיקת איכות וריאציה
-const isQualityVariation = (text: string): boolean => {
-  return text.length > 10 && 
-         !text.includes("undefined") && 
-         !text.includes("null") &&
-         text.split(" ").length >= 5;
-};
-
-// פונקציה לבחירת וריאציה מבוססת זרע
+// בחירת וריאציה על בסיס זרע
 export const selectAdvancedVariation = (variations: string[], seed: number = 0): string => {
   const index = seed % variations.length;
   return variations[index];

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, BarChart3 } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
+import ParameterBars from "@/components/ParameterBars";
 
 const Results = () => {
   const navigate = useNavigate();
@@ -91,9 +92,16 @@ const Results = () => {
             </div>
           </div>
           
-          {/* גרף הרדאר ללא ציונים */}
-          <div className="bg-white rounded-lg p-4 shadow-sm">
-            <ResultsRadar result={results} hideScores={true} />
+          {/* גרף הרדאר עם ציון SLQ */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <ResultsRadar result={results} hideScores={true} />
+            </div>
+            
+            {/* פרמטרים צבעוניים */}
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <ParameterBars result={results} />
+            </div>
           </div>
           
           {/* כרטיסי פירוט */}
