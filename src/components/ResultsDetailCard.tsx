@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { dimensionColors } from "./ResultsRadar";
 import { 
   evaluateDimensionLevel, 
-  getColorIntensity
+  getColorIntensity,
+  getPersonalizedAnalysis
 } from "@/lib/dimension-analysis";
 import DimensionHeader from "./DimensionHeader";
 import DimensionSpectrum from "./DimensionSpectrum";
@@ -19,6 +20,14 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
   
   const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
   const intensityColor = getColorIntensity(dimension.score, baseColors);
+
+  // קבלת תשובות רלוונטיות לממד זה
+  const dimensionAnswers = answers.filter(answer => 
+    dimension.questions.includes(answer.questionId)
+  );
+
+  // יצירת ניתוח מותאם אישית
+  const personalizedAnalysis = getPersonalizedAnalysis(dimension.dimension, dimensionAnswers);
 
   return (
     <Card className="mb-4 overflow-hidden border-2" style={{ borderColor: intensityColor }}>
@@ -39,6 +48,27 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             intensityColor={intensityColor}
             levelDescription={levelInfo.description}
           />
+          
+          {/* ניתוח מותאם אישית */}
+          {personalizedAnalysis && (
+            <div 
+              className="p-4 rounded-lg border-2 text-sm leading-relaxed"
+              style={{ 
+                backgroundColor: baseColors.light,
+                borderColor: intensityColor + '40'
+              }}
+            >
+              <h4 
+                className="font-semibold mb-3"
+                style={{ color: intensityColor }}
+              >
+                ניתוח מותאם אישית:
+              </h4>
+              <div className="whitespace-pre-line text-right" dir="rtl">
+                {personalizedAnalysis}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

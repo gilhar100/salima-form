@@ -138,6 +138,66 @@ export type Database = {
         }
         Relationships: []
       }
+      woca_responses: {
+        Row: {
+          age: string | null
+          consent_research: boolean | null
+          created_at: string | null
+          education: string | null
+          email: string
+          experience_years: number | null
+          full_name: string
+          gender: string | null
+          group_id: string | null
+          id: string
+          organization: string | null
+          overall_score: number | null
+          phone: string | null
+          profession: string | null
+          question_responses: Json | null
+          scores: Json | null
+          workshop_id: number | null
+        }
+        Insert: {
+          age?: string | null
+          consent_research?: boolean | null
+          created_at?: string | null
+          education?: string | null
+          email: string
+          experience_years?: number | null
+          full_name: string
+          gender?: string | null
+          group_id?: string | null
+          id: string
+          organization?: string | null
+          overall_score?: number | null
+          phone?: string | null
+          profession?: string | null
+          question_responses?: Json | null
+          scores?: Json | null
+          workshop_id?: number | null
+        }
+        Update: {
+          age?: string | null
+          consent_research?: boolean | null
+          created_at?: string | null
+          education?: string | null
+          email?: string
+          experience_years?: number | null
+          full_name?: string
+          gender?: string | null
+          group_id?: string | null
+          id?: string
+          organization?: string | null
+          overall_score?: number | null
+          phone?: string | null
+          profession?: string | null
+          question_responses?: Json | null
+          scores?: Json | null
+          workshop_id?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
