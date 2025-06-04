@@ -5,7 +5,7 @@ import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, BarChart3 } from "lucide-react";
+import { Loader2, BarChart3, Award } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import ParameterBars from "@/components/ParameterBars";
@@ -73,6 +73,24 @@ const Results = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {/* תצוגת ציון SLQ מרכזי */}
+          <div className="flex justify-center">
+            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-salima-200 text-center">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <Award className="h-8 w-8 text-salima-600" />
+                <h3 className="text-2xl font-bold text-salima-800">
+                  ציון מנהיגות כללי
+                </h3>
+              </div>
+              <div className="text-5xl font-bold text-salima-600 mb-2">
+                {results.slq}
+              </div>
+              <p className="text-sm text-gray-600">
+                ציון SLQ (Strategic Leadership Quotient)
+              </p>
+            </div>
+          </div>
+
           {/* תקציר כללי ללא ציונים מספריים */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
             <div className="p-4 bg-green-50 rounded-lg border-2 border-green-200">
