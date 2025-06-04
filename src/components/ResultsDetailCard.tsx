@@ -60,22 +60,26 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             hideScore={true}
           />
           
-          {/* ניתוח מותאם אישית ללא ציונים */}
+          {/* פסקת ניתוח מקיפה */}
           {personalizedAnalysis && (
             <div 
-              className="p-4 rounded-lg border-2 text-sm leading-relaxed"
+              className="p-5 rounded-lg border-2 text-base leading-relaxed"
               style={{ 
                 backgroundColor: baseColors.light,
                 borderColor: intensityColor + '40'
               }}
             >
               <h4 
-                className="font-semibold mb-3"
+                className="font-semibold mb-4 text-lg"
                 style={{ color: intensityColor }}
               >
-                תובנות אישיות:
+                ניתוח מותאם אישית:
               </h4>
-              <div className="whitespace-pre-line text-right" dir="rtl">
+              <div 
+                className="text-right text-gray-800 leading-7"
+                dir="rtl"
+                style={{ lineHeight: '1.8' }}
+              >
                 {personalizedAnalysis}
               </div>
             </div>

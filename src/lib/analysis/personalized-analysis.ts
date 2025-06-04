@@ -1,5 +1,5 @@
 
-import { generateEnhancedDimensionAnalysis, validateAnalysisQuality } from './enhanced-conditional-analysis';
+import { getParameterParagraph } from './paragraph-generator';
 
 // פונקציה מרכזית לקבלת ניתוח מותאם אישית משופר ללא ציונים
 export const getPersonalizedAnalysis = (
@@ -7,7 +7,7 @@ export const getPersonalizedAnalysis = (
   answersForDimension: { questionId: number; value: number }[],
   userIdentifier?: string
 ): string => {
-  console.log(`Getting enhanced personalized analysis for dimension ${dimension}:`, answersForDimension);
+  console.log(`Getting personalized paragraph for dimension ${dimension}:`, answersForDimension);
   
   if (answersForDimension.length === 0) {
     return "לא זוהו תשובות רלוונטיות לממד זה. אנא ודא שהשאלון הושלם במלואו.";
@@ -18,23 +18,19 @@ export const getPersonalizedAnalysis = (
     userIdentifier.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 
     Date.now();
 
-  // קבלת רשימת מספרי השאלות עבור הממד
-  const questionIds = answersForDimension.map(a => a.questionId);
-  
-  // יצירת ניתוח משופר עם וריאציות ללא חשיפת ציונים
-  const analysis = generateEnhancedDimensionAnalysis(
-    questionIds, 
-    answersForDimension, 
+  // קבלת פסקה מקיפה מהמחולל החדש
+  const paragraph = getParameterParagraph(
+    dimension,
     userSeed,
     'neutral' // ברירת מחדל לכינוי נייטרלי
   );
   
-  // וידוא איכות הניתוח ושאין בו רמזים מספריים
-  if (!validateAnalysisQuality(analysis)) {
+  // וידוא איכות הפסקה
+  if (!paragraph || paragraph.trim().length < 20) {
     return `בממד ${getDimensionDisplayName(dimension)} נדרש מידע נוסף לצורך ניתוח מדויק יותר.`;
   }
   
-  return analysis;
+  return paragraph;
 };
 
 // פונקציה לקבלת שם תצוגה של ממד
