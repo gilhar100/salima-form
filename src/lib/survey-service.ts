@@ -1,15 +1,37 @@
 
-import { SurveyResult, ColleagueSubmissionResult } from "@/lib/types";
+import { SurveyResult, ColleagueSubmissionResult, Answer } from "@/lib/types";
 import { supabase } from "@/integrations/supabase/client";
+
+// פונקציה ליצירת אובייקט עם כל השאלות q1-q90
+const createQuestionFields = (answers: Answer[]) => {
+  const questionFields: { [key: string]: number | null } = {};
+  
+  // Initialize all questions to null
+  for (let i = 1; i <= 90; i++) {
+    questionFields[`q${i}`] = null;
+  }
+  
+  // Fill in the actual answers (raw values without reverse scoring)
+  answers.forEach(answer => {
+    questionFields[`q${answer.questionId}`] = answer.value;
+  });
+  
+  return questionFields;
+};
 
 // פונקציה לשמירת תוצאות שאלון מנהלים במסד הנתונים
 export async function saveSurveyToDatabase(
   results: SurveyResult, 
+  answers: Answer[],
   consentForResearch: boolean, 
   isAnonymous: boolean = true
 ): Promise<void> {
   try {
     console.log('מתחיל שמירת נתוני מנהל:', results);
+    console.log('תשובות גולמיות:', answers);
+    
+    // Create question fields object
+    const questionFields = createQuestionFields(answers);
     
     const surveyData = {
       user_email: isAnonymous ? null : results.userInfo.email,
@@ -27,7 +49,9 @@ export async function saveSurveyToDatabase(
       strategy: results.slq, // נשמור את ה-SLQ גם בשדה strategy לתאימות לאחור
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
-      survey_type: 'manager'
+      survey_type: 'manager',
+      answers: answers.map(a => a.value), // Array of raw values for backward compatibility
+      ...questionFields // Add all q1-q90 fields
     };
 
     console.log('נתונים לשמירה:', surveyData);
@@ -51,12 +75,17 @@ export async function saveSurveyToDatabase(
 
 // פונקציה לשמירת תוצאות שאלון עמיתים במסד הנתונים
 export async function saveColleagueSurveyToDatabase(
-  results: ColleagueSubmissionResult, 
+  results: ColleagueSubmissionResult,
+  answers: Answer[],
   consentForResearch: boolean, 
   isAnonymous: boolean = true
 ): Promise<void> {
   try {
     console.log('מתחיל שמירת נתוני עמיתים:', results);
+    console.log('תשובות גולמיות עמיתים:', answers);
+    
+    // Create question fields object
+    const questionFields = createQuestionFields(answers);
     
     const colleagueSurveyData = {
       manager_name: results.evaluatorInfo.managerName,
@@ -75,7 +104,9 @@ export async function saveColleagueSurveyToDatabase(
       dimension_a: results.dimensions.A,
       dimension_a2: results.dimensions.A2,
       consent_for_research: consentForResearch,
-      is_anonymous: isAnonymous
+      is_anonymous: isAnonymous,
+      answers: answers.map(a => a.value), // Array of raw values for backward compatibility
+      ...questionFields // Add all q1-q90 fields
     };
 
     console.log('נתוני עמיתים לשמירה:', colleagueSurveyData);

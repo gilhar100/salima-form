@@ -80,7 +80,7 @@ const Survey = () => {
       
       setIsSubmitting(true);
       console.log('סיום השאלון, סוג:', surveyType);
-      console.log('תשובות:', answers);
+      console.log('תשובות גולמיות:', answers);
       
       if (surveyType === 'manager' && userInfo) {
         try {
@@ -91,8 +91,8 @@ const Survey = () => {
           localStorage.setItem('salimaResults', JSON.stringify(results));
           localStorage.setItem('salimaAnswers', JSON.stringify(answers));
           
-          // שמירה במסד הנתונים
-          await saveSurveyToDatabase(results, true, false);
+          // שמירה במסד הנתונים עם התשובות הגולמיות
+          await saveSurveyToDatabase(results, answers, true, false);
           
           toast({
             title: "השאלון הושלם בהצלחה!",
@@ -135,10 +135,10 @@ const Survey = () => {
           
           console.log('נתוני עמית לשמירה:', colleagueSubmission);
           
-          // שמירה ב-localStorage ובמסד הנתונים
+          // שמירה ב-localStorage ובמסד הנתונים עם התשובות הגולמיות
           localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
           
-          await saveColleagueSurveyToDatabase(colleagueSubmission, true, false);
+          await saveColleagueSurveyToDatabase(colleagueSubmission, answers, true, false);
           
           toast({
             title: "השאלון הושלם בהצלחה!",
