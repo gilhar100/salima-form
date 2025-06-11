@@ -106,7 +106,7 @@ const Statistics = () => {
             <CardTitle className="text-base sm:text-lg">הציון שלך</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-3xl sm:text-4xl font-bold text-salima-600">{userResults.slq}</p>
+            <p className="text-3xl sm:text-4xl font-bold text-salima-600">{userResults.slq}/5</p>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">ציון SLQ</p>
           </CardContent>
         </Card>
@@ -116,7 +116,7 @@ const Statistics = () => {
             <CardTitle className="text-base sm:text-lg">ממוצע כללי</CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <p className="text-3xl sm:text-4xl font-bold text-blue-600">{avgSlq}</p>
+            <p className="text-3xl sm:text-4xl font-bold text-blue-600">{avgSlq}/5</p>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">מתוך {statistics.length} משתתפים</p>
           </CardContent>
         </Card>
