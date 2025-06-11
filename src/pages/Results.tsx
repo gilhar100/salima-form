@@ -49,6 +49,10 @@ const Results = () => {
       </div>;
   }
 
+  // Check if there's any percentile calculation or display in the results
+  // Based on the code structure, the main results appear to be handled by other components
+  // The bell curve visualization is now integrated into the Statistics page
+
   // חישוב סטטיסטיקות נוספות ללא חשיפת ציונים מספריים
   const highestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score > current.score ? prev : current);
   const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score < current.score ? prev : current);

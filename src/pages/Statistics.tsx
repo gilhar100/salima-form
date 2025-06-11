@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { getSurveyStatistics } from "@/lib/survey-service";
 import { SurveyResult } from "@/lib/types";
 import StatisticsCharts from "@/components/StatisticsCharts";
+import BellCurveVisualization from "@/components/BellCurveVisualization";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 interface SurveyResponse {
   id: string;
   slq_score: number;
@@ -27,15 +30,15 @@ interface SurveyResponse {
   strategy: number;
   survey_type: string;
 }
+
 const Statistics = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const isMobile = useIsMobile();
   const [statistics, setStatistics] = useState<SurveyResponse[]>([]);
   const [userResults, setUserResults] = useState<SurveyResult | null>(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -61,11 +64,13 @@ const Statistics = () => {
     };
     loadData();
   }, [toast]);
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-screen px-4">
         <p className="text-lg sm:text-xl text-center">טוען סטטיסטיקות...</p>
       </div>;
   }
+
   if (!userResults) {
     return <div className="container max-w-4xl mx-auto py-4 px-4">
         <Card>
@@ -83,14 +88,10 @@ const Statistics = () => {
         </Card>
       </div>;
   }
-  const calculatePercentile = (userScore: number, allScores: number[]) => {
-    if (allScores.length === 0) return 0;
-    const lowerScores = allScores.filter(score => score < userScore).length;
-    return Math.round(lowerScores / allScores.length * 100);
-  };
+
   const slqScores = statistics.map(s => s.slq_score);
-  const userPercentile = calculatePercentile(userResults.slq, slqScores);
   const avgSlq = slqScores.length > 0 ? Number((slqScores.reduce((sum, score) => sum + score, 0) / slqScores.length).toFixed(2)) : 0;
+
   return <div className="container max-w-6xl mx-auto py-4 px-4">
       <div className="mb-6 text-center">
         <h1 className="text-2xl sm:text-3xl font-bold text-salima-800 mb-2">השוואה סטטיסטית</h1>
@@ -120,17 +121,10 @@ const Statistics = () => {
           </CardContent>
         </Card>
 
-        <Card className="text-center sm:col-span-2 lg:col-span-1">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg">האחוזון שלך</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <p className="text-3xl sm:text-4xl font-bold text-green-600">{userPercentile}%</p>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">
-              {userPercentile >= 75 ? "מעולה!" : userPercentile >= 50 ? "טוב!" : userPercentile >= 25 ? "סביר" : "יש מקום לשיפור"}
-            </p>
-          </CardContent>
-        </Card>
+        <BellCurveVisualization 
+          userScore={userResults.slq}
+          title="התפלגות הציונים"
+        />
       </div>
 
       <StatisticsCharts statistics={statistics} userResults={userResults} />
@@ -140,9 +134,9 @@ const Statistics = () => {
           <Button variant="outline" onClick={() => navigate('/results')} className={isMobile ? 'w-full' : 'w-auto'}>
             חזור לתוצאות
           </Button>
-          
         </div>
       </div>
     </div>;
 };
+
 export default Statistics;

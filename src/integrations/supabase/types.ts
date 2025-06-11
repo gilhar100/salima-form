@@ -722,6 +722,7 @@ export type Database = {
           dimension_s: number
           id: string
           is_anonymous: boolean | null
+          manager_id: number | null
           organization: string | null
           position: string | null
           q1: number | null
@@ -923,6 +924,7 @@ export type Database = {
           dimension_s?: number
           id?: string
           is_anonymous?: boolean | null
+          manager_id?: number | null
           organization?: string | null
           position?: string | null
           q1?: number | null
@@ -1124,6 +1126,7 @@ export type Database = {
           dimension_s?: number
           id?: string
           is_anonymous?: boolean | null
+          manager_id?: number | null
           organization?: string | null
           position?: string | null
           q1?: number | null
