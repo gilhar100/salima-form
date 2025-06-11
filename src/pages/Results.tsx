@@ -78,7 +78,7 @@ const Results = () => {
                 </h3>
               </div>
               <div className="text-5xl font-bold text-salima-600 mb-2">
-                {results.slq}
+                {results.slq}/5
               </div>
               <p className="text-sm text-gray-600">
                 ציון SLQ (Strategic Leadership Quotient)
