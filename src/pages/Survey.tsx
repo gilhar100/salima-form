@@ -83,8 +83,12 @@ const Survey = () => {
       console.log('תשובות גולמיות:', answers);
       
       if (surveyType === 'manager' && userInfo) {
+        // Attach group_number to results and save
         try {
           const results = calculateSurveyResults(answers, userInfo);
+          // Attach group_number as int if exists
+          results.group_number = userInfo.groupNumber ? parseInt(userInfo.groupNumber) : null;
+          
           console.log('תוצאות מחושבות למנהל:', results);
           
           // שמירת התוצאות והתשובות ב־localStorage

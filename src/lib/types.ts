@@ -1,4 +1,3 @@
-
 // סוגי הממדים בשאלון
 export type Dimension = 'S' | 'L' | 'I' | 'M' | 'A' | 'A2';
 
@@ -46,11 +45,12 @@ export interface SurveyResult {
 
 // מידע על המשתמש - שאלון מנהלים
 export interface UserInfo {
+  groupNumber?: string; // Updated: Make groupNumber attribute available
   name: string;
   email: string;
-  position?: string;
-  department?: string;
   organization?: string;
+  department?: string;
+  position?: string;
 }
 
 // מידע על המעריך בשאלון עמיתים

@@ -11,47 +11,73 @@ interface UserInfoFormProps {
 }
 
 const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
-  const [userInfo, setUserInfo] = useState<UserInfo>({
+  const [formData, setFormData] = useState<UserInfo>({
+    groupNumber: "",
     name: "",
     email: "",
-    position: "",
-    department: "",
     organization: "",
+    department: "",
+    position: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(userInfo);
-  };
+  const [isTouched, setIsTouched] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserInfo(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setIsTouched(true);
   };
 
-  const isFormValid = userInfo.name.trim() !== "" && userInfo.email.trim() !== "";
+  const isFormValid =
+    formData.name.trim() !== "" &&
+    formData.email.trim() !== "" &&
+    formData.groupNumber.trim() !== "";
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isFormValid) {
+      onSubmit(formData);
+    }
+  };
 
   return (
     <div className="flex justify-center py-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-salima-800">שאלון מנהיגות SALIMA-WOCA</CardTitle>
-          <CardDescription>אנא מלא/י את הפרטים האישיים שלך כדי להתחיל</CardDescription>
+          <CardTitle className="text-2xl font-bold text-blue-800">
+            שאלון מנהלים
+            <div className="text-base font-normal text-blue-700 mt-1">
+              ד"ר יוסי שרעבי
+            </div>
+          </CardTitle>
+          <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בשאלון SALIMA</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="groupNumber">מספר קבוצה *</Label>
+              <Input
+                id="groupNumber"
+                name="groupNumber"
+                type="number"
+                min={1}
+                placeholder="הזן/י מספר קבוצה"
+                value={formData.groupNumber || ""}
+                onChange={handleChange}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="name">שם מלא *</Label>
               <Input
                 id="name"
                 name="name"
                 placeholder="השם המלא שלך"
-                value={userInfo.name}
+                value={formData.name || ""}
                 onChange={handleChange}
                 required
               />
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="email">אימייל *</Label>
               <Input
@@ -59,50 +85,46 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
                 name="email"
                 type="email"
                 placeholder="כתובת האימייל שלך"
-                value={userInfo.email}
+                value={formData.email || ""}
                 onChange={handleChange}
                 required
               />
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="position">תפקיד</Label>
-              <Input
-                id="position"
-                name="position"
-                placeholder="התפקיד שלך בארגון"
-                value={userInfo.position}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="department">מחלקה</Label>
-              <Input
-                id="department"
-                name="department"
-                placeholder="המחלקה שלך בארגון"
-                value={userInfo.department}
-                onChange={handleChange}
-              />
-            </div>
-            
             <div className="space-y-2">
               <Label htmlFor="organization">ארגון</Label>
               <Input
                 id="organization"
                 name="organization"
                 placeholder="שם הארגון"
-                value={userInfo.organization}
+                value={formData.organization || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="department">מחלקה</Label>
+              <Input
+                id="department"
+                name="department"
+                placeholder="המחלקה בארגון"
+                value={formData.department || ""}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="position">תפקיד</Label>
+              <Input
+                id="position"
+                name="position"
+                placeholder="התפקיד שלך"
+                value={formData.position || ""}
                 onChange={handleChange}
               />
             </div>
           </CardContent>
-          
           <CardFooter>
-            <Button 
-              type="submit" 
-              className="w-full bg-salima-600 hover:bg-salima-700"
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
               disabled={!isFormValid}
             >
               התחל את השאלון
@@ -115,3 +137,4 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
 };
 
 export default UserInfoForm;
+

@@ -1,4 +1,3 @@
-
 import { SurveyResult, ColleagueSubmissionResult, Answer } from "@/lib/types";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,6 +38,7 @@ export async function saveSurveyToDatabase(
       organization: isAnonymous ? null : results.userInfo.organization,
       department: isAnonymous ? null : results.userInfo.department,
       position: isAnonymous ? null : results.userInfo.position,
+      group_number: results.group_number ?? (results.userInfo.groupNumber ? parseInt(results.userInfo.groupNumber) : null),
       slq_score: results.slq,
       dimension_s: results.dimensions.S.score,
       dimension_l: results.dimensions.L.score,

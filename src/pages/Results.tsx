@@ -8,6 +8,7 @@ import { Loader2, BarChart3, Award } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import ParameterBars from "@/components/ParameterBars";
+import BellCurveVisualization from "@/components/BellCurveVisualization";
 const Results = () => {
   const navigate = useNavigate();
   const {
@@ -130,6 +131,10 @@ const Results = () => {
           </div>
         </CardContent>
       </Card>
+      {/* Bell curve at the end of the results/analysis page */}
+      <div className="mb-8">
+        <BellCurveVisualization userScore={results.slq} />
+      </div>
       
       <div className="flex gap-4 justify-center flex-wrap">
         <Button onClick={() => navigate('/statistics')} variant="outline" className="w-auto bg-blue-50 hover:bg-blue-100 border-blue-200">
