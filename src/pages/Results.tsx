@@ -4,11 +4,12 @@ import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, BarChart3, Award } from "lucide-react";
+import { Loader2, Award } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import ParameterBars from "@/components/ParameterBars";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
+
 const Results = () => {
   const navigate = useNavigate();
   const {
@@ -57,7 +58,8 @@ const Results = () => {
   // חישוב סטטיסטיקות נוספות ללא חשיפת ציונים מספריים
   const highestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score > current.score ? prev : current);
   const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score < current.score ? prev : current);
-  return <div className="container py-6 max-w-6xl mx-auto px-4">
+  return (
+    <div className="container py-6 max-w-6xl mx-auto px-4">
       <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-salima-800 mb-2">
@@ -131,21 +133,19 @@ const Results = () => {
           </div>
         </CardContent>
       </Card>
+      
       {/* Bell curve at the end of the results/analysis page */}
       <div className="mb-8">
         <BellCurveVisualization userScore={results.slq} />
       </div>
       
       <div className="flex gap-4 justify-center flex-wrap">
-        <Button onClick={() => navigate('/statistics')} variant="outline" className="w-auto bg-blue-50 hover:bg-blue-100 border-blue-200">
-          <BarChart3 className="mr-2 h-4 w-4" />
-          השוואה סטטיסטית
-        </Button>
-        
         <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-auto">
           חזור לעמוד הבית
         </Button>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Results;
