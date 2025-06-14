@@ -41,6 +41,7 @@ export interface SurveyResult {
   slq: number;
   userInfo: UserInfo;
   date: string;
+  group_number?: number; // Add group_number property
 }
 
 // מידע על המשתמש - שאלון מנהלים

@@ -83,11 +83,11 @@ const Survey = () => {
       console.log('תשובות גולמיות:', answers);
       
       if (surveyType === 'manager' && userInfo) {
-        // Attach group_number to results and save
+        // Calculate results and attach group_number
         try {
           const results = calculateSurveyResults(answers, userInfo);
           // Attach group_number as int if exists
-          results.group_number = userInfo.groupNumber ? parseInt(userInfo.groupNumber) : null;
+          results.group_number = userInfo.groupNumber ? parseInt(userInfo.groupNumber) : undefined;
           
           console.log('תוצאות מחושבות למנהל:', results);
           
