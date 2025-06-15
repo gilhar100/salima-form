@@ -1,0 +1,93 @@
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardFooter, CardTitle } from "@/components/ui/card";
+import { Question, SurveyType } from "@/lib/types";
+import SurveyQuestion from "@/components/SurveyQuestion";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Loader2 } from "lucide-react";
+
+interface SurveyCardProps {
+  currentQuestions: Question[];
+  currentStep: number;
+  totalSteps: number;
+  surveyType: SurveyType;
+  getAnswerValue: (questionId: number) => number | null;
+  handleAnswerChange: (questionId: number, value: number) => void;
+  handlePrevious: () => void;
+  handleNext: () => void;
+  canProceed: () => boolean;
+  isSubmitting: boolean;
+}
+
+const SurveyCard: React.FC<SurveyCardProps> = ({
+  currentQuestions,
+  currentStep,
+  totalSteps,
+  surveyType,
+  getAnswerValue,
+  handleAnswerChange,
+  handlePrevious,
+  handleNext,
+  canProceed,
+  isSubmitting
+}) => {
+  const isMobile = useIsMobile();
+
+  const instructionText = surveyType === 'manager' 
+    ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+    : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+
+  return (
+    <Card className="shadow-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg sm:text-xl leading-tight">
+          {currentStep === 0 ? instructionText : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
+        </CardTitle>
+      </CardHeader>
+      
+      <CardContent className="px-3 sm:px-6">
+        <div className="space-y-4">
+          {currentQuestions.map((question) => (
+            <SurveyQuestion
+              key={question.id}
+              question={question}
+              selectedValue={getAnswerValue(question.id)}
+              onChange={(value) => handleAnswerChange(question.id, value)}
+              surveyType={surveyType}
+            />
+          ))}
+        </div>
+      </CardContent>
+      
+      <CardFooter className={`flex justify-between px-3 sm:px-6 ${isMobile ? 'flex-col gap-3' : 'flex-row'}`}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handlePrevious}
+          disabled={currentStep === 0}
+          className={isMobile ? 'w-full order-2' : 'w-auto'}
+        >
+          הקודם
+        </Button>
+        
+        <Button
+          type="button"
+          onClick={handleNext}
+          disabled={!canProceed() || isSubmitting}
+          className={`${surveyType === 'manager' ? 'bg-salima-600 hover:bg-salima-700' : 'bg-blue-600 hover:bg-blue-700'} ${isMobile ? 'w-full order-1' : 'w-auto'}`}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              שומר...
+            </>
+          ) : (
+            currentStep === totalSteps - 1 ? "סיים ושלח" : "הבא"
+          )}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default SurveyCard;
