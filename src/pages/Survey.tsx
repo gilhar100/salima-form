@@ -236,6 +236,7 @@ const Survey = () => {
     <div className="container py-4 max-w-3xl mx-auto px-4">
       <div className="mb-4 space-y-3">
         <h1 className="text-xl sm:text-2xl font-bold text-center">{surveyTitle}</h1>
+        <h2 className="text-lg sm:text-xl font-semibold text-center text-gray-600">ד"ר יוסי שרעבי</h2>
         {surveyType === 'colleague' && colleagueInfo && (
           <p className="text-center text-gray-600">מעריך את: {colleagueInfo.managerName}</p>
         )}

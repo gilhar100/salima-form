@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,8 +45,9 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-blue-800">
-            שאלון מנהלים - ד"ר יוסי שרעבי
+            שאלון מנהלים
           </CardTitle>
+          <CardDescription className="text-lg font-semibold text-gray-600">ד"ר יוסי שרעבי</CardDescription>
           <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בשאלון SALIMA</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
