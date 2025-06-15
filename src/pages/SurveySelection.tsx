@@ -1,23 +1,18 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Users, User } from "lucide-react";
-
 const SurveySelection = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-
   const handleSurveySelection = (surveyType: 'manager' | 'colleague') => {
     navigate(`/survey?type=${surveyType}`);
   };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-50 p-4">
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-50 p-4">
       <div className="max-w-4xl w-full text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-salima-800">SALIMA-WOCA</h1>
-        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 sm:mb-8 text-salima-600 px-2">מערכת אבחון מנהיגות ארגונית</h2>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-salima-800">SALIMA</h1>
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 sm:mb-8 text-salima-600 px-2">ד&quot;ר יוסי שרעבי</h2>
         
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* שאלון מנהלים */}
@@ -45,10 +40,7 @@ const SurveySelection = () => {
             </CardContent>
             
             <CardFooter className="px-4 sm:px-6">
-              <Button 
-                className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full' : 'w-full'}`}
-                onClick={() => handleSurveySelection('manager')}
-              >
+              <Button className={`bg-salima-600 hover:bg-salima-700 ${isMobile ? 'w-full' : 'w-full'}`} onClick={() => handleSurveySelection('manager')}>
                 התחל שאלון מנהלים
               </Button>
             </CardFooter>
@@ -79,10 +71,7 @@ const SurveySelection = () => {
             </CardContent>
             
             <CardFooter className="px-4 sm:px-6">
-              <Button 
-                className={`bg-blue-600 hover:bg-blue-700 ${isMobile ? 'w-full' : 'w-full'}`}
-                onClick={() => handleSurveySelection('colleague')}
-              >
+              <Button className={`bg-blue-600 hover:bg-blue-700 ${isMobile ? 'w-full' : 'w-full'}`} onClick={() => handleSurveySelection('colleague')}>
                 התחל שאלון עמיתים
               </Button>
             </CardFooter>
@@ -93,8 +82,6 @@ const SurveySelection = () => {
           <p>מערכת SALIMA-WOCA © כל הזכויות שמורות</p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default SurveySelection;
