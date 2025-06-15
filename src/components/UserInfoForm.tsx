@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -45,10 +44,7 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-blue-800">
-            שאלון מנהלים
-            <div className="text-base font-normal text-blue-700 mt-1">
-              ד"ר יוסי שרעבי
-            </div>
+            שאלון מנהלים - ד"ר יוסי שרעבי
           </CardTitle>
           <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בשאלון SALIMA</CardDescription>
         </CardHeader>
@@ -137,4 +133,3 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
 };
 
 export default UserInfoForm;
-

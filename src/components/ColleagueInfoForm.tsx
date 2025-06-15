@@ -40,7 +40,7 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
     <div className="flex justify-center py-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-blue-800">שאלון הערכת מנהל</CardTitle>
+          <CardTitle className="text-2xl font-bold text-blue-800">שאלון הערכת מנהל - ד"ר יוסי שרעבי</CardTitle>
           <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בהערכת המנהל</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
