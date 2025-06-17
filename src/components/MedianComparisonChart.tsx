@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, Cell } from 'recharts';
 import { SurveyResult } from '@/lib/types';
 
 interface MedianComparisonChartProps {
@@ -89,8 +89,11 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
             <Bar 
               dataKey="score" 
               radius={[4, 4, 0, 0]}
-              fill={(entry) => entry.color}
-            />
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
