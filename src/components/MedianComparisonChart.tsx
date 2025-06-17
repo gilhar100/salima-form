@@ -12,32 +12,26 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
   const scores = Object.values(result.dimensions).map(d => d.score);
   const meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
-  // Separate dimensions above and below mean
-  const belowMean = Object.values(result.dimensions)
-    .filter(d => d.score < meanScore)
-    .sort((a, b) => a.score - b.score); // Sort ascending (lowest first)
-    
-  const aboveMean = Object.values(result.dimensions)
-    .filter(d => d.score > meanScore)
-    .sort((a, b) => b.score - a.score); // Sort descending (highest first)
-
-  const atMean = Object.values(result.dimensions)
-    .filter(d => Math.abs(d.score - meanScore) < 0.01); // Very close to mean
-
-  // Calculate max distance from mean for scaling
-  const maxDistance = Math.max(
-    ...Object.values(result.dimensions).map(d => Math.abs(d.score - meanScore))
-  );
-
-  const getBarWidth = (score: number) => {
-    if (maxDistance === 0) return 0;
-    return (Math.abs(score - meanScore) / maxDistance) * 100;
+  // Get all dimensions with their Hebrew names
+  const dimensionNames = {
+    strategic: 'אסטרטגי',
+    adaptive: 'אדפטיבי', 
+    learning: 'לומד',
+    inspiring: 'השראה',
+    meaningful: 'משמעות',
+    authentic: 'אותנטיות'
   };
+
+  const dimensions = Object.values(result.dimensions);
 
   function getParameterColor(dimension: string) {
     const colors = dimensionColors[dimension as keyof typeof dimensionColors];
-    return colors?.primary || '#6b7280';
+    return colors?.primary || '#4F46E5';
   }
+
+  // Calculate the maximum height for scaling
+  const maxScore = Math.max(...scores, 5);
+  const chartHeight = 300;
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border">
@@ -45,99 +39,82 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
         ממדי SALIMA ביחס לציון הממוצע האישי
       </h3>
       
-      <div className="space-y-3">
-        {/* Below mean parameters */}
-        {belowMean.map((dimension) => (
-          <div key={`below-${dimension.dimension}`} className="flex items-center h-8">
-            <div className="w-1/2 flex justify-end pr-4">
-              <div className="flex items-center">
-                <span className="text-sm font-medium text-gray-700 ml-3">
-                  {dimension.title}
-                </span>
-                <div
-                  className="h-6 rounded-r-md"
-                  style={{
-                    width: `${getBarWidth(dimension.score)}%`,
-                    maxWidth: '150px',
-                    backgroundColor: getParameterColor(dimension.dimension),
-                    opacity: 0.8
-                  }}
-                />
-              </div>
-            </div>
-            
-            {/* Center line space */}
-            <div className="w-0 flex justify-center">
-              <div className="w-px h-8 bg-gray-600"></div>
-            </div>
-            
-            <div className="w-1/2"></div>
-          </div>
-        ))}
+      <div className="relative" style={{ height: chartHeight + 80 }}>
+        {/* Y-axis scale */}
+        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-sm text-gray-600">
+          <span>5</span>
+          <span>4</span>
+          <span>3</span>
+          <span>2</span>
+          <span>1</span>
+          <span>0</span>
+        </div>
 
-        {/* At mean parameters */}
-        {atMean.map((dimension) => (
-          <div key={`at-${dimension.dimension}`} className="flex items-center h-8">
-            <div className="w-1/2 flex justify-end pr-4">
-              <span className="text-sm font-medium text-gray-700">
-                {dimension.title}
-              </span>
-            </div>
-            
-            {/* Center line */}
-            <div className="flex justify-center items-center">
-              <div className="w-px h-8 bg-gray-600"></div>
-            </div>
-            
-            <div className="w-1/2"></div>
-          </div>
-        ))}
-
-        {/* Above mean parameters */}
-        {aboveMean.map((dimension) => (
-          <div key={`above-${dimension.dimension}`} className="flex items-center h-8">
-            <div className="w-1/2"></div>
-            
-            {/* Center line space */}
-            <div className="w-0 flex justify-center">
-              <div className="w-px h-8 bg-gray-600"></div>
-            </div>
-            
-            <div className="w-1/2 flex justify-start pl-4">
-              <div className="flex items-center">
-                <div
-                  className="h-6 rounded-l-md"
-                  style={{
-                    width: `${getBarWidth(dimension.score)}%`,
-                    maxWidth: '150px',
-                    backgroundColor: getParameterColor(dimension.dimension),
-                    opacity: 0.8
-                  }}
-                />
-                <span className="text-sm font-medium text-gray-700 mr-3">
-                  {dimension.title}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Mean line label */}
-        <div className="flex items-center mt-6 pt-4 border-t border-gray-300">
-          <div className="w-1/2 flex justify-end pr-4">
-            <span className="text-sm text-gray-600">מתחת לממוצע</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <div className="w-px h-12 bg-gray-800"></div>
-            <span className="text-lg font-bold text-gray-800 mt-2">
+        {/* Chart area */}
+        <div className="ml-8 relative" style={{ height: chartHeight }}>
+          {/* Mean line */}
+          <div 
+            className="absolute w-full border-t-2 border-orange-400 border-dashed"
+            style={{ 
+              bottom: `${(meanScore / maxScore) * chartHeight}px`,
+            }}
+          >
+            <span className="absolute right-0 -top-6 text-sm font-medium text-orange-600">
               ממוצע: {meanScore.toFixed(2)}
             </span>
           </div>
-          
-          <div className="w-1/2 flex justify-start pl-4">
-            <span className="text-sm text-gray-600">מעל הממוצע</span>
+
+          {/* Bars container */}
+          <div className="flex items-end justify-between h-full gap-2">
+            {dimensions.map((dimension, index) => {
+              const barHeight = (dimension.score / maxScore) * chartHeight;
+              const isAboveMean = dimension.score > meanScore;
+              const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
+              
+              return (
+                <div key={dimension.dimension} className="flex flex-col items-center flex-1">
+                  {/* Score value above bar */}
+                  <div className="text-sm font-medium text-gray-700 mb-1">
+                    {dimension.score.toFixed(2)}
+                  </div>
+                  
+                  {/* Bar */}
+                  <div 
+                    className="w-full rounded-t-md relative"
+                    style={{ 
+                      height: `${barHeight}px`,
+                      backgroundColor: getParameterColor(dimension.dimension),
+                      minWidth: '60px',
+                      maxWidth: '80px'
+                    }}
+                  />
+                  
+                  {/* Dimension label */}
+                  <div className="text-sm font-medium text-gray-800 mt-2 text-center">
+                    {hebrewName}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        </div>
+
+        {/* Legend */}
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-orange-400"></div>
+            <span className="text-sm text-gray-600">ממוצע קולטות</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-500"></div>
+            <span className="text-sm text-gray-600">הערכה עצמית</span>
+          </div>
+        </div>
+
+        {/* Below/Above mean indicators */}
+        <div className="flex justify-between text-sm text-gray-600 mt-4">
+          <span>מתחת לממוצע</span>
+          <span>מעל הממוצע</span>
         </div>
       </div>
     </div>
