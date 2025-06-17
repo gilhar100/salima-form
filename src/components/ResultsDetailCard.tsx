@@ -38,9 +38,6 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
     userIdentifier
   );
 
-  // חישוב אחוז עוצמה עבור הבר הצבעוני
-  const intensityPercentage = (dimension.score / 5) * 100;
-
   return (
     <Card className="mb-4 overflow-hidden border-2" style={{ borderColor: intensityColor }}>
       <DimensionHeader
@@ -54,28 +51,8 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
       />
       
       <CardContent className="pt-4">
-        <div className="space-y-4">
-          {/* בר עוצמה צבעוני */}
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-gray-700">עוצמת הממד</h4>
-            <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-              <div 
-                className="h-full rounded-lg transition-all duration-700 ease-out"
-                style={{ 
-                  width: `${intensityPercentage}%`,
-                  backgroundColor: intensityColor,
-                  opacity: 0.8 + (dimension.score / 5) * 0.2
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-medium text-gray-600">
-                  {levelInfo.level}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Parameter intensity bar with parameter-specific color */}
+        <div className="space-y-6">
+          {/* Parameter intensity bar with new format */}
           <ParameterIntensityBar
             score={dimension.score}
             parameterKey={dimension.dimension}

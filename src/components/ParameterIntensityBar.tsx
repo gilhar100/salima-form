@@ -16,30 +16,57 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
   // Get the base color for this parameter
   const baseColors = dimensionColors[parameterKey as keyof typeof dimensionColors];
   
-  // Calculate opacity based on score (1-5 scale)
-  const intensity = Math.min(Math.max(score / 5, 0.1), 1);
-  
-  // Calculate width percentage for the bar
-  const widthPercentage = (score / 5) * 100;
+  // Calculate opacity based on score (1-5 scale) for intensity effect
+  const intensity = Math.min(Math.max(score / 5, 0.2), 1);
   
   return (
-    <div className="space-y-2">
-      <h4 className="text-sm font-medium text-gray-700">
-        עוצמת מדד {parameterName}
+    <div className="space-y-3 p-4 bg-white rounded-lg border">
+      <h4 className="text-lg font-semibold text-gray-800 text-center">
+        {parameterName}
       </h4>
-      <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
+      
+      {/* Score circle */}
+      <div className="flex justify-center">
         <div 
-          className="h-full rounded-lg transition-all duration-700 ease-out flex items-center justify-end pr-2"
-          style={{ 
-            width: `${widthPercentage}%`,
-            backgroundColor: baseColors.primary,
-            opacity: 0.3 + (intensity * 0.7) // Range from 0.3 to 1.0 opacity
-          }}
+          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg"
+          style={{ backgroundColor: baseColors.primary }}
         >
-          <span className="text-xs font-semibold text-gray-800">
-            {score.toFixed(1)}
-          </span>
+          {score.toFixed(2)}
         </div>
+      </div>
+      
+      {/* Color intensity bar */}
+      <div className="space-y-2">
+        <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
+          {/* Full bar with parameter color and calculated intensity */}
+          <div 
+            className="h-full w-full rounded-full"
+            style={{ 
+              backgroundColor: baseColors.primary,
+              opacity: intensity
+            }}
+          />
+          
+          {/* Score indicator line */}
+          <div 
+            className="absolute top-0 h-full w-0.5 bg-gray-800"
+            style={{ 
+              left: `${(score / 5) * 100}%`,
+              transform: 'translateX(-50%)'
+            }}
+          />
+        </div>
+        
+        {/* Scale labels */}
+        <div className="flex justify-between text-xs text-gray-600">
+          <span>1.0</span>
+          <span>2.5</span>
+          <span>5.0</span>
+        </div>
+        
+        <p className="text-center text-sm text-gray-600 mt-2">
+          ציון מדד בין קיצוני משמעויות לציפייה
+        </p>
       </div>
     </div>
   );

@@ -8,30 +8,30 @@ interface MedianComparisonChartProps {
 }
 
 const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result }) => {
-  // Calculate median score across all dimensions
+  // Calculate mean score across all dimensions
   const scores = Object.values(result.dimensions).map(d => d.score);
-  const medianScore = scores.sort((a, b) => a - b)[Math.floor(scores.length / 2)];
+  const meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
-  // Separate dimensions above and below median
-  const belowMedian = Object.values(result.dimensions)
-    .filter(d => d.score < medianScore)
+  // Separate dimensions above and below mean
+  const belowMean = Object.values(result.dimensions)
+    .filter(d => d.score < meanScore)
     .sort((a, b) => a.score - b.score); // Sort ascending (lowest first)
     
-  const aboveMedian = Object.values(result.dimensions)
-    .filter(d => d.score > medianScore)
+  const aboveMean = Object.values(result.dimensions)
+    .filter(d => d.score > meanScore)
     .sort((a, b) => b.score - a.score); // Sort descending (highest first)
 
-  const atMedian = Object.values(result.dimensions)
-    .filter(d => d.score === medianScore);
+  const atMean = Object.values(result.dimensions)
+    .filter(d => Math.abs(d.score - meanScore) < 0.01); // Very close to mean
 
-  // Calculate max distance from median for scaling
+  // Calculate max distance from mean for scaling
   const maxDistance = Math.max(
-    ...Object.values(result.dimensions).map(d => Math.abs(d.score - medianScore))
+    ...Object.values(result.dimensions).map(d => Math.abs(d.score - meanScore))
   );
 
   const getBarWidth = (score: number) => {
     if (maxDistance === 0) return 0;
-    return (Math.abs(score - medianScore) / maxDistance) * 100;
+    return (Math.abs(score - meanScore) / maxDistance) * 100;
   };
 
   function getParameterColor(dimension: string) {
@@ -40,112 +40,103 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm border">
-      <h3 className="text-lg font-semibold mb-6 text-center text-gray-800">
-        התפלגות מדדים ביחס לציון החציוני האישי
+    <div className="bg-white rounded-lg p-6 shadow-sm border">
+      <h3 className="text-xl font-bold mb-6 text-center text-gray-800">
+        ממדי SALIMA ביחס לציון הממוצע האישי
       </h3>
       
       <div className="space-y-3">
-        {/* Below median parameters */}
-        {belowMedian.map((dimension) => (
-          <div key={`below-${dimension.dimension}`} className="flex items-center">
-            <div className="w-1/2 flex justify-end pr-2">
+        {/* Below mean parameters */}
+        {belowMean.map((dimension) => (
+          <div key={`below-${dimension.dimension}`} className="flex items-center h-8">
+            <div className="w-1/2 flex justify-end pr-4">
               <div className="flex items-center">
-                <span className="text-xs font-medium text-gray-600 mr-2">
-                  {dimension.score.toFixed(1)}
+                <span className="text-sm font-medium text-gray-700 ml-3">
+                  {dimension.title}
                 </span>
                 <div
-                  className="h-6 rounded-r-md flex items-center justify-start pl-2"
+                  className="h-6 rounded-r-md"
                   style={{
                     width: `${getBarWidth(dimension.score)}%`,
+                    maxWidth: '150px',
                     backgroundColor: getParameterColor(dimension.dimension),
                     opacity: 0.8
                   }}
-                >
-                  <span className="text-xs font-medium text-white truncate">
-                    {dimension.title}
-                  </span>
-                </div>
+                />
               </div>
             </div>
             
             {/* Center line space */}
             <div className="w-0 flex justify-center">
-              <div className="w-px h-6 bg-gray-400"></div>
+              <div className="w-px h-8 bg-gray-600"></div>
             </div>
             
             <div className="w-1/2"></div>
           </div>
         ))}
 
-        {/* At median parameters */}
-        {atMedian.map((dimension) => (
-          <div key={`at-${dimension.dimension}`} className="flex items-center">
-            <div className="w-1/2 flex justify-end pr-2">
-              <span className="text-xs font-medium text-gray-600">
+        {/* At mean parameters */}
+        {atMean.map((dimension) => (
+          <div key={`at-${dimension.dimension}`} className="flex items-center h-8">
+            <div className="w-1/2 flex justify-end pr-4">
+              <span className="text-sm font-medium text-gray-700">
                 {dimension.title}
               </span>
             </div>
             
-            {/* Center line with score */}
+            {/* Center line */}
             <div className="flex justify-center items-center">
-              <div className="w-px h-6 bg-gray-400"></div>
-              <span className="text-xs font-semibold text-gray-800 mx-1">
-                {dimension.score.toFixed(1)}
-              </span>
+              <div className="w-px h-8 bg-gray-600"></div>
             </div>
             
             <div className="w-1/2"></div>
           </div>
         ))}
 
-        {/* Above median parameters */}
-        {aboveMedian.map((dimension) => (
-          <div key={`above-${dimension.dimension}`} className="flex items-center">
+        {/* Above mean parameters */}
+        {aboveMean.map((dimension) => (
+          <div key={`above-${dimension.dimension}`} className="flex items-center h-8">
             <div className="w-1/2"></div>
             
             {/* Center line space */}
             <div className="w-0 flex justify-center">
-              <div className="w-px h-6 bg-gray-400"></div>
+              <div className="w-px h-8 bg-gray-600"></div>
             </div>
             
-            <div className="w-1/2 flex justify-start pl-2">
+            <div className="w-1/2 flex justify-start pl-4">
               <div className="flex items-center">
                 <div
-                  className="h-6 rounded-l-md flex items-center justify-end pr-2"
+                  className="h-6 rounded-l-md"
                   style={{
                     width: `${getBarWidth(dimension.score)}%`,
+                    maxWidth: '150px',
                     backgroundColor: getParameterColor(dimension.dimension),
                     opacity: 0.8
                   }}
-                >
-                  <span className="text-xs font-medium text-white truncate">
-                    {dimension.title}
-                  </span>
-                </div>
-                <span className="text-xs font-medium text-gray-600 ml-2">
-                  {dimension.score.toFixed(1)}
+                />
+                <span className="text-sm font-medium text-gray-700 mr-3">
+                  {dimension.title}
                 </span>
               </div>
             </div>
           </div>
         ))}
 
-        {/* Median line label */}
-        <div className="flex items-center mt-4 pt-2 border-t border-gray-200">
-          <div className="w-1/2 flex justify-end pr-2">
-            <span className="text-sm text-gray-600">מתחת לחציון</span>
+        {/* Mean line label */}
+        <div className="flex items-center mt-6 pt-4 border-t border-gray-300">
+          <div className="w-1/2 flex justify-end pr-4">
+            <span className="text-sm text-gray-600">מתחת לממוצע</span>
           </div>
           
           <div className="flex flex-col items-center">
-            <div className="w-px h-8 bg-gray-600"></div>
-            <span className="text-sm font-bold text-gray-800 mt-1">
-              חציון: {medianScore.toFixed(1)}
+            <div className="w-px h-12 bg-gray-800"></div>
+            <span className="text-lg font-bold text-gray-800 mt-2">
+              ממוצע: {meanScore.toFixed(2)}
             </span>
           </div>
           
-          <div className="w-1/2 flex justify-start pl-2">
-            <span className="text-sm text-gray-600">מעל החציון</span>
+          <div className="w-1/2 flex justify-start pl-4">
+            <span className="text-sm text-gray-600">מעל הממוצע</span>
           </div>
         </div>
       </div>
