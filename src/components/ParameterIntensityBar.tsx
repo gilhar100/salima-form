@@ -16,52 +16,55 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
   // Get the base color for this parameter
   const baseColors = dimensionColors[parameterKey as keyof typeof dimensionColors];
   
-  // Calculate opacity based on score (1-5 scale) for intensity effect
-  const intensity = Math.min(Math.max(score / 5, 0.2), 1);
+  // Calculate height percentage based on score (1-5 scale)
+  const heightPercentage = (score / 5) * 100;
   
   return (
-    <div className="space-y-3 p-4 bg-white rounded-lg border">
-      <h4 className="text-lg font-semibold text-gray-800 text-center">
-        {parameterName}
-      </h4>
-      
-      {/* Score circle */}
-      <div className="flex justify-center">
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg"
-          style={{ backgroundColor: baseColors.primary }}
-        >
-          {score.toFixed(2)}
+    <div className="flex flex-col items-center space-y-2 p-4 bg-white rounded-lg border">
+      {/* Y-axis scale */}
+      <div className="relative w-16 h-40 flex flex-col justify-end">
+        {/* Scale lines and numbers */}
+        <div className="absolute left-0 top-0 w-full h-full">
+          {[5, 4, 3, 2, 1, 0].map((value) => (
+            <div
+              key={value}
+              className="absolute left-0 w-full flex items-center"
+              style={{ bottom: `${(value / 5) * 100}%` }}
+            >
+              <span className="text-xs text-gray-600 w-6 text-right mr-2">
+                {value}
+              </span>
+              <div className="w-1 h-px bg-gray-300"></div>
+            </div>
+          ))}
+        </div>
+        
+        {/* The bar */}
+        <div className="ml-8 w-12 bg-gray-100 relative">
+          <div
+            className="w-full rounded-t transition-all duration-300"
+            style={{
+              height: `${heightPercentage}%`,
+              backgroundColor: baseColors.primary,
+              minHeight: '4px'
+            }}
+          />
         </div>
       </div>
       
-      {/* Color intensity bar with gradient */}
-      <div className="space-y-2">
-        <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
-          {/* Gradient bar from dark on left to bright on right */}
-          <div 
-            className="h-full w-full rounded-full"
-            style={{ 
-              background: `linear-gradient(to right, ${baseColors.primary}20, ${baseColors.primary}FF)`
-            }}
-          />
-          
-          {/* Score indicator line */}
-          <div 
-            className="absolute top-0 h-full w-0.5 bg-gray-800"
-            style={{ 
-              left: `${(score / 5) * 100}%`,
-              transform: 'translateX(-50%)'
-            }}
-          />
+      {/* Parameter label */}
+      <div className="text-center">
+        <div className="text-lg font-bold text-gray-800">
+          {parameterKey}
         </div>
-        
-        {/* Scale labels */}
-        <div className="flex justify-between text-xs text-gray-600">
-          <span>1.0</span>
-          <span>2.5</span>
-          <span>5.0</span>
+        <div className="text-xs text-gray-600 max-w-16 leading-tight">
+          {parameterName}
         </div>
+      </div>
+      
+      {/* Score display */}
+      <div className="text-sm font-semibold text-gray-700">
+        {score.toFixed(2)}
       </div>
     </div>
   );
