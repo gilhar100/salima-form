@@ -8,9 +8,8 @@ interface MedianComparisonChartProps {
 }
 
 const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result }) => {
-  // Calculate mean score across all dimensions
-  const scores = Object.values(result.dimensions).map(d => d.score);
-  const meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  // Use the SLQ score as the median reference point
+  const medianScore = result.slq;
 
   // Get all dimensions with their Hebrew names
   const dimensionNames = {
@@ -24,13 +23,16 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
 
   const dimensions = Object.values(result.dimensions);
 
+  // Sort dimensions by score relative to median
+  const sortedDimensions = [...dimensions].sort((a, b) => a.score - b.score);
+
   function getParameterColor(dimension: string) {
     const colors = dimensionColors[dimension as keyof typeof dimensionColors];
     return colors?.primary || '#4F46E5';
   }
 
   // Calculate the maximum height for scaling
-  const maxScore = Math.max(...scores, 5);
+  const maxScore = Math.max(...dimensions.map(d => d.score), 5);
   const chartHeight = 300;
 
   return (
@@ -52,23 +54,22 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
 
         {/* Chart area */}
         <div className="ml-8 relative" style={{ height: chartHeight }}>
-          {/* Mean line */}
+          {/* Median line */}
           <div 
             className="absolute w-full border-t-2 border-orange-400 border-dashed"
             style={{ 
-              bottom: `${(meanScore / maxScore) * chartHeight}px`,
+              bottom: `${(medianScore / maxScore) * chartHeight}px`,
             }}
           >
             <span className="absolute right-0 -top-6 text-sm font-medium text-orange-600">
-              ממוצע: {meanScore.toFixed(2)}
+              ממוצע: {medianScore.toFixed(2)}
             </span>
           </div>
 
           {/* Bars container */}
           <div className="flex items-end justify-between h-full gap-2">
-            {dimensions.map((dimension, index) => {
+            {sortedDimensions.map((dimension, index) => {
               const barHeight = (dimension.score / maxScore) * chartHeight;
-              const isAboveMean = dimension.score > meanScore;
               const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
               
               return (
@@ -111,7 +112,7 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
           </div>
         </div>
 
-        {/* Below/Above mean indicators */}
+        {/* Below/Above median indicators */}
         <div className="flex justify-between text-sm text-gray-600 mt-4">
           <span>מתחת לממוצע</span>
           <span>מעל הממוצע</span>
