@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -7,31 +8,28 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Award } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
-import ParameterBars from "@/components/ParameterBars";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
+import MedianComparisonChart from "@/components/MedianComparisonChart";
 
 const Results = () => {
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [answers, setAnswers] = useState<{
-    questionId: number;
-    value: number;
-  }[]>([]);
+  const [answers, setAnswers] = useState<{ questionId: number; value: number; }[]>([]);
+
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
+    
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
 
-      // טעינת התשובות לניתוח מפורט
       if (savedAnswers) {
         const parsedAnswers = JSON.parse(savedAnswers);
         setAnswers(parsedAnswers);
       }
+      
       toast({
         title: "תוצאות השאלון",
         description: "הנתונים כבר נשמרו במערכת בהצלחה"
@@ -45,19 +43,22 @@ const Results = () => {
       navigate('/');
     }
   }, [navigate, toast]);
+
   if (!results) {
-    return <div className="flex justify-center items-center min-h-screen">
+    return (
+      <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
-      </div>;
+      </div>
+    );
   }
 
-  // Check if there's any percentile calculation or display in the results
-  // Based on the code structure, the main results appear to be handled by other components
-  // The bell curve visualization is now integrated into the Statistics page
+  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => 
+    prev.score > current.score ? prev : current
+  );
+  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => 
+    prev.score < current.score ? prev : current
+  );
 
-  // חישוב סטטיסטיקות נוספות ללא חשיפת ציונים מספריים
-  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score > current.score ? prev : current);
-  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score < current.score ? prev : current);
   return (
     <div className="container py-6 max-w-6xl mx-auto px-4">
       <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
@@ -108,14 +109,12 @@ const Results = () => {
             </div>
           </div>
           
-          {/* גרף הרדאר עם ציון SLQ */}
+          {/* גרף הרדאר עם גרף השוואה לחציון */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <MedianComparisonChart result={results} />
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <ResultsRadar result={results} hideScores={true} />
             </div>
-            
-            {/* פרמטרים צבעוניים */}
-            
           </div>
           
           {/* כרטיסי פירוט */}
@@ -124,7 +123,13 @@ const Results = () => {
               ניתוח מפורט לכל ממד
             </h2>
             <div className="grid gap-6 lg:grid-cols-2">
-              {Object.values(results.dimensions).map(dimension => <ResultsDetailCard key={dimension.dimension} dimension={dimension} answers={answers} />)}
+              {Object.values(results.dimensions).map(dimension => (
+                <ResultsDetailCard 
+                  key={dimension.dimension} 
+                  dimension={dimension} 
+                  answers={answers} 
+                />
+              ))}
             </div>
           </div>
           

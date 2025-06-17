@@ -8,7 +8,7 @@ import {
   getPersonalizedAnalysis
 } from "@/lib/dimension-analysis";
 import DimensionHeader from "./DimensionHeader";
-import DimensionSpectrum from "./DimensionSpectrum";
+import ParameterSpectrum from "./ParameterSpectrum";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -64,7 +64,7 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
                 style={{ 
                   width: `${intensityPercentage}%`,
                   backgroundColor: intensityColor,
-                  opacity: 0.8 + (dimension.score / 5) * 0.2 // עוצמה דינמית
+                  opacity: 0.8 + (dimension.score / 5) * 0.2
                 }}
               />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -75,13 +75,15 @@ const ResultsDetailCard: React.FC<ResultsDetailCardProps> = ({ dimension, answer
             </div>
           </div>
 
-          <DimensionSpectrum
-            score={dimension.score}
-            baseColors={baseColors}
-            intensityColor={intensityColor}
-            levelDescription={levelInfo.description}
-            hideScore={true}
-          />
+          {/* Parameter spectrum with color gradient */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium text-gray-700">מיקום על הספקטרום</h4>
+            <ParameterSpectrum
+              score={dimension.score}
+              parameterName={dimension.title}
+              color={intensityColor}
+            />
+          </div>
           
           {/* פסקת ניתוח מקיפה */}
           {personalizedAnalysis && (
