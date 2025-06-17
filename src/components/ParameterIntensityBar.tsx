@@ -35,15 +35,14 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
         </div>
       </div>
       
-      {/* Color intensity bar */}
+      {/* Color intensity bar with gradient */}
       <div className="space-y-2">
         <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
-          {/* Full bar with parameter color and calculated intensity */}
+          {/* Gradient bar from dark on left to bright on right */}
           <div 
             className="h-full w-full rounded-full"
             style={{ 
-              backgroundColor: baseColors.primary,
-              opacity: intensity
+              background: `linear-gradient(to right, ${baseColors.primary}20, ${baseColors.primary}FF)`
             }}
           />
           
