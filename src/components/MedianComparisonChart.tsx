@@ -23,100 +23,127 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
 
   const dimensions = Object.values(result.dimensions);
 
-  // Sort dimensions by score relative to median
-  const sortedDimensions = [...dimensions].sort((a, b) => a.score - b.score);
-
   function getParameterColor(dimension: string) {
     const colors = dimensionColors[dimension as keyof typeof dimensionColors];
     return colors?.primary || '#4F46E5';
   }
 
-  // Calculate the maximum height for scaling
-  const maxScore = Math.max(...dimensions.map(d => d.score), 5);
-  const chartHeight = 300;
+  // Separate dimensions above and below median
+  const aboveMedian = dimensions
+    .filter(d => d.score > medianScore)
+    .sort((a, b) => a.score - b.score); // Ascending order (lowest to highest)
+
+  const belowMedian = dimensions
+    .filter(d => d.score < medianScore)
+    .sort((a, b) => b.score - a.score); // Descending order (highest to lowest)
+
+  const atMedian = dimensions.filter(d => d.score === medianScore);
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border">
-      <h3 className="text-xl font-bold mb-6 text-center text-gray-800">
+      <h3 className="text-xl font-bold mb-8 text-center text-gray-800">
         ממדי SALIMA ביחס לציון הממוצע האישי
       </h3>
       
-      <div className="relative" style={{ height: chartHeight + 80 }}>
-        {/* Y-axis scale */}
-        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-sm text-gray-600">
-          <span>5</span>
-          <span>4</span>
-          <span>3</span>
-          <span>2</span>
-          <span>1</span>
-          <span>0</span>
+      <div className="flex items-center justify-center min-h-[300px]">
+        {/* Left Side - Below Median */}
+        <div className="flex-1 flex flex-col items-end pr-8 space-y-4">
+          <div className="text-sm font-medium text-gray-500 mb-2">מתחת לממוצע</div>
+          {belowMedian.map((dimension, index) => {
+            const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
+            const distance = Math.abs(dimension.score - medianScore);
+            const marginRight = Math.min(distance * 20, 60); // Visual spacing based on distance
+            
+            return (
+              <div 
+                key={dimension.dimension}
+                className="flex items-center gap-2"
+                style={{ marginRight: `${marginRight}px` }}
+              >
+                <span 
+                  className="font-medium text-lg"
+                  style={{ color: getParameterColor(dimension.dimension) }}
+                >
+                  {hebrewName}
+                </span>
+                <div 
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: getParameterColor(dimension.dimension) }}
+                />
+              </div>
+            );
+          })}
         </div>
 
-        {/* Chart area */}
-        <div className="ml-8 relative" style={{ height: chartHeight }}>
-          {/* Median line */}
-          <div 
-            className="absolute w-full border-t-2 border-orange-400 border-dashed"
-            style={{ 
-              bottom: `${(medianScore / maxScore) * chartHeight}px`,
-            }}
-          >
-            <span className="absolute right-0 -top-6 text-sm font-medium text-orange-600">
-              ממוצע: {medianScore.toFixed(2)}
+        {/* Center - Median Score */}
+        <div className="flex flex-col items-center px-6">
+          <div className="w-20 h-20 rounded-full bg-orange-400 flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-xl">
+              {medianScore.toFixed(2)}
             </span>
           </div>
-
-          {/* Bars container */}
-          <div className="flex items-end justify-between h-full gap-2">
-            {sortedDimensions.map((dimension, index) => {
-              const barHeight = (dimension.score / maxScore) * chartHeight;
-              const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
-              
-              return (
-                <div key={dimension.dimension} className="flex flex-col items-center flex-1">
-                  {/* Score value above bar */}
-                  <div className="text-sm font-medium text-gray-700 mb-1">
-                    {dimension.score.toFixed(2)}
+          <div className="text-sm font-medium text-orange-600 mt-2">
+            ממוצע אישי
+          </div>
+          
+          {/* Parameters exactly at median */}
+          {atMedian.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {atMedian.map((dimension) => {
+                const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
+                return (
+                  <div key={dimension.dimension} className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: getParameterColor(dimension.dimension) }}
+                    />
+                    <span 
+                      className="font-medium text-sm"
+                      style={{ color: getParameterColor(dimension.dimension) }}
+                    >
+                      {hebrewName}
+                    </span>
                   </div>
-                  
-                  {/* Bar */}
-                  <div 
-                    className="w-full rounded-t-md relative"
-                    style={{ 
-                      height: `${barHeight}px`,
-                      backgroundColor: getParameterColor(dimension.dimension),
-                      minWidth: '60px',
-                      maxWidth: '80px'
-                    }}
-                  />
-                  
-                  {/* Dimension label */}
-                  <div className="text-sm font-medium text-gray-800 mt-2 text-center">
-                    {hebrewName}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Legend */}
-        <div className="flex justify-center items-center gap-6 mt-6">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-orange-400"></div>
-            <span className="text-sm text-gray-600">ממוצע קולטות</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-500"></div>
-            <span className="text-sm text-gray-600">הערכה עצמית</span>
-          </div>
+        {/* Right Side - Above Median */}
+        <div className="flex-1 flex flex-col items-start pl-8 space-y-4">
+          <div className="text-sm font-medium text-gray-500 mb-2">מעל הממוצע</div>
+          {aboveMedian.map((dimension, index) => {
+            const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames] || dimension.title;
+            const distance = Math.abs(dimension.score - medianScore);
+            const marginLeft = Math.min(distance * 20, 60); // Visual spacing based on distance
+            
+            return (
+              <div 
+                key={dimension.dimension}
+                className="flex items-center gap-2"
+                style={{ marginLeft: `${marginLeft}px` }}
+              >
+                <div 
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: getParameterColor(dimension.dimension) }}
+                />
+                <span 
+                  className="font-medium text-lg"
+                  style={{ color: getParameterColor(dimension.dimension) }}
+                >
+                  {hebrewName}
+                </span>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Below/Above median indicators */}
-        <div className="flex justify-between text-sm text-gray-600 mt-4">
-          <span>מתחת לממוצע</span>
-          <span>מעל הממוצע</span>
-        </div>
+      {/* Bottom indicators */}
+      <div className="flex justify-between text-xs text-gray-500 mt-6 px-8">
+        <span>ציונים נמוכים יותר</span>
+        <span>ציונים גבוהים יותר</span>
       </div>
     </div>
   );
