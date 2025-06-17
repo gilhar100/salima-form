@@ -25,17 +25,7 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
         {parameterName}
       </h4>
       
-      {/* Score circle */}
-      <div className="flex justify-center">
-        <div 
-          className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg"
-          style={{ backgroundColor: baseColors.primary }}
-        >
-          {score.toFixed(2)}
-        </div>
-      </div>
-      
-      {/* Color intensity bar with gradient */}
+      {/* Color intensity bar with gradient - no score circle */}
       <div className="space-y-2">
         <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
           {/* Gradient bar from dark on left to bright on right */}
