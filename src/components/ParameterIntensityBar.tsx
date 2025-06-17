@@ -62,10 +62,6 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
           <span>2.5</span>
           <span>5.0</span>
         </div>
-        
-        <p className="text-center text-sm text-gray-600 mt-2">
-          ציון מדד בין קיצוני משמעויות לציפייה
-        </p>
       </div>
     </div>
   );
