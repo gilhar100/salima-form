@@ -182,8 +182,8 @@ export const generateDimensionAnalysis = (
     return "לא נמצאו תובנות מתאימות לממד זה.";
   }
 
-  // שילוב התובנות לפסקה מקיפה
-  return combineInsights(insights, dimension, userIdentifier);
+  // שילוב התובנות לפסקה מקיפה בסגנון טבעי
+  return combineInsightsNaturally(insights, dimension, userIdentifier);
 };
 
 // פונקציה לקבלת מידע על היפוך שאלה
@@ -193,8 +193,8 @@ const getQuestionReversed = (questionId: number): boolean => {
   return reversedQuestions.includes(questionId);
 };
 
-// פונקציה לשילוב תובנות לפסקה אחת
-const combineInsights = (insights: string[], dimension: string, userIdentifier?: string): string => {
+// פונקציה לשילוב תובנות לפסקה טבעית וזורמת
+const combineInsightsNaturally = (insights: string[], dimension: string, userIdentifier?: string): string => {
   if (insights.length === 1) {
     return insights[0];
   }
@@ -204,27 +204,104 @@ const combineInsights = (insights: string[], dimension: string, userIdentifier?:
     userIdentifier.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 
     Date.now();
 
-  // מיון התובנות לפי אורך (הקצרות קודם)
-  const sortedInsights = insights.sort((a, b) => a.length - b.length);
+  // זיהוי הטון הכללי של התובנות
+  const positiveCount = insights.filter(insight => isPositiveInsight(insight)).length;
+  const negativeCount = insights.filter(insight => isNegativeInsight(insight)).length;
   
-  // בחירת 2-3 תובנות מרכזיות
-  const selectedInsights = sortedInsights.slice(0, Math.min(3, sortedInsights.length));
-  
-  // שילוב עם מחברים טבעיים
-  const connectors = ["בנוסף, ", "כמו כן, ", "יחד עם זאת, ", ""];
-  
-  let combined = selectedInsights[0];
-  
-  if (selectedInsights.length > 1) {
-    const connector = connectors[seed % connectors.length];
-    combined += ` ${connector}${selectedInsights[1]}`;
-  }
-  
-  if (selectedInsights.length > 2) {
-    combined += ` מאידך, ${selectedInsights[2]}`;
-  }
+  let overallTone: 'positive' | 'balanced' | 'constructive' = 'balanced';
+  if (positiveCount > negativeCount * 1.5) overallTone = 'positive';
+  else if (negativeCount > positiveCount * 1.5) overallTone = 'constructive';
 
-  return combined;
+  // בחירת 2-3 תובנות מרכזיות לפי החשיבות
+  const selectedInsights = selectKeyInsights(insights, seed);
+  
+  // יצירת פסקה זורמת בהתאם לטון
+  return createFlowingParagraph(selectedInsights, overallTone, seed);
+};
+
+// פונקציה לזיהוי תובנות חיוביות
+const isPositiveInsight = (insight: string): boolean => {
+  const positiveKeywords = [
+    "ביטוי ל", "מחזק", "מעיד על", "תודעה", "דבר שמ", "גישה שמ", 
+    "יוזם", "מגלה", "פועל/ת מתוך", "מצליח", "יודע/ת", "אותנטי"
+  ];
+  return positiveKeywords.some(keyword => insight.includes(keyword));
+};
+
+// פונקציה לזיהוי תובנות שליליות/בונות
+const isNegativeInsight = (insight: string): boolean => {
+  const negativeKeywords = [
+    "ייתכן ש", "מה שעלול", "דבר שעלול", "מתקשה", "לא מזהה", 
+    "מגיב/ה באיחור", "נבלע/ת", "מאבד/ת", "עסוק/ה בעיקר"
+  ];
+  return negativeKeywords.some(keyword => insight.includes(keyword));
+};
+
+// פונקציה לבחירת תובנות מרכזיות
+const selectKeyInsights = (insights: string[], seed: number): string[] => {
+  // מיון לפי חשיבות ואורך
+  const sortedInsights = insights.sort((a, b) => {
+    const aImportance = getInsightImportance(a);
+    const bImportance = getInsightImportance(b);
+    if (aImportance !== bImportance) return bImportance - aImportance;
+    return a.length - b.length; // העדפה לתובנות קצרות יותר
+  });
+  
+  // בחירת 2-3 תובנות בהתאם לזרע
+  const maxInsights = Math.min(3, sortedInsights.length);
+  const numInsights = Math.max(2, Math.min(maxInsights, 2 + (seed % 2)));
+  
+  return sortedInsights.slice(0, numInsights);
+};
+
+// פונקציה לקביעת חשיבות תובנה
+const getInsightImportance = (insight: string): number => {
+  let importance = 1;
+  
+  // תובנות חזקות יותר
+  if (insight.includes("מנהיגות") || insight.includes("הובלה")) importance += 2;
+  if (insight.includes("חזון") || insight.includes("אסטרטגי")) importance += 2;
+  if (insight.includes("אמון") || insight.includes("שייכות")) importance += 1;
+  if (insight.includes("השראה") || insight.includes("מוטיבציה")) importance += 1;
+  
+  return importance;
+};
+
+// פונקציה ליצירת פסקה זורמת
+const createFlowingParagraph = (insights: string[], tone: 'positive' | 'balanced' | 'constructive', seed: number): string => {
+  if (insights.length === 1) return insights[0];
+  
+  // מחברים טבעיים לפי טון
+  const connectors = getConnectorsByTone(tone, seed);
+  
+  let paragraph = insights[0];
+  
+  for (let i = 1; i < insights.length; i++) {
+    const connector = connectors[(i - 1) % connectors.length];
+    paragraph += ` ${connector}${insights[i]}`;
+  }
+  
+  return paragraph;
+};
+
+// פונקציה לקבלת מחברים לפי טון
+const getConnectorsByTone = (tone: 'positive' | 'balanced' | 'constructive', seed: number): string[] => {
+  const connectorSets = {
+    positive: ["יתרה מכך, ", "בנוסף, ", "כמו כן, "],
+    balanced: ["עם זאת, ", "יחד עם זאת, ", "מאידך, "],
+    constructive: ["כמו כן, ", "בנוסף, ", "חשוב לציין כי "]
+  };
+  
+  const baseConnectors = connectorSets[tone];
+  
+  // ערבוב לפי הזרע
+  const shuffled = [...baseConnectors];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = (seed + i) % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  
+  return shuffled;
 };
 
 // ייצוא הפונקציה הראשית
