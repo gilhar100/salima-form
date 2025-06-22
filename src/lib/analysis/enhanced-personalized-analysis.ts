@@ -131,44 +131,7 @@ const questionInsights: QuestionInsight[] = [
     high_text: "את/ה חי/ה בתודעה שמזהה שינוי כהזדמנות, ומתקדם/ת תוך כדי למידה והתנסות.",
     low_text: "ייתכן שאת/ה רואה בשינוי איום – גישה שמובילה לרתיעה וסטגנציה."
   },
-  // ממשיך עם יתר השאלות...
-  {
-    id: 90,
-    dimension: "A2",
-    high_text: "את/ה פתוח/ה לרגשות, יודע/ת להכיל ולהיות שם בשביל אחרים – מנהיגות נוכחת.",
-    low_text: "ייתכן שאת/ה מתמקד/ת רק בעובדות – מה שמקשה על חיבור רגשי ואותנטי."
-  },
-  {
-    id: 54,
-    dimension: "I",
-    high_text: "את/ה מאמין/ה ביכולת של כל אדם להשפיע – גישה שמעוררת השראה ומחזקת את הסובבים.",
-    low_text: "ייתכן שאת/ה שומר/ת את זכות ההובלה לעצמך – דבר שמקטין את תחושת השותפות בצוות."
-  },
-  {
-    id: 85,
-    dimension: "A2",
-    high_text: "את/ה יודע/ת לתת מילה טובה כשצריך – דבר שמחזק מוטיבציה ושייכות.",
-    low_text: "ייתכן שאת/ה ממעט/ת לבטא הכרה – מה שעלול להשאיר מאמץ ללא תגמול רגשי."
-  },
-  {
-    id: 58,
-    dimension: "I",
-    high_text: "את/ה יוצר/ת שיח מעורר השראה – מה שמעודד רגש, משמעות ופעולה.",
-    low_text: "ייתכן שהשפה שלך עניינית בלבד – דבר שעלול לדכא השראה או חזון."
-  },
-  {
-    id: 87,
-    dimension: "A2",
-    high_text: "את/ה נסגר/ת או מתרחק/ת בעת מתח – מה שעלול להשאיר אחרים לבד.",
-    low_text: "את/ה נשאר/ת נוכח/ת גם כשקשה – ביטוי לאחריות רגשית ובשלות."
-  },
-  {
-    id: 1,
-    dimension: "S",
-    high_text: "את/ה בוחן/ת הנחות פעולה מתוך ערנות להזדמנויות ושינויים. גישה זו מעידה על חיים בצומת תודעתי ועל מיקוד באפקטיביות ניהולית.",
-    low_text: "ייתכן שאת/ה נצמד/ת להנחות עבר גם כשהסביבה משתנה, מה שמקשה על זיהוי הזדמנויות או ניהול אפקטיבי."
-  }
-  // ניתן להמשיך עם יתר השאלות...
+  // Add more insights here as needed...
 ];
 
 // יצירת מיפוי מהיר לתובנות
@@ -204,7 +167,9 @@ export const generateDimensionAnalysis = (
       const isReversed = getQuestionReversed(answer.questionId);
       const effectiveValue = isReversed ? (6 - answer.value) : answer.value;
       
-      // בחירת התובנה המתאימה
+      // בחירת התובנה המתאימה לפי הכלל החדש:
+      // אם הציון הסופי מעל 3 → high_text
+      // אם הציון הסופי 3 או פחות → low_text
       const selectedInsight = effectiveValue > 3 ? insight.high_text : insight.low_text;
       
       if (selectedInsight && selectedInsight !== "nan") {
@@ -270,4 +235,3 @@ export const getEnhancedPersonalizedAnalysis = (
 ): string => {
   return generateDimensionAnalysis(dimension, answers, userIdentifier);
 };
-
