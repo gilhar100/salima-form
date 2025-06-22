@@ -7,7 +7,7 @@ import {
 } from "./scoring-logic";
 import { combineInsightsNaturally } from "./paragraph-composition";
 
-// פונקציה ליצירת ניתוח מקיף לכל ממד
+// פונקציה ליצירת ניתוח מקיף וייחודי לכל ממד
 export const generateDimensionAnalysis = (
   dimension: string,
   answers: Answer[],
@@ -21,12 +21,13 @@ export const generateDimensionAnalysis = (
     return "לא נמצאו תשובות רלוונטיות לממד זה.";
   }
 
-  // יצירת תובנות בהתבסס על הציונים
+  // יצירת תובנות בהתבסס על הציונים הפרטניים של כל שאלה
   const insights: string[] = [];
   
   relevantAnswers.forEach(answer => {
+    // קבלת התובנה המתאימה לפי הכלל: מעל 3 = high_text, 3 ומטה = low_text
     const insightText = getInsightText(answer.questionId, answer.value);
-    if (insightText) {
+    if (insightText && insightText.trim() && insightText !== "nan") {
       insights.push(insightText);
     }
   });
@@ -35,8 +36,15 @@ export const generateDimensionAnalysis = (
     return "לא נמצאו תובנות מתאימות לממד זה.";
   }
 
-  // שילוב התובנות לפסקה מקיפה בסגנון טבעי
-  return combineInsightsNaturally(insights, dimension, userIdentifier);
+  // יצירת פסקה ייחודית ומותאמת אישית
+  const personalizedParagraph = combineInsightsNaturally(insights, dimension, userIdentifier);
+  
+  // וידוא שהפסקה אינה ריקה או קצרה מדי
+  if (!personalizedParagraph || personalizedParagraph.trim().length < 15) {
+    return insights[0]; // החזרת התובנה הראשונה כגיבוי
+  }
+  
+  return personalizedParagraph;
 };
 
 // ייצוא הפונקציה הראשית
