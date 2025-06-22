@@ -1,144 +1,11 @@
 
 import { Answer } from "@/lib/types";
-
-// מחולל ניתוח מותאם אישית על בסיס השאלות החדשות
-interface QuestionInsight {
-  id: number;
-  dimension: string;
-  high_text: string;
-  low_text: string;
-}
-
-// מיפוי תובנות השאלות החדשות
-const questionInsights: QuestionInsight[] = [
-  {
-    id: 82,
-    dimension: "L",
-    high_text: "את/ה שומר/ת הכל בפנים ולא מבקש/ת עזרה – מה שעלול להחליש אותך ולבודד אותך.",
-    low_text: "את/ה יודע/ת להיעזר כשצריך – ביטוי לאותנטיות ובשלות."
-  },
-  {
-    id: 15,
-    dimension: "S",
-    high_text: "את/ה יוזם/ת אפשרויות חדשות ומחפש/ת אזורי צמיחה בלתי ממומשים – ביטוי לאומץ והובלה.",
-    low_text: "ייתכן שאת/ה נצמד/ת למסלולים קיימים ולא מזהה הזדמנויות רעננות למימוש חזון."
-  },
-  {
-    id: 4,
-    dimension: "S",
-    high_text: "את/ה יוזם/ת רפורמות מתוך חזון דינמי והבנה של ההקשר המשתנה – ביטוי לאפקטיביות בהובלה.",
-    low_text: "ייתכן שאת/ה מגיב/ה באיחור לשינויים, ומתקשה לתרגם חזון לשינוי בפועל."
-  },
-  {
-    id: 36,
-    dimension: "L",
-    high_text: "את/ה מגלה סקרנות אמיתית ולומד/ת בהתלהבות – ביטוי ללהבה פנימית של התפתחות.",
-    low_text: "ייתכן שאת/ה לומד/ת רק מתוך הכרח, ולא ממקום של עניין פנימי – מה שעלול להגביל עומק ואותנטיות בלמידה."
-  },
-  {
-    id: 32,
-    dimension: "L",
-    high_text: "את/ה רואה ערך בכל אדם ופתוח/ה ללמוד ממנו – ביטוי עמוק לתודעת \"התלמיד הנצחי\".",
-    low_text: "ייתכן שאת/ה מתקשה להכיר בערך של שונות ובלמידה מתוך גיוון – דבר שעלול לצמצם את ההתפתחות האישית."
-  },
-  {
-    id: 29,
-    dimension: "A",
-    high_text: "את/ה מתמקד/ת בפתרונות קיימים ומתקדם/ת דרך פעולה מציאותית.",
-    low_text: "ייתכן שאת/ה עסוק/ה בעיקר במה שאין, ולא בונה על מה שיש."
-  },
-  {
-    id: 18,
-    dimension: "A",
-    high_text: "את/ה מצליח/ה להתבונן מבחוץ גם ברגעי קושי – גישה רגשית מאוזנת שמאפשרת קבלת החלטות שקולה.",
-    low_text: "ייתכן שאת/ה נבלע/ת באירועים ופחות מצליח/ה לראות את התמונה הרחבה."
-  },
-  {
-    id: 14,
-    dimension: "S",
-    high_text: "את/ה שומר/ת על מיקוד גם בזמנים סוערים, מתוך תודעה חזונית בהירה.",
-    low_text: "ייתכן שאת/ה מאבד/ת כיוון בעת משבר ופועל/ת תגובתית."
-  },
-  {
-    id: 70,
-    dimension: "M",
-    high_text: "את/ה מקשר/ת בין פרקטיקות לבין ערכים – מנהיגות שפועלת מתוך עומק.",
-    low_text: "ייתכן שתהליכים מתקיימים מנותקים מערכים – דבר שעלול לגרום לתחושת ניכור ארגוני."
-  },
-  {
-    id: 12,
-    dimension: "S",
-    high_text: "את/ה קושר/ת כל פעולה לתמונה רחבה יותר, פועל/ת מתוך תודעה של מיפוי, ראייה ארוכת טווח ויוזמה.",
-    low_text: "ייתכן שאת/ה מתמקד/ת במשימות בודדות ללא חיבור להקשר האסטרטגי הכולל."
-  },
-  {
-    id: 76,
-    dimension: "A2",
-    high_text: "את/ה יוצר/ת קשרים אישיים ואותנטיים – מחזק/ת אמון ושייכות.",
-    low_text: "ייתכן שאת/ה שומר/ת על מרחק מקצועי בלבד – מה שעלול לפגוע באמון הדדי."
-  },
-  {
-    id: 55,
-    dimension: "I",
-    high_text: "את/ה מדגיש/ה הישגים קטנים – דבר שמעודד תחושת מסוגלות ומחזק השראה מתמשכת.",
-    low_text: "ייתכן שאת/ה מתמקד/ת רק בתוצאה הסופית – מה שעלול לגרום לתחושת שחיקה."
-  },
-  {
-    id: 5,
-    dimension: "S",
-    high_text: "את/ה מבטיח/ה שכל עשייה מקושרת לתמונה הגדולה – דבר שמעיד על בהירות וחיבור לחזון.",
-    low_text: "ייתכן שאת/ה פועל/ת מתוך שיקולי יעילות בלבד, ולא מקשר/ת את העשייה לתכלית ארגונית רחבה."
-  },
-  {
-    id: 88,
-    dimension: "A2",
-    high_text: "את/ה יוצר/ת מרחב פתוח דרך הקשבה אמפתית – מה שמחזק שייכות.",
-    low_text: "ייתכן שאת/ה שומע/ת אבל לא באמת מקשיב/ה – מה שפוגע בתחושת החיבור."
-  },
-  {
-    id: 81,
-    dimension: "A2",
-    high_text: "את/ה מודה בטעות ולוקח/ת אחריות – גישה שמעוררת אמון ודוגמה אישית.",
-    low_text: "ייתכן שאת/ה נוטה להשליך אחריות – מה שמחליש אמינות ופתיחות."
-  },
-  {
-    id: 28,
-    dimension: "A",
-    high_text: "את/ה משדר/ת נחישות גם במצבים לא ברורים – מה שמייצר יציבות לצוות.",
-    low_text: "ייתכן שאת/ה מושפע/ת מאוד מהכאוס סביבך, ומתקשה לייצר תחושת ביטחון."
-  },
-  {
-    id: 30,
-    dimension: "A",
-    high_text: "את/ה נצמד/ת לתחום אחריותך בלבד – גישה שמגבילה הסתגלות והשפעה",
-    low_text: "את/ה מוכן/ה לפעול מעבר להגדרה הפורמלית של תפקידך – מתוך אחריות מערכתית."
-  },
-  {
-    id: 65,
-    dimension: "M",
-    high_text: "את/ה יוזם/ת שיח ערכי בעבודה – גישה שמקדמת עומק, חיבור אישי ומחויבות.",
-    low_text: "ייתכן שאת/ה מתמקד/ת בהיבטים טכניים בלבד – מה שמקשה על גיוס רגשי אמיתי."
-  },
-  {
-    id: 77,
-    dimension: "A2",
-    high_text: "את/ה רואה את האדם שמולך ולא רק את המערכת – גישה שמחזקת נאמנות ותחושת שייכות.",
-    low_text: "ייתכן שאת/ה מתמקד/ת בעיקר בדרישות הארגוניות – מה שעלול לגרום לתחושת ניכור."
-  },
-  {
-    id: 26,
-    dimension: "A",
-    high_text: "את/ה חי/ה בתודעה שמזהה שינוי כהזדמנות, ומתקדם/ת תוך כדי למידה והתנסות.",
-    low_text: "ייתכן שאת/ה רואה בשינוי איום – גישה שמובילה לרתיעה וסטגנציה."
-  },
-  // Add more insights here as needed...
-];
-
-// יצירת מיפוי מהיר לתובנות
-const insightMap = new Map<number, QuestionInsight>();
-questionInsights.forEach(insight => {
-  insightMap.set(insight.id, insight);
-});
+import { 
+  filterAnswersForDimension, 
+  getInsightText, 
+  calculateDimensionStats 
+} from "./scoring-logic";
+import { combineInsightsNaturally } from "./paragraph-composition";
 
 // פונקציה ליצירת ניתוח מקיף לכל ממד
 export const generateDimensionAnalysis = (
@@ -148,10 +15,7 @@ export const generateDimensionAnalysis = (
 ): string => {
   
   // סינון התשובות הרלוונטיות לממד
-  const relevantAnswers = answers.filter(answer => {
-    const insight = insightMap.get(answer.questionId);
-    return insight && insight.dimension === dimension;
-  });
+  const relevantAnswers = filterAnswersForDimension(dimension, answers);
 
   if (relevantAnswers.length === 0) {
     return "לא נמצאו תשובות רלוונטיות לממד זה.";
@@ -161,20 +25,9 @@ export const generateDimensionAnalysis = (
   const insights: string[] = [];
   
   relevantAnswers.forEach(answer => {
-    const insight = insightMap.get(answer.questionId);
-    if (insight) {
-      // הפיכת ערך אם השאלה הפוכה
-      const isReversed = getQuestionReversed(answer.questionId);
-      const effectiveValue = isReversed ? (6 - answer.value) : answer.value;
-      
-      // בחירת התובנה המתאימה לפי הכלל החדש:
-      // אם הציון הסופי מעל 3 → high_text
-      // אם הציון הסופי 3 או פחות → low_text
-      const selectedInsight = effectiveValue > 3 ? insight.high_text : insight.low_text;
-      
-      if (selectedInsight && selectedInsight !== "nan") {
-        insights.push(selectedInsight);
-      }
+    const insightText = getInsightText(answer.questionId, answer.value);
+    if (insightText) {
+      insights.push(insightText);
     }
   });
 
@@ -184,124 +37,6 @@ export const generateDimensionAnalysis = (
 
   // שילוב התובנות לפסקה מקיפה בסגנון טבעי
   return combineInsightsNaturally(insights, dimension, userIdentifier);
-};
-
-// פונקציה לקבלת מידע על היפוך שאלה
-const getQuestionReversed = (questionId: number): boolean => {
-  // מיפוי ידני של השאלות ההפוכות
-  const reversedQuestions = [82, 30, 87, 21, 23, 51, 3, 35, 53, 19, 37, 78, 31, 38, 9, 34, 80, 50, 46, 27, 16];
-  return reversedQuestions.includes(questionId);
-};
-
-// פונקציה לשילוב תובנות לפסקה טבעית וזורמת
-const combineInsightsNaturally = (insights: string[], dimension: string, userIdentifier?: string): string => {
-  if (insights.length === 1) {
-    return insights[0];
-  }
-
-  // יצירת זרע לוריאציה
-  const seed = userIdentifier ? 
-    userIdentifier.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 
-    Date.now();
-
-  // זיהוי הטון הכללי של התובנות
-  const positiveCount = insights.filter(insight => isPositiveInsight(insight)).length;
-  const negativeCount = insights.filter(insight => isNegativeInsight(insight)).length;
-  
-  let overallTone: 'positive' | 'balanced' | 'constructive' = 'balanced';
-  if (positiveCount > negativeCount * 1.5) overallTone = 'positive';
-  else if (negativeCount > positiveCount * 1.5) overallTone = 'constructive';
-
-  // בחירת 2-3 תובנות מרכזיות לפי החשיבות
-  const selectedInsights = selectKeyInsights(insights, seed);
-  
-  // יצירת פסקה זורמת בהתאם לטון
-  return createFlowingParagraph(selectedInsights, overallTone, seed);
-};
-
-// פונקציה לזיהוי תובנות חיוביות
-const isPositiveInsight = (insight: string): boolean => {
-  const positiveKeywords = [
-    "ביטוי ל", "מחזק", "מעיד על", "תודעה", "דבר שמ", "גישה שמ", 
-    "יוזם", "מגלה", "פועל/ת מתוך", "מצליח", "יודע/ת", "אותנטי"
-  ];
-  return positiveKeywords.some(keyword => insight.includes(keyword));
-};
-
-// פונקציה לזיהוי תובנות שליליות/בונות
-const isNegativeInsight = (insight: string): boolean => {
-  const negativeKeywords = [
-    "ייתכן ש", "מה שעלול", "דבר שעלול", "מתקשה", "לא מזהה", 
-    "מגיב/ה באיחור", "נבלע/ת", "מאבד/ת", "עסוק/ה בעיקר"
-  ];
-  return negativeKeywords.some(keyword => insight.includes(keyword));
-};
-
-// פונקציה לבחירת תובנות מרכזיות
-const selectKeyInsights = (insights: string[], seed: number): string[] => {
-  // מיון לפי חשיבות ואורך
-  const sortedInsights = insights.sort((a, b) => {
-    const aImportance = getInsightImportance(a);
-    const bImportance = getInsightImportance(b);
-    if (aImportance !== bImportance) return bImportance - aImportance;
-    return a.length - b.length; // העדפה לתובנות קצרות יותר
-  });
-  
-  // בחירת 2-3 תובנות בהתאם לזרע
-  const maxInsights = Math.min(3, sortedInsights.length);
-  const numInsights = Math.max(2, Math.min(maxInsights, 2 + (seed % 2)));
-  
-  return sortedInsights.slice(0, numInsights);
-};
-
-// פונקציה לקביעת חשיבות תובנה
-const getInsightImportance = (insight: string): number => {
-  let importance = 1;
-  
-  // תובנות חזקות יותר
-  if (insight.includes("מנהיגות") || insight.includes("הובלה")) importance += 2;
-  if (insight.includes("חזון") || insight.includes("אסטרטגי")) importance += 2;
-  if (insight.includes("אמון") || insight.includes("שייכות")) importance += 1;
-  if (insight.includes("השראה") || insight.includes("מוטיבציה")) importance += 1;
-  
-  return importance;
-};
-
-// פונקציה ליצירת פסקה זורמת
-const createFlowingParagraph = (insights: string[], tone: 'positive' | 'balanced' | 'constructive', seed: number): string => {
-  if (insights.length === 1) return insights[0];
-  
-  // מחברים טבעיים לפי טון
-  const connectors = getConnectorsByTone(tone, seed);
-  
-  let paragraph = insights[0];
-  
-  for (let i = 1; i < insights.length; i++) {
-    const connector = connectors[(i - 1) % connectors.length];
-    paragraph += ` ${connector}${insights[i]}`;
-  }
-  
-  return paragraph;
-};
-
-// פונקציה לקבלת מחברים לפי טון
-const getConnectorsByTone = (tone: 'positive' | 'balanced' | 'constructive', seed: number): string[] => {
-  const connectorSets = {
-    positive: ["יתרה מכך, ", "בנוסף, ", "כמו כן, "],
-    balanced: ["עם זאת, ", "יחד עם זאת, ", "מאידך, "],
-    constructive: ["כמו כן, ", "בנוסף, ", "חשוב לציין כי "]
-  };
-  
-  const baseConnectors = connectorSets[tone];
-  
-  // ערבוב לפי הזרע
-  const shuffled = [...baseConnectors];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = (seed + i) % (i + 1);
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  
-  return shuffled;
 };
 
 // ייצוא הפונקציה הראשית
