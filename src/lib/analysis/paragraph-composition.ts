@@ -6,12 +6,12 @@ import { getInsightText, calculateEffectiveScore } from "./scoring-logic";
 export const classifyInsightTone = (insight: string): 'positive' | 'constructive' | 'neutral' => {
   const positiveIndicators = [
     "ביטוי ל", "מחזק", "מעיד על", "תודעה", "דבר שמ", "גישה שמ", 
-    "יוזם", "מגלה", "פועל/ת מתוך", "מצליח", "יודע/ת", "אותנטי", "מתוך חזון"
+    "יוזם", "מגלה", "פועל/ת מתוך", "מצליח", "יודע/ת", "אותנטי", "מתוך חזון", "כישור"
   ];
   
   const constructiveIndicators = [
     "ייתכן ש", "מה שעלול", "דבר שעלול", "מתקשה", "לא מזהה", 
-    "מגיב/ה באיחור", "נבלע/ת", "מאבד/ת", "עסוק/ה בעיקר", "מתעלם"
+    "מגיב/ה באיחור", "נבלע/ת", "מאבד/ת", "עסוק/ה בעיקר", "מתעלם", "רצוי", "כדאי"
   ];
   
   const hasPositive = positiveIndicators.some(indicator => insight.includes(indicator));
@@ -33,7 +33,7 @@ export const determineOverallTone = (insights: string[]): 'positive' | 'balanced
   return 'balanced';
 };
 
-// פונקציה משופרת לבחירת מחבר הגיוני
+// פונקציה מותאמת לבחירת מחבר הגיוני רק כשהוא באמת מתאים
 export const selectLogicalConnector = (
   previousInsight: string, 
   currentInsight: string,
@@ -42,65 +42,63 @@ export const selectLogicalConnector = (
   const prevTone = classifyInsightTone(previousInsight);
   const currTone = classifyInsightTone(currentInsight);
   
-  // אם יש ניגוד אמיתי בין הטונים
-  if ((prevTone === 'positive' && currTone === 'constructive') || 
-      (prevTone === 'constructive' && currTone === 'positive')) {
-    const contrastConnectors = ["יחד עם זאת", "לצד זאת", "אולם", "מצד שני"];
-    return contrastConnectors[position % contrastConnectors.length];
+  // רק אם יש ניגוד אמיתי וברור - השתמש במחבר ניגוד
+  if ((prevTone === 'positive' && currTone === 'constructive' && 
+       currentInsight.includes("רצוי")) || 
+      (prevTone === 'constructive' && currTone === 'positive' && 
+       previousInsight.includes("רצוי"))) {
+    return position % 2 === 0 ? "יחד עם זאת" : "לצד זאת";
   }
   
-  // אם התובנה השנייה מרחיבה או מחזקת את הראשונה
-  if (prevTone === currTone && currTone === 'positive') {
-    const additiveConnectors = ["בנוסף", "יתרה מכך", "כמו כן"];
-    return additiveConnectors[position % additiveConnectors.length];
+  // רק אם התובנה השנייה באמת מחזקת או מרחיבה את הראשונה
+  if (prevTone === 'positive' && currTone === 'positive' && 
+      (currentInsight.includes("יתרה מכך") || currentInsight.includes("בנוסף") ||
+       currentInsight.includes("מחזק") || currentInsight.includes("מעיד"))) {
+    return position % 3 === 0 ? "בנוסף" : "";
   }
   
-  // אם התובנה השנייה מפרטת או מדגימה
-  if (currentInsight.includes("ביטוי") || currentInsight.includes("מתבטא")) {
-    const elaborativeConnectors = ["דבר זה בא לידי ביטוי בכך ש", "למשל", "הדבר ניכר ב"];
-    return elaborativeConnectors[position % elaborativeConnectors.length];
+  // רק אם זה באמת דוגמה או פירוט ברור של הקודם
+  if (currentInsight.includes("ביטוי לכך") || 
+      (previousInsight.includes("מתאפיין") && currentInsight.includes("מתבטא"))) {
+    return "הדבר בא לידי ביטוי";
   }
   
-  // במקרים אחרים - העדף חיבור טבעי ללא מחבר מפורש
+  // ברוב המקרים - ללא מחבר מאולץ, תן לטקסט לזרום טבעית
   return "";
 };
 
-// פונקציה ליצירת וריאציות בניסוח
+// פונקציה לווריאציות טבעיות בניסוח
 export const varyPhrasing = (insight: string, position: number): string => {
-  const variations = [
-    "ייתכן שאת/ה",
-    "נראה כי את/ה", 
-    "לעיתים את/ה",
-    "יש סימנים לכך שאת/ה",
-    "נטייתך היא ל",
-    "דומה שאת/ה"
+  const naturalVariations = [
+    { from: "ייתכן שאת/ה", to: "נראה כי את/ה" },
+    { from: "ייתכן שאת/ה", to: "לעיתים את/ה" },
+    { from: "ייתכן שאת/ה", to: "יש סימנים לכך שאת/ה" },
+    { from: "ייתכן שאת/ה", to: "נטייתך היא ל" },
+    { from: "ייתכן שאת/ה", to: "דומה שאת/ה" }
   ];
   
   let result = insight;
   
-  // החלפת הביטוי החוזר
+  // החלפה טבעית רק אם יש חזרה
   if (result.startsWith("ייתכן שאת/ה") && position > 0) {
-    const newPhrase = variations[position % variations.length];
-    result = result.replace("ייתכן שאת/ה", newPhrase);
+    const variation = naturalVariations[position % naturalVariations.length];
+    result = result.replace(variation.from, variation.to);
   }
   
   return result;
 };
 
-// פונקציה לניקוי ועיצוב משפטים
+// ניקוי וחידוד של המשפטים
 export const cleanAndFormat = (text: string): string => {
   return text
-    // הסרת נקודות כפולות
-    .replace(/\.{2,}/g, ".")
-    // ניקוי רווחים מיותרים
-    .replace(/\s+/g, " ")
-    // הבטחת רווח אחרי נקודה
-    .replace(/\.(\S)/g, ". $1")
-    // ניקוי רווחים בתחילת וסיום
+    .replace(/\.{2,}/g, ".") // הסרת נקודות כפולות
+    .replace(/\s+/g, " ") // רווחים מיותרים
+    .replace(/\.(\S)/g, ". $1") // רווח אחרי נקודה
+    .replace(/\s*[-–]\s*/g, " – ") // תיקון מקפים
     .trim();
 };
 
-// פונקציה לקיבוץ תובנות לפי נושא
+// קיבוץ תובנות לפי נושא לזרימה טובה יותר
 export const groupInsightsByTheme = (insights: string[]): string[][] => {
   const themes: { [key: string]: string[] } = {
     leadership: [],
@@ -111,13 +109,13 @@ export const groupInsightsByTheme = (insights: string[]): string[][] => {
   };
   
   insights.forEach(insight => {
-    if (insight.includes("מנהיגות") || insight.includes("הובלה") || insight.includes("חזון")) {
+    if (insight.includes("מנהיגות") || insight.includes("הובלה") || insight.includes("חזון") || insight.includes("אסטרטגי")) {
       themes.leadership.push(insight);
-    } else if (insight.includes("קשר") || insight.includes("אמון") || insight.includes("שייכות")) {
+    } else if (insight.includes("קשר") || insight.includes("אמון") || insight.includes("שייכות") || insight.includes("אחרים")) {
       themes.relationships.push(insight);
-    } else if (insight.includes("למידה") || insight.includes("סקרנות") || insight.includes("התפתחות")) {
+    } else if (insight.includes("למידה") || insight.includes("סקרנות") || insight.includes("התפתחות") || insight.includes("חדש")) {
       themes.learning.push(insight);
-    } else if (insight.includes("הסתגלות") || insight.includes("שינוי") || insight.includes("גמישות")) {
+    } else if (insight.includes("הסתגלות") || insight.includes("שינוי") || insight.includes("גמישות") || insight.includes("מתאים")) {
       themes.adaptation.push(insight);
     } else {
       themes.general.push(insight);
@@ -127,7 +125,7 @@ export const groupInsightsByTheme = (insights: string[]): string[][] => {
   return Object.values(themes).filter(group => group.length > 0);
 };
 
-// פונקציה מרכזית ליצירת פסקה זורמת ומקושרת
+// פונקציה מרכזית ליצירת פסקה זורמת וטבעית ללא מחברים מאולצים
 export const createFlowingParagraph = (
   insights: string[],
   userIdentifier?: string
@@ -143,12 +141,12 @@ export const createFlowingParagraph = (
   if (validInsights.length === 0) return "";
   if (validInsights.length === 1) return cleanAndFormat(varyPhrasing(validInsights[0], 0));
   
-  // קיבוץ לפי נושאים למבנה טוב יותר
+  // קיבוץ לפי נושאים למבנה טבעי יותר
   const themeGroups = groupInsightsByTheme(validInsights);
   const selectedInsights = themeGroups.length > 0 ? 
     themeGroups.flat().slice(0, 3) : validInsights.slice(0, 3);
   
-  // בניית הפסקה עם זרימה טבעית
+  // בניית הפסקה עם זרימה טבעית ואמיתית
   let paragraph = cleanAndFormat(varyPhrasing(selectedInsights[0], 0));
   
   for (let i = 1; i < selectedInsights.length; i++) {
@@ -156,14 +154,16 @@ export const createFlowingParagraph = (
     const connector = selectLogicalConnector(selectedInsights[i-1], currentInsight, i);
     
     if (connector.trim()) {
-      // אם יש מחבר הגיוני - השתמש בו
-      if (connector.startsWith("דבר זה")) {
-        paragraph += `. ${connector}${currentInsight.replace(/^[^א-ת]*/, "")}`;
+      // שימוש במחבר רק אם הוא באמת מתאים
+      if (connector.startsWith("הדבר בא")) {
+        paragraph += `. ${connector} בכך ש${currentInsight.replace(/^[^א-ת]*/, "").replace(/^נראה כי את\/ה|^ייתכן שאת\/ה|^דומה שאת\/ה/, "את/ה")}`;
+      } else if (connector === "בנוסף") {
+        paragraph += `. ${connector}, ${currentInsight}`;
       } else {
         paragraph += `. ${connector}, ${currentInsight}`;
       }
     } else {
-      // חיבור טבעי ללא מחבר מפורש
+      // חיבור טבעי ללא מחבר - פשוט המשך זורם
       paragraph += `. ${currentInsight}`;
     }
   }
@@ -171,7 +171,7 @@ export const createFlowingParagraph = (
   return cleanAndFormat(paragraph);
 };
 
-// פונקציה מרכזית לשילוב תובנות לפסקה טבעית וזורמת
+// פונקציה מרכזית לשילוב תובנות לפסקה טבעית ואנושית
 export const combineInsightsNaturally = (
   insights: string[], 
   dimension: string, 
