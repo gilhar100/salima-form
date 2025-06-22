@@ -722,6 +722,12 @@ export type Database = {
           dimension_s: number
           group_number: number | null
           id: string
+          insight_adaptive: string | null
+          insight_authentic: string | null
+          insight_inspiration: string | null
+          insight_learning: string | null
+          insight_meaning: string | null
+          insight_strategy: string | null
           is_anonymous: boolean | null
           manager_id: number | null
           organization: string | null
@@ -925,6 +931,12 @@ export type Database = {
           dimension_s?: number
           group_number?: number | null
           id?: string
+          insight_adaptive?: string | null
+          insight_authentic?: string | null
+          insight_inspiration?: string | null
+          insight_learning?: string | null
+          insight_meaning?: string | null
+          insight_strategy?: string | null
           is_anonymous?: boolean | null
           manager_id?: number | null
           organization?: string | null
@@ -1128,6 +1140,12 @@ export type Database = {
           dimension_s?: number
           group_number?: number | null
           id?: string
+          insight_adaptive?: string | null
+          insight_authentic?: string | null
+          insight_inspiration?: string | null
+          insight_learning?: string | null
+          insight_meaning?: string | null
+          insight_strategy?: string | null
           is_anonymous?: boolean | null
           manager_id?: number | null
           organization?: string | null

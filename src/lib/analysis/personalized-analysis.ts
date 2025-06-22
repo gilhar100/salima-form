@@ -1,5 +1,5 @@
 
-import { getParameterParagraph } from './paragraph-generator';
+import { getEnhancedPersonalizedAnalysis } from './enhanced-personalized-analysis';
 
 // פונקציה מרכזית לקבלת ניתוח מותאם אישית משופר ללא ציונים
 export const getPersonalizedAnalysis = (
@@ -13,24 +13,15 @@ export const getPersonalizedAnalysis = (
     return "לא זוהו תשובות רלוונטיות לממד זה. אנא ודא שהשאלון הושלם במלואו.";
   }
 
-  // יצירת זרע ייחודי למשתמש לצורך עקביות בוריאציות
-  const userSeed = userIdentifier ? 
-    userIdentifier.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 
-    Date.now();
-
-  // קבלת פסקה מקיפה מהמחולל החדש
-  const paragraph = getParameterParagraph(
-    dimension,
-    userSeed,
-    'neutral' // ברירת מחדל לכינוי נייטרלי
-  );
+  // שימוש במנוע הניתוח החדש
+  const analysis = getEnhancedPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
   
   // וידוא איכות הפסקה
-  if (!paragraph || paragraph.trim().length < 20) {
+  if (!analysis || analysis.trim().length < 20) {
     return `בממד ${getDimensionDisplayName(dimension)} נדרש מידע נוסף לצורך ניתוח מדויק יותר.`;
   }
   
-  return paragraph;
+  return analysis;
 };
 
 // פונקציה לקבלת שם תצוגה של ממד
@@ -55,3 +46,4 @@ export const analyzeSpecificAnswers = (
 ): string => {
   return getPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
 };
+
