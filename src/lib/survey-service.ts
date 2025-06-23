@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
 
@@ -32,14 +33,15 @@ export const saveSurveyToDatabase = async (
       position: results.userInfo.position || null,
       group_number: results.group_number || null,
       
-      // Scores
+      // Scores - mapping dimension_s to strategy for database compatibility
       slq_score: results.slq,
-      dimension_s: results.dimensions.S.score,
+      strategy: results.dimensions.S.score, // Changed from dimension_s to strategy
       dimension_l: results.dimensions.L.score,
       dimension_i: results.dimensions.I.score,
       dimension_m: results.dimensions.M.score,
       dimension_a: results.dimensions.A.score,
       dimension_a2: results.dimensions.A2.score,
+      dimension_s: results.dimensions.S.score, // Keep dimension_s as well
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
@@ -132,6 +134,68 @@ export const saveColleagueSurveyToDatabase = async (
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת הערכת עמית:', error);
+    throw error;
+  }
+};
+
+// Add missing exported functions for Statistics and ManagerComparison pages
+export const getSurveyStatistics = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('survey_responses')
+      .select('id, slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, created_at, consent_for_research, is_anonymous, user_email, user_name, organization, department, position, strategy, survey_type')
+      .eq('consent_for_research', true);
+
+    if (error) {
+      console.error('שגיאה בטעינת סטטיסטיקות:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('שגיאה בטעינת סטטיסטיקות:', error);
+    throw error;
+  }
+};
+
+export const getManagerComparisonData = async (managerName: string, managerEmail?: string) => {
+  try {
+    // Get manager's self-assessments
+    let managerQuery = supabase
+      .from('survey_responses')
+      .select('slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, user_name, created_at')
+      .eq('user_name', managerName);
+
+    if (managerEmail) {
+      managerQuery = managerQuery.eq('user_email', managerEmail);
+    }
+
+    const { data: managerData, error: managerError } = await managerQuery;
+
+    if (managerError) {
+      console.error('שגיאה בטעינת נתוני מנהל:', managerError);
+      throw managerError;
+    }
+
+    // Get colleague assessments
+    let colleagueQuery = supabase
+      .from('colleague_survey_responses')
+      .select('slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, manager_name, evaluator_name, created_at')
+      .eq('manager_name', managerName);
+
+    const { data: colleagueData, error: colleagueError } = await colleagueQuery;
+
+    if (colleagueError) {
+      console.error('שגיאה בטעינת נתוני עמיתים:', colleagueError);
+      throw colleagueError;
+    }
+
+    return {
+      managerData: managerData || [],
+      colleagueData: colleagueData || []
+    };
+  } catch (error) {
+    console.error('שגיאה בטעינת נתוני השוואה:', error);
     throw error;
   }
 };
