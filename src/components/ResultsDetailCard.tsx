@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DimensionResult } from "@/lib/types";
@@ -12,7 +11,7 @@ interface ResultsDetailCardProps {
   isLoadingInsight?: boolean;
 }
 
-const ResultsDetailCard = ({ dimension, answers, insight, isLoadingInsight }: ResultsDetailCardProps) => {
+const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDetailCardProps) => {
   const getIntensityColor = (score: number) => {
     if (score >= 4.5) return "bg-green-500";
     if (score >= 4.0) return "bg-green-400";
@@ -27,6 +26,18 @@ const ResultsDetailCard = ({ dimension, answers, insight, isLoadingInsight }: Re
     if (score >= 3.5) return "בינוני";
     if (score >= 3.0) return "מתפתח";
     return "לפיתוח";
+  };
+
+  const getDimensionTitle = (dimension: string) => {
+    const titles: Record<string, string> = {
+      'S': 'אסטרטגיה',
+      'L': 'למידה',
+      'I': 'השראה',
+      'M': 'משמעות',
+      'A': 'אדפטיביות',
+      'A2': 'אותנטיות'
+    };
+    return titles[dimension] || dimension;
   };
 
   return (
@@ -47,20 +58,26 @@ const ResultsDetailCard = ({ dimension, answers, insight, isLoadingInsight }: Re
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {isLoadingInsight ? (
-          <div className="flex items-center justify-center p-4">
-            <Loader2 className="h-6 w-6 animate-spin mr-2" />
-            <span className="text-sm text-gray-600">טוען ניתוח מותאם אישית...</span>
-          </div>
-        ) : insight ? (
-          <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg">
-            {insight}
-          </div>
-        ) : (
-          <div className="text-sm leading-relaxed text-gray-600 bg-gray-50 p-4 rounded-lg italic">
-            ניתוח מותאם אישית יהיה זמין בקרוב...
-          </div>
-        )}
+        <div>
+          <h4 className="text-lg font-bold text-salima-700 mb-3">
+            {getDimensionTitle(dimension.dimension)}
+          </h4>
+          
+          {isLoadingInsight ? (
+            <div className="flex items-center justify-center p-4">
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
+              <span className="text-sm text-gray-600">טוען ניתוח...</span>
+            </div>
+          ) : insight ? (
+            <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg border-r-4 border-salima-400">
+              {insight}
+            </div>
+          ) : (
+            <div className="text-sm leading-relaxed text-gray-500 bg-gray-50 p-4 rounded-lg border-r-4 border-gray-300 italic">
+              ניתוח מותאם אישית בהכנה...
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

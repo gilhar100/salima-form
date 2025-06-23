@@ -1,10 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Award } from "lucide-react";
+import { Loader2, Award, RefreshCw } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
@@ -28,6 +29,7 @@ const Results = () => {
   const [insights, setInsights] = useState<DatabaseInsights>({});
   const [surveyId, setSurveyId] = useState<string | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const [insightsAvailable, setInsightsAvailable] = useState(false);
 
   useEffect(() => {
     console.log('Results page mounted, checking localStorage...');
@@ -55,8 +57,8 @@ const Results = () => {
 
         if (savedSurveyId) {
           setSurveyId(savedSurveyId);
-          console.log('Fetching insights for survey ID:', savedSurveyId);
-          fetchInsights(savedSurveyId);
+          console.log('Starting delayed insights fetch for survey ID:', savedSurveyId);
+          fetchInsightsWithDelay(savedSurveyId);
         } else {
           console.log('No survey ID found, insights will not be loaded');
         }
@@ -85,27 +87,49 @@ const Results = () => {
     }
   }, [navigate, toast]);
 
-  const fetchInsights = async (surveyId: string) => {
+  const fetchInsightsWithDelay = async (surveyId: string) => {
     setIsLoadingInsights(true);
+    
+    // Wait 2-3 seconds before fetching
+    console.log('Waiting 2.5 seconds before fetching insights...');
+    await new Promise(resolve => setTimeout(resolve, 2500));
+    
     try {
-      console.log('Fetching insights for survey ID:', surveyId);
+      console.log('Fetching insights after delay for survey ID:', surveyId);
       const data = await getSurveyWithInsights(surveyId);
       console.log('Insights data received:', data);
       
-      setInsights({
+      const fetchedInsights = {
         insight_strategy: data.insight_strategy,
         insight_adaptive: data.insight_adaptive,
         insight_learning: data.insight_learning,
         insight_inspiration: data.insight_inspiration,
         insight_meaning: data.insight_meaning,
         insight_authentic: data.insight_authentic,
-      });
+      };
       
-      console.log('Insights set successfully');
+      setInsights(fetchedInsights);
+      
+      // Check if any insights are available
+      const hasAnyInsight = Object.values(fetchedInsights).some(insight => 
+        insight && insight.trim() !== ''
+      );
+      
+      setInsightsAvailable(hasAnyInsight);
+      console.log('Insights availability check:', hasAnyInsight);
+      
     } catch (error) {
       console.error('Error fetching insights:', error);
+      setInsightsAvailable(false);
     } finally {
       setIsLoadingInsights(false);
+    }
+  };
+
+  const handleRefreshInsights = () => {
+    if (surveyId) {
+      console.log('Manual refresh of insights requested');
+      fetchInsightsWithDelay(surveyId);
     }
   };
 
@@ -187,15 +211,35 @@ const Results = () => {
           
           {/* כרטיסי פירוט עם תובנות מהמסד נתונים */}
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-center text-salima-800 mb-4">
-              ניתוח מפורט לכל ממד
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-salima-800">
+                ניתוח מפורט לכל ממד
+              </h2>
+              {!isLoadingInsights && !insightsAvailable && (
+                <Button 
+                  onClick={handleRefreshInsights}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  רענן תובנות
+                </Button>
+              )}
+            </div>
+            
             {isLoadingInsights && (
-              <div className="text-center text-gray-600 mb-4">
+              <div className="text-center text-gray-600 mb-4 p-4 bg-blue-50 rounded-lg">
                 <Loader2 className="h-6 w-6 animate-spin inline-block mr-2" />
-                טוען ניתוח מותאם אישית...
+                התובנות נטענות כעת... אנא המתן מספר שניות
               </div>
             )}
+            
+            {!isLoadingInsights && !insightsAvailable && (
+              <div className="text-center text-orange-600 mb-4 p-4 bg-orange-50 rounded-lg">
+                התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
+              </div>
+            )}
+            
             <div className="grid gap-6 lg:grid-cols-2">
               {Object.values(results.dimensions).map(dimension => (
                 <ResultsDetailCard 
@@ -241,7 +285,9 @@ const getInsightForDimension = (dimension: string, insights: DatabaseInsights): 
   };
   
   const insightKey = dimensionInsightMap[dimension];
-  return insightKey ? insights[insightKey] : undefined;
+  return insightKey && insights[insightKey] && insights[insightKey]!.trim() !== '' 
+    ? insights[insightKey] 
+    : undefined;
 };
 
 export default Results;
