@@ -1,28 +1,45 @@
 
 import { Answer } from "@/lib/types";
-import { generateIntelligentParagraph } from "./enhanced-paragraph-generator";
+import { generateSalimaParagraphs } from "./salima-paragraph-generator";
 
 // פונקציה מרכזית ליצירת ניתוח מותאם אישית משופר
-export const getEnhancedPersonalizedAnalysis = (
+export const getEnhancedPersonalizedAnalysis = async (
   dimension: string,
   answers: Answer[],
   userIdentifier?: string
-): string => {
+): Promise<string> => {
   console.log(`Generating intelligent analysis for dimension ${dimension}:`, answers);
   
   if (answers.length === 0) {
     return "לא נמצאו תשובות רלוונטיות לממד זה.";
   }
 
-  // שימוש במחולל הפסקאות החכם
-  const analysis = generateIntelligentParagraph(dimension, answers, userIdentifier);
-  
-  // וידוא איכות הפסקה
-  if (!analysis || analysis.trim().length < 30) {
-    return `בממד ${getDimensionDisplayName(dimension)} נדרש מידע נוסף לצורך ניתוח מדויק יותר.`;
+  try {
+    // יצירת פסקאות SALIMA מותאמות אישית
+    const paragraphs = await generateSalimaParagraphs(answers, userIdentifier);
+    
+    // מיפוי הממדים לשמות התצוגה
+    const dimensionNameMap: Record<string, string> = {
+      'S': 'אסטרטגיה',
+      'L': 'לומד',
+      'I': 'השראה',
+      'M': 'משמעות',
+      'A': 'אדפטיביות',
+      'A2': 'אותנטיות'
+    };
+    
+    const dimensionDisplayName = dimensionNameMap[dimension];
+    const analysis = paragraphs[dimensionDisplayName];
+    
+    if (!analysis || analysis.trim().length < 30) {
+      return `בממד ${getDimensionDisplayName(dimension)} נדרש מידע נוסף לצורך ניתוח מדויק יותר.`;
+    }
+    
+    return analysis;
+  } catch (error) {
+    console.error('Error in enhanced personalized analysis:', error);
+    return `שגיאה ביצירת ניתוח עבור ממד ${getDimensionDisplayName(dimension)}.`;
   }
-  
-  return analysis;
 };
 
 // פונקציה לקבלת שם תצוגה של ממד

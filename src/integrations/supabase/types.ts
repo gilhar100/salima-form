@@ -618,6 +618,36 @@ export type Database = {
         }
         Relationships: []
       }
+      salima_q_logic: {
+        Row: {
+          dimension: string | null
+          high_text: string | null
+          id: number | null
+          isReversed: boolean | null
+          low_text: string | null
+          order: number
+          text: string | null
+        }
+        Insert: {
+          dimension?: string | null
+          high_text?: string | null
+          id?: number | null
+          isReversed?: boolean | null
+          low_text?: string | null
+          order: number
+          text?: string | null
+        }
+        Update: {
+          dimension?: string | null
+          high_text?: string | null
+          id?: number | null
+          isReversed?: boolean | null
+          low_text?: string | null
+          order?: number
+          text?: string | null
+        }
+        Relationships: []
+      }
       survey_responses: {
         Row: {
           "1": number | null
