@@ -117,9 +117,9 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           // שמירה במסד הנתונים עם התשובות הגולמיות
           const savedRecord = await saveSurveyToDatabase(results, answers, true, false);
           
-          // Generate SALIMA insights after successful save
+          // Save the survey ID for later retrieval of insights
           if (savedRecord && savedRecord.id) {
-            await generateSalimaInsights(savedRecord.id, answers);
+            localStorage.setItem('salimaSurveyId', savedRecord.id);
           }
           
           toast({

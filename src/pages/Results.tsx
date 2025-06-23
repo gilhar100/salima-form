@@ -10,16 +10,30 @@ import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
 import MedianComparisonChart from "@/components/MedianComparisonChart";
+import { getSurveyWithInsights } from "@/lib/survey-service";
+
+interface DatabaseInsights {
+  insight_strategy?: string;
+  insight_adaptive?: string;
+  insight_learning?: string;
+  insight_inspiration?: string;
+  insight_meaning?: string;
+  insight_authentic?: string;
+}
 
 const Results = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
   const [answers, setAnswers] = useState<{ questionId: number; value: number; }[]>([]);
+  const [insights, setInsights] = useState<DatabaseInsights>({});
+  const [surveyId, setSurveyId] = useState<string | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
 
   useEffect(() => {
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
+    const savedSurveyId = localStorage.getItem('salimaSurveyId');
     
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
@@ -28,6 +42,11 @@ const Results = () => {
       if (savedAnswers) {
         const parsedAnswers = JSON.parse(savedAnswers);
         setAnswers(parsedAnswers);
+      }
+
+      if (savedSurveyId) {
+        setSurveyId(savedSurveyId);
+        fetchInsights(savedSurveyId);
       }
       
       toast({
@@ -43,6 +62,25 @@ const Results = () => {
       navigate('/');
     }
   }, [navigate, toast]);
+
+  const fetchInsights = async (surveyId: string) => {
+    setIsLoadingInsights(true);
+    try {
+      const data = await getSurveyWithInsights(surveyId);
+      setInsights({
+        insight_strategy: data.insight_strategy,
+        insight_adaptive: data.insight_adaptive,
+        insight_learning: data.insight_learning,
+        insight_inspiration: data.insight_inspiration,
+        insight_meaning: data.insight_meaning,
+        insight_authentic: data.insight_authentic,
+      });
+    } catch (error) {
+      console.error('Error fetching insights:', error);
+    } finally {
+      setIsLoadingInsights(false);
+    }
+  };
 
   if (!results) {
     return (
@@ -117,17 +155,25 @@ const Results = () => {
             </div>
           </div>
           
-          {/* כרטיסי פירוט */}
+          {/* כרטיסי פירוט עם תובנות מהמסד נתונים */}
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-center text-salima-800 mb-4">
               ניתוח מפורט לכל ממד
             </h2>
+            {isLoadingInsights && (
+              <div className="text-center text-gray-600 mb-4">
+                <Loader2 className="h-6 w-6 animate-spin inline-block mr-2" />
+                טוען ניתוח מותאם אישית...
+              </div>
+            )}
             <div className="grid gap-6 lg:grid-cols-2">
               {Object.values(results.dimensions).map(dimension => (
                 <ResultsDetailCard 
                   key={dimension.dimension} 
                   dimension={dimension} 
-                  answers={answers} 
+                  answers={answers}
+                  insight={getInsightForDimension(dimension.dimension, insights)}
+                  isLoadingInsight={isLoadingInsights}
                 />
               ))}
             </div>
@@ -151,6 +197,21 @@ const Results = () => {
       </div>
     </div>
   );
+};
+
+// Helper function to get the appropriate insight for each dimension
+const getInsightForDimension = (dimension: string, insights: DatabaseInsights): string | undefined => {
+  const dimensionInsightMap: Record<string, keyof DatabaseInsights> = {
+    'S': 'insight_strategy',
+    'L': 'insight_learning',
+    'I': 'insight_inspiration',
+    'M': 'insight_meaning',
+    'A': 'insight_adaptive',
+    'A2': 'insight_authentic'
+  };
+  
+  const insightKey = dimensionInsightMap[dimension];
+  return insightKey ? insights[insightKey] : undefined;
 };
 
 export default Results;

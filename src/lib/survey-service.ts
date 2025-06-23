@@ -1,5 +1,3 @@
-
-
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
 
@@ -39,13 +37,13 @@ export const saveSurveyToDatabase = async (
       
       // Scores - mapping dimension_s to strategy for database compatibility
       slq_score: results.slq,
-      strategy: results.dimensions.S.score, // Changed from dimension_s to strategy
+      strategy: results.dimensions.S.score,
       dimension_l: results.dimensions.L.score,
       dimension_i: results.dimensions.I.score,
       dimension_m: results.dimensions.M.score,
       dimension_a: results.dimensions.A.score,
       dimension_a2: results.dimensions.A2.score,
-      dimension_s: results.dimensions.S.score, // Keep dimension_s as well
+      dimension_s: results.dimensions.S.score,
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
@@ -54,7 +52,7 @@ export const saveSurveyToDatabase = async (
       
       // Raw answers as individual columns and array
       ...rawAnswersObject,
-      answers: answersArray // Convert to simple number array
+      answers: answersArray
     };
 
     const { data, error } = await supabase
@@ -69,7 +67,29 @@ export const saveSurveyToDatabase = async (
     }
 
     console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
-    return data; // Return the saved record with ID
+
+    // Call the edge function to generate insights
+    try {
+      console.log('Calling edge function to generate insights...');
+      const { data: insightData, error: insightError } = await supabase.functions.invoke('generate_salima_insights', {
+        body: {
+          record: {
+            id: data.id,
+            ...rawAnswersObject
+          }
+        }
+      });
+
+      if (insightError) {
+        console.error('Error generating insights:', insightError);
+      } else {
+        console.log('Insights generated successfully:', insightData);
+      }
+    } catch (insightError) {
+      console.error('Failed to call insights function:', insightError);
+    }
+
+    return data;
   } catch (error) {
     console.error('שגיאה בשמירת נתוני השאלון:', error);
     throw error;
@@ -123,7 +143,7 @@ export const saveColleagueSurveyToDatabase = async (
       
       // Raw answers as individual columns and array
       ...rawAnswersObject,
-      answers: answersArray // Convert to simple number array
+      answers: answersArray
     };
 
     const { data, error } = await supabase
@@ -145,7 +165,27 @@ export const saveColleagueSurveyToDatabase = async (
   }
 };
 
-// Add missing exported functions for Statistics and ManagerComparison pages
+// Function to get survey results with insights from database
+export const getSurveyWithInsights = async (surveyId: string) => {
+  try {
+    const { data, error } = await supabase
+      .from('survey_responses')
+      .select('*')
+      .eq('id', surveyId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching survey insights:', error);
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error getting survey with insights:', error);
+    throw error;
+  }
+};
+
 export const getSurveyStatistics = async () => {
   try {
     const { data, error } = await supabase
@@ -206,4 +246,3 @@ export const getManagerComparisonData = async (managerName: string, managerEmail
     throw error;
   }
 };
-

@@ -3,40 +3,16 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DimensionResult } from "@/lib/types";
-import { getEnhancedPersonalizedAnalysis } from "@/lib/analysis/enhanced-personalized-analysis";
+import { Loader2 } from "lucide-react";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
   answers: { questionId: number; value: number; }[];
+  insight?: string;
+  isLoadingInsight?: boolean;
 }
 
-const ResultsDetailCard = ({ dimension, answers }: ResultsDetailCardProps) => {
-  const [analysis, setAnalysis] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const generateAnalysis = async () => {
-      setIsLoading(true);
-      try {
-        // יצירת מזהה משתמש יציב על בסיס התשובות
-        const userIdentifier = answers.map(a => `${a.questionId}-${a.value}`).join(',');
-        const analysisText = await getEnhancedPersonalizedAnalysis(
-          dimension.dimension, 
-          answers.map(a => ({ questionId: a.questionId, value: a.value })),
-          userIdentifier
-        );
-        setAnalysis(analysisText);
-      } catch (error) {
-        console.error('Error generating analysis:', error);
-        setAnalysis("שגיאה ביצירת ניתוח עבור ממד זה.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    generateAnalysis();
-  }, [dimension.dimension, answers]);
-
+const ResultsDetailCard = ({ dimension, answers, insight, isLoadingInsight }: ResultsDetailCardProps) => {
   const getIntensityColor = (score: number) => {
     if (score >= 4.5) return "bg-green-500";
     if (score >= 4.0) return "bg-green-400";
@@ -71,13 +47,18 @@ const ResultsDetailCard = ({ dimension, answers }: ResultsDetailCardProps) => {
       </CardHeader>
       
       <CardContent className="space-y-4">
-        {isLoading ? (
+        {isLoadingInsight ? (
           <div className="flex items-center justify-center p-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-salima-600"></div>
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <span className="text-sm text-gray-600">טוען ניתוח מותאם אישית...</span>
+          </div>
+        ) : insight ? (
+          <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg">
+            {insight}
           </div>
         ) : (
-          <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg">
-            {analysis}
+          <div className="text-sm leading-relaxed text-gray-600 bg-gray-50 p-4 rounded-lg italic">
+            ניתוח מותאם אישית יהיה זמין בקרוב...
           </div>
         )}
       </CardContent>
