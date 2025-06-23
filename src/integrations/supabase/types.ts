@@ -650,7 +650,6 @@ export type Database = {
       }
       survey_responses: {
         Row: {
-          "1": number | null
           "10": number | null
           "11": number | null
           "12": number | null
@@ -672,7 +671,6 @@ export type Database = {
           "27": number | null
           "28": number | null
           "29": number | null
-          "3": number | null
           "30": number | null
           "31": number | null
           "32": number | null
@@ -859,7 +857,6 @@ export type Database = {
           user_name: string | null
         }
         Insert: {
-          "1"?: number | null
           "10"?: number | null
           "11"?: number | null
           "12"?: number | null
@@ -881,7 +878,6 @@ export type Database = {
           "27"?: number | null
           "28"?: number | null
           "29"?: number | null
-          "3"?: number | null
           "30"?: number | null
           "31"?: number | null
           "32"?: number | null
@@ -1068,7 +1064,6 @@ export type Database = {
           user_name?: string | null
         }
         Update: {
-          "1"?: number | null
           "10"?: number | null
           "11"?: number | null
           "12"?: number | null
@@ -1090,7 +1085,6 @@ export type Database = {
           "27"?: number | null
           "28"?: number | null
           "29"?: number | null
-          "3"?: number | null
           "30"?: number | null
           "31"?: number | null
           "32"?: number | null
