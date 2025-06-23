@@ -47,6 +47,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   
   // עדכון תשובה
   const handleAnswerChange = (questionId: number, value: number) => {
+    console.log(`Answer changed: Question ${questionId} = ${value}`);
     setAnswers(prev => {
       const existingIndex = prev.findIndex(a => a.questionId === questionId);
       if (existingIndex >= 0) {
@@ -61,32 +62,44 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   // מעבר לשלב הבא
   const handleNext = async () => {
     const nextStep = currentStep + 1;
+    console.log(`Moving to next step: ${nextStep}/${totalSteps}`);
+    
     if (nextStep < totalSteps) {
       setCurrentStep(nextStep);
       window.scrollTo(0, 0);
     } else {
       // סיום השאלון וחישוב התוצאות
-      if (isSubmitting) return; // מניעת שליחה כפולה
+      if (isSubmitting) {
+        console.log('Already submitting, ignoring duplicate submission');
+        return;
+      }
       
+      console.log('Starting survey submission...');
       setIsSubmitting(true);
       console.log('סיום השאלון, סוג:', surveyType);
       console.log('תשובות גולמיות:', answers);
+      console.log(`Total answers: ${answers.length}`);
       
       if (surveyType === 'manager' && userInfo) {
-        // Calculate results and attach group_number
         try {
+          console.log('Processing manager survey...');
           const results = calculateSurveyResults(answers, userInfo);
+          
           // Attach group_number as int if exists
           results.group_number = userInfo.groupNumber ? parseInt(userInfo.groupNumber) : undefined;
           
           console.log('תוצאות מחושבות למנהל:', results);
           
-          // שמירת התוצאות והתשובות ב־localStorage
+          // שמירת התוצאות והתשובות ב־localStorage תחילה
+          console.log('Saving to localStorage...');
           localStorage.setItem('salimaResults', JSON.stringify(results));
           localStorage.setItem('salimaAnswers', JSON.stringify(answers));
+          console.log('localStorage data saved successfully');
           
           // שמירה במסד הנתונים עם התשובות הגולמיות
+          console.log('Saving to database...');
           const savedRecord = await saveSurveyToDatabase(results, answers, true, false);
+          console.log('Database save completed:', savedRecord);
           
           // Save the survey ID for later retrieval of insights
           if (savedRecord && savedRecord.id) {
@@ -99,6 +112,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
             description: "הנתונים נשמרו במסד הנתונים. מעבר לדף התוצאות...",
           });
           
+          console.log('Navigating to results page...');
           // Small delay to ensure everything is saved
           setTimeout(() => {
             navigate('/results');
@@ -114,7 +128,8 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           setIsSubmitting(false);
         }
       } else if (surveyType === 'colleague' && colleagueInfo) {
-        // חישוב תוצאות לשאלון עמיתים
+        // ... keep existing code (colleague survey handling)
+        console.log('Processing colleague survey...');
         const fakeUserInfo: UserInfo = {
           name: colleagueInfo.evaluatorName,
           email: colleagueInfo.evaluatorEmail
@@ -149,6 +164,14 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
         });
         
         navigate('/colleague-completion');
+      } else {
+        console.error('Missing required data for submission:', { surveyType, userInfo, colleagueInfo });
+        toast({
+          title: "שגיאה",
+          description: "חסרים נתונים נדרשים להשלמת השאלון.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
       }
     }
   };
@@ -165,11 +188,14 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   const canProceed = () => {
     if (!hasInfo || !consentGiven) return false;
     
-    return currentQuestions.every(q => getAnswerValue(q.id) !== null);
+    const allAnswered = currentQuestions.every(q => getAnswerValue(q.id) !== null);
+    console.log(`Can proceed: ${allAnswered}, Current questions: ${currentQuestions.length}, Answered: ${currentQuestions.filter(q => getAnswerValue(q.id) !== null).length}`);
+    return allAnswered;
   };
   
   // הסכמה למחקר
   const handleConsentResponse = (consented: boolean) => {
+    console.log('Consent response:', consented);
     if (consented) {
       setConsentGiven(true);
       toast({
@@ -187,6 +213,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   
   // התחלת השאלון אחרי הזנת פרטי המשתמש
   const handleUserInfoSubmit = (info: UserInfo) => {
+    console.log('Manager info submitted:', info);
     setUserInfo(info);
     toast({
       title: "פרטים נרשמו בהצלחה",
@@ -196,6 +223,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
 
   // התחלת השאלון אחרי הזנת פרטי העמית
   const handleColleagueInfoSubmit = (info: ColleagueEvaluatorInfo) => {
+    console.log('Colleague info submitted:', info);
     setColleagueInfo(info);
     toast({
       title: "פרטים נרשמו בהצלחה",

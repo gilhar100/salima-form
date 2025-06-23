@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -31,6 +30,8 @@ const Results = () => {
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
 
   useEffect(() => {
+    console.log('Results page mounted, checking localStorage...');
+    
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
     const savedSurveyId = localStorage.getItem('salimaSurveyId');
@@ -41,28 +42,38 @@ const Results = () => {
     console.log('- Survey ID:', savedSurveyId);
     
     if (savedResults) {
-      const parsedResults = JSON.parse(savedResults);
-      setResults(parsedResults);
-      console.log('Parsed results:', parsedResults);
+      try {
+        const parsedResults = JSON.parse(savedResults);
+        setResults(parsedResults);
+        console.log('Parsed results:', parsedResults);
 
-      if (savedAnswers) {
-        const parsedAnswers = JSON.parse(savedAnswers);
-        setAnswers(parsedAnswers);
-        console.log('Parsed answers:', parsedAnswers.length, 'answers');
-      }
+        if (savedAnswers) {
+          const parsedAnswers = JSON.parse(savedAnswers);
+          setAnswers(parsedAnswers);
+          console.log('Parsed answers:', parsedAnswers.length, 'answers');
+        }
 
-      if (savedSurveyId) {
-        setSurveyId(savedSurveyId);
-        console.log('Fetching insights for survey ID:', savedSurveyId);
-        fetchInsights(savedSurveyId);
-      } else {
-        console.log('No survey ID found, insights will not be loaded');
+        if (savedSurveyId) {
+          setSurveyId(savedSurveyId);
+          console.log('Fetching insights for survey ID:', savedSurveyId);
+          fetchInsights(savedSurveyId);
+        } else {
+          console.log('No survey ID found, insights will not be loaded');
+        }
+        
+        toast({
+          title: "תוצאות השאלון",
+          description: "הנתונים כבר נשמרו במערכת בהצלחה"
+        });
+      } catch (error) {
+        console.error('Error parsing saved results:', error);
+        toast({
+          title: "שגיאה בטעינת התוצאות",
+          description: "אירעה שגיאה בטעינת התוצאות השמורות",
+          variant: "destructive"
+        });
+        navigate('/');
       }
-      
-      toast({
-        title: "תוצאות השאלון",
-        description: "הנתונים כבר נשמרו במערכת בהצלחה"
-      });
     } else {
       console.log('No results found in localStorage, redirecting to home');
       toast({
@@ -89,6 +100,8 @@ const Results = () => {
         insight_meaning: data.insight_meaning,
         insight_authentic: data.insight_authentic,
       });
+      
+      console.log('Insights set successfully');
     } catch (error) {
       console.error('Error fetching insights:', error);
     } finally {
@@ -100,9 +113,12 @@ const Results = () => {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">טוען תוצאות...</span>
       </div>
     );
   }
+
+  console.log('Rendering results page with data:', results);
 
   const highestDimension = Object.values(results.dimensions).reduce((prev, current) => 
     prev.score > current.score ? prev : current
