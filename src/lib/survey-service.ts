@@ -1,44 +1,38 @@
-import { SurveyResult, ColleagueSubmissionResult, Answer } from "@/lib/types";
 import { supabase } from "@/integrations/supabase/client";
+import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
 
-// פונקציה ליצירת אובייקט עם כל השאלות q1-q90
-const createQuestionFields = (answers: Answer[]) => {
-  const questionFields: { [key: string]: number | null } = {};
-  
-  // Initialize all questions to null
+// Helper function to convert raw answers array to object
+const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
+  const rawAnswersObject: Record<string, number | null> = {};
   for (let i = 1; i <= 90; i++) {
-    questionFields[`q${i}`] = null;
+    const answer = rawAnswers.find(a => a.questionId === i);
+    rawAnswersObject[`q${i}`] = answer ? answer.value : null;
   }
-  
-  // Fill in the actual answers (raw values without reverse scoring)
-  answers.forEach(answer => {
-    questionFields[`q${answer.questionId}`] = answer.value;
-  });
-  
-  return questionFields;
+  return rawAnswersObject;
 };
 
-// פונקציה לשמירת תוצאות שאלון מנהלים במסד הנתונים
-export async function saveSurveyToDatabase(
-  results: SurveyResult, 
-  answers: Answer[],
-  consentForResearch: boolean, 
+export const saveSurveyToDatabase = async (
+  results: SurveyResult,
+  rawAnswers: Answer[],
+  consentForResearch: boolean = false,
   isAnonymous: boolean = true
-): Promise<void> {
+) => {
   try {
-    console.log('מתחיל שמירת נתוני מנהל:', results);
-    console.log('תשובות גולמיות:', answers);
+    console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
     
-    // Create question fields object
-    const questionFields = createQuestionFields(answers);
+    // Prepare raw answers as individual columns
+    const rawAnswersObject = convertRawAnswersToObject(rawAnswers);
     
-    const surveyData = {
-      user_email: isAnonymous ? null : results.userInfo.email,
-      user_name: isAnonymous ? null : results.userInfo.name,
-      organization: isAnonymous ? null : results.userInfo.organization,
-      department: isAnonymous ? null : results.userInfo.department,
-      position: isAnonymous ? null : results.userInfo.position,
-      group_number: results.group_number ?? (results.userInfo.groupNumber ? parseInt(results.userInfo.groupNumber) : null),
+    const surveyResponse = {
+      // Basic info
+      user_name: results.userInfo.name,
+      user_email: results.userInfo.email,
+      organization: results.userInfo.organization || null,
+      department: results.userInfo.department || null,
+      position: results.userInfo.position || null,
+      group_number: results.group_number || null,
+      
+      // Scores
       slq_score: results.slq,
       dimension_s: results.dimensions.S.score,
       dimension_l: results.dimensions.L.score,
@@ -46,226 +40,98 @@ export async function saveSurveyToDatabase(
       dimension_m: results.dimensions.M.score,
       dimension_a: results.dimensions.A.score,
       dimension_a2: results.dimensions.A2.score,
-      strategy: results.slq, // נשמור את ה-SLQ גם בשדה strategy לתאימות לאחור
+      
+      // Consent and anonymity
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
       survey_type: 'manager',
-      answers: answers.map(a => a.value), // Array of raw values for backward compatibility
-      ...questionFields // Add all q1-q90 fields
+      
+      // Raw answers as individual columns and array
+      ...rawAnswersObject,
+      answers: rawAnswers
     };
-
-    console.log('נתונים לשמירה:', surveyData);
 
     const { data, error } = await supabase
       .from('survey_responses')
-      .insert([surveyData])
-      .select();
+      .insert(surveyResponse)
+      .select('id')
+      .single();
 
     if (error) {
-      console.error('שגיאה בשמירת הנתונים:', error);
+      console.error('שגיאה בשמירת תוצאות השאלון:', error);
       throw error;
     }
 
-    console.log('נתוני שאלון המנהלים נשמרו בהצלחה:', data);
+    console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
+    return data; // Return the saved record with ID
   } catch (error) {
-    console.error('שגיאה בשמירת תוצאות שאלון המנהלים:', error);
+    console.error('שגיאה בשמירת נתוני השאלון:', error);
     throw error;
   }
-}
+};
 
-// פונקציה לשמירת תוצאות שאלון עמיתים במסד הנתונים
-export async function saveColleagueSurveyToDatabase(
-  results: ColleagueSubmissionResult,
-  answers: Answer[],
-  consentForResearch: boolean, 
+export const saveColleagueSurveyToDatabase = async (
+  submission: ColleagueSubmissionResult,
+  rawAnswers: Answer[],
+  consentForResearch: boolean = false,
   isAnonymous: boolean = true
-): Promise<void> {
+) => {
   try {
-    console.log('מתחיל שמירת נתוני עמיתים:', results);
-    console.log('תשובות גולמיות עמיתים:', answers);
+    console.log('שמירת הערכת עמית במסד הנתונים:', submission);
     
-    // Create question fields object
-    const questionFields = createQuestionFields(answers);
-    
-    const colleagueSurveyData = {
-      manager_name: results.evaluatorInfo.managerName,
-      manager_position: isAnonymous ? null : results.evaluatorInfo.managerPosition,
-      manager_department: isAnonymous ? null : results.evaluatorInfo.managerDepartment,
-      evaluator_name: isAnonymous ? null : results.evaluatorInfo.evaluatorName,
-      evaluator_email: isAnonymous ? null : results.evaluatorInfo.evaluatorEmail,
-      evaluator_position: isAnonymous ? null : results.evaluatorInfo.evaluatorPosition,
-      evaluator_department: isAnonymous ? null : results.evaluatorInfo.evaluatorDepartment,
-      organization: isAnonymous ? null : results.evaluatorInfo.organization,
-      slq_score: results.slq,
-      dimension_s: results.dimensions.S,
-      dimension_l: results.dimensions.L,
-      dimension_i: results.dimensions.I,
-      dimension_m: results.dimensions.M,
-      dimension_a: results.dimensions.A,
-      dimension_a2: results.dimensions.A2,
+    // Prepare raw answers as individual columns
+    const rawAnswersObject: Record<string, number | null> = {};
+    for (let i = 1; i <= 90; i++) {
+      const answer = rawAnswers.find(a => a.questionId === i);
+      rawAnswersObject[`q${i}`] = answer ? answer.value : null;
+    }
+
+    const colleagueResponse = {
+      // Manager info
+      manager_name: submission.evaluatorInfo.managerName,
+      manager_position: submission.evaluatorInfo.managerPosition || null,
+      manager_department: submission.evaluatorInfo.managerDepartment || null,
+      
+      // Evaluator info
+      evaluator_name: submission.evaluatorInfo.evaluatorName || null,
+      evaluator_email: submission.evaluatorInfo.evaluatorEmail || null,
+      evaluator_position: submission.evaluatorInfo.evaluatorPosition || null,
+      evaluator_department: submission.evaluatorInfo.evaluatorDepartment || null,
+      organization: submission.evaluatorInfo.organization || null,
+      
+      // Scores
+      slq_score: submission.slq,
+      dimension_s: submission.dimensions.S,
+      dimension_l: submission.dimensions.L,
+      dimension_i: submission.dimensions.I,
+      dimension_m: submission.dimensions.M,
+      dimension_a: submission.dimensions.A,
+      dimension_a2: submission.dimensions.A2,
+      
+      // Consent and anonymity
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
-      answers: answers.map(a => a.value), // Array of raw values for backward compatibility
-      ...questionFields // Add all q1-q90 fields
+      
+      // Raw answers as individual columns and array
+      ...rawAnswersObject,
+      answers: rawAnswers
     };
-
-    console.log('נתוני עמיתים לשמירה:', colleagueSurveyData);
 
     const { data, error } = await supabase
       .from('colleague_survey_responses')
-      .insert([colleagueSurveyData])
-      .select();
+      .insert(colleagueResponse)
+      .select('id')
+      .single();
 
     if (error) {
-      console.error('שגיאה בשמירת נתוני שאלון עמיתים:', error);
+      console.error('שגיאה בשמירת הערכת עמית:', error);
       throw error;
     }
 
-    console.log('נתוני שאלון העמיתים נשמרו בהצלחה:', data);
+    console.log('הערכת עמית נשמרה בהצלחה עם ID:', data.id);
+    return data;
   } catch (error) {
-    console.error('שגיאה בשמירת תוצאות שאלון עמיתים:', error);
+    console.error('שגיאה בשמירת הערכת עמית:', error);
     throw error;
   }
-}
-
-// פונקציה לקבלת סטטיסטיקות כלליות עם אפשרות סינון לפי סוג שאלון
-export async function getSurveyStatistics(surveyType?: 'manager' | 'colleague') {
-  try {
-    let query = supabase
-      .from('survey_responses')
-      .select('*')
-      .eq('consent_for_research', true);
-
-    if (surveyType) {
-      query = query.eq('survey_type', surveyType);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('שגיאה בטעינת הסטטיסטיקות:', error);
-      throw error;
-    }
-
-    // ודא שכל הנתונים כוללים את כל השדות הנדרשים עם ערכי ברירת מחדל
-    const normalizedData = (data || []).map(record => ({
-      ...record,
-      dimension_s: record.dimension_s ?? 0,
-      dimension_l: record.dimension_l ?? 0,
-      dimension_i: record.dimension_i ?? 0,
-      dimension_m: record.dimension_m ?? 0,
-      dimension_a: record.dimension_a ?? 0,
-      dimension_a2: record.dimension_a2 ?? 0,
-      slq_score: record.slq_score ?? 0
-    }));
-
-    return normalizedData;
-  } catch (error) {
-    console.error('שגיאה בקבלת הסטטיסטיקות:', error);
-    throw error;
-  }
-}
-
-// פונקציה לקבלת נתוני עמיתים עם אפשרות סינון לפי שם מנהל
-export async function getColleagueSurveyData(managerName?: string) {
-  try {
-    let query = supabase
-      .from('colleague_survey_responses')
-      .select('*')
-      .eq('consent_for_research', true);
-
-    if (managerName) {
-      query = query.eq('manager_name', managerName);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('שגיאה בטעינת נתוני עמיתים:', error);
-      throw error;
-    }
-
-    // ודא שכל הנתונים כוללים את כל השדות הנדרשים עם ערכי ברירת מחדל
-    const normalizedData = (data || []).map(record => ({
-      ...record,
-      dimension_s: record.dimension_s ?? 0,
-      dimension_l: record.dimension_l ?? 0,
-      dimension_i: record.dimension_i ?? 0,
-      dimension_m: record.dimension_m ?? 0,
-      dimension_a: record.dimension_a ?? 0,
-      dimension_a2: record.dimension_a2 ?? 0,
-      slq_score: record.slq_score ?? 0
-    }));
-
-    return normalizedData;
-  } catch (error) {
-    console.error('שגיאה בקבלת נתוני עמיתים:', error);
-    throw error;
-  }
-}
-
-// פונקציה להשוואה בין נתוני מנהל לנתוני עמיתים
-export async function getManagerComparisonData(managerName: string, managerEmail?: string) {
-  try {
-    // קבלת נתוני המנהל
-    let managerQuery = supabase
-      .from('survey_responses')
-      .select('*')
-      .eq('survey_type', 'manager')
-      .eq('consent_for_research', true);
-
-    if (managerEmail) {
-      managerQuery = managerQuery.eq('user_email', managerEmail);
-    } else if (managerName) {
-      managerQuery = managerQuery.eq('user_name', managerName);
-    }
-
-    const { data: managerData, error: managerError } = await managerQuery;
-
-    if (managerError) {
-      console.error('שגיאה בטעינת נתוני המנהל:', managerError);
-      throw managerError;
-    }
-
-    // קבלת נתוני העמיתים
-    const { data: colleagueData, error: colleagueError } = await supabase
-      .from('colleague_survey_responses')
-      .select('*')
-      .eq('manager_name', managerName)
-      .eq('consent_for_research', true);
-
-    if (colleagueError) {
-      console.error('שגיאה בטעינת נתוני העמיתים:', colleagueError);
-      throw colleagueError;
-    }
-
-    // נרמול הנתונים
-    const normalizedManagerData = (managerData || []).map(record => ({
-      ...record,
-      dimension_s: record.dimension_s ?? 0,
-      dimension_l: record.dimension_l ?? 0,
-      dimension_i: record.dimension_i ?? 0,
-      dimension_m: record.dimension_m ?? 0,
-      dimension_a: record.dimension_a ?? 0,
-      dimension_a2: record.dimension_a2 ?? 0
-    }));
-
-    const normalizedColleagueData = (colleagueData || []).map(record => ({
-      ...record,
-      dimension_s: record.dimension_s ?? 0,
-      dimension_l: record.dimension_l ?? 0,
-      dimension_i: record.dimension_i ?? 0,
-      dimension_m: record.dimension_m ?? 0,
-      dimension_a: record.dimension_a ?? 0,
-      dimension_a2: record.dimension_a2 ?? 0
-    }));
-
-    return {
-      managerData: normalizedManagerData,
-      colleagueData: normalizedColleagueData
-    };
-  } catch (error) {
-    console.error('שגיאה בקבלת נתוני השוואה:', error);
-    throw error;
-  }
-}
+};

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Answer, UserInfo, ColleagueEvaluatorInfo, SurveyType } from "@/lib/types";
@@ -7,6 +6,7 @@ import { calculateSurveyResults } from "@/lib/calculations";
 import { saveSurveyToDatabase, saveColleagueSurveyToDatabase } from "@/lib/survey-service";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useSurveyLogic = (surveyType: SurveyType) => {
   const navigate = useNavigate();
@@ -59,6 +59,34 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
     });
   };
   
+  // Function to call the SALIMA insights Edge Function
+  const generateSalimaInsights = async (recordId: string, answers: Answer[]) => {
+    try {
+      console.log('Calling SALIMA insights Edge Function for record:', recordId);
+      
+      // Build the record object with all questions
+      const record: any = { id: recordId };
+      
+      // Add all questions q1-q90 to the record
+      for (let i = 1; i <= 90; i++) {
+        const answer = answers.find(a => a.questionId === i);
+        record[`q${i}`] = answer ? answer.value : null;
+      }
+      
+      const { data, error } = await supabase.functions.invoke('generate_salima_insights', {
+        body: { record }
+      });
+      
+      if (error) {
+        console.error('Error calling SALIMA insights function:', error);
+      } else {
+        console.log('SALIMA insights generated successfully:', data);
+      }
+    } catch (error) {
+      console.error('Failed to generate SALIMA insights:', error);
+    }
+  };
+  
   // מעבר לשלב הבא
   const handleNext = async () => {
     const nextStep = currentStep + 1;
@@ -87,7 +115,12 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           localStorage.setItem('salimaAnswers', JSON.stringify(answers));
           
           // שמירה במסד הנתונים עם התשובות הגולמיות
-          await saveSurveyToDatabase(results, answers, true, false);
+          const savedRecord = await saveSurveyToDatabase(results, answers, true, false);
+          
+          // Generate SALIMA insights after successful save
+          if (savedRecord && savedRecord.id) {
+            await generateSalimaInsights(savedRecord.id, answers);
+          }
           
           toast({
             title: "השאלון הושלם בהצלחה!",
@@ -105,51 +138,41 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           setIsSubmitting(false);
         }
       } else if (surveyType === 'colleague' && colleagueInfo) {
-        try {
-          // חישוב תוצאות לשאלון עמיתים
-          const fakeUserInfo: UserInfo = {
-            name: colleagueInfo.evaluatorName,
-            email: colleagueInfo.evaluatorEmail
-          };
-          const results = calculateSurveyResults(answers, fakeUserInfo);
-          console.log('תוצאות מחושבות לעמית:', results);
-          
-          const colleagueSubmission = {
-            slq: results.slq,
-            dimensions: {
-              S: results.dimensions.S.score,
-              L: results.dimensions.L.score,
-              I: results.dimensions.I.score,
-              M: results.dimensions.M.score,
-              A: results.dimensions.A.score,
-              A2: results.dimensions.A2.score,
-            },
-            evaluatorInfo: colleagueInfo,
-            date: new Date().toLocaleDateString('he-IL'),
-          };
-          
-          console.log('נתוני עמית לשמירה:', colleagueSubmission);
-          
-          // שמירה ב-localStorage ובמסד הנתונים עם התשובות הגולמיות
-          localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
-          
-          await saveColleagueSurveyToDatabase(colleagueSubmission, answers, true, false);
-          
-          toast({
-            title: "השאלון הושלם בהצלחה!",
-            description: "הנתונים נשמרו במסד הנתונים. תודה על ההערכה!",
-          });
-          
-          navigate('/colleague-completion');
-        } catch (error) {
-          console.error('שגיאה בעיבוד תוצאות העמית:', error);
-          toast({
-            title: "שגיאה",
-            description: "אירעה שגיאה בשמירת הנתונים. אנא נסה שוב.",
-            variant: "destructive"
-          });
-          setIsSubmitting(false);
-        }
+        // חישוב תוצאות לשאלון עמיתים
+        const fakeUserInfo: UserInfo = {
+          name: colleagueInfo.evaluatorName,
+          email: colleagueInfo.evaluatorEmail
+        };
+        const results = calculateSurveyResults(answers, fakeUserInfo);
+        console.log('תוצאות מחושבות לעמית:', results);
+        
+        const colleagueSubmission = {
+          slq: results.slq,
+          dimensions: {
+            S: results.dimensions.S.score,
+            L: results.dimensions.L.score,
+            I: results.dimensions.I.score,
+            M: results.dimensions.M.score,
+            A: results.dimensions.A.score,
+            A2: results.dimensions.A2.score,
+          },
+          evaluatorInfo: colleagueInfo,
+          date: new Date().toLocaleDateString('he-IL'),
+        };
+        
+        console.log('נתוני עמית לשמירה:', colleagueSubmission);
+        
+        // שמירה ב-localStorage ובמסד הנתונים עם התשובות הגולמיות
+        localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
+        
+        await saveColleagueSurveyToDatabase(colleagueSubmission, answers, true, false);
+        
+        toast({
+          title: "השאלון הושלם בהצלחה!",
+          description: "הנתונים נשמרו במסד הנתונים. תודה על ההערכה!",
+        });
+        
+        navigate('/colleague-completion');
       }
     }
   };
