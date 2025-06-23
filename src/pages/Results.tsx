@@ -35,18 +35,28 @@ const Results = () => {
     const savedAnswers = localStorage.getItem('salimaAnswers');
     const savedSurveyId = localStorage.getItem('salimaSurveyId');
     
+    console.log('Loading results from localStorage:');
+    console.log('- Results:', savedResults ? 'Found' : 'Not found');
+    console.log('- Answers:', savedAnswers ? 'Found' : 'Not found'); 
+    console.log('- Survey ID:', savedSurveyId);
+    
     if (savedResults) {
       const parsedResults = JSON.parse(savedResults);
       setResults(parsedResults);
+      console.log('Parsed results:', parsedResults);
 
       if (savedAnswers) {
         const parsedAnswers = JSON.parse(savedAnswers);
         setAnswers(parsedAnswers);
+        console.log('Parsed answers:', parsedAnswers.length, 'answers');
       }
 
       if (savedSurveyId) {
         setSurveyId(savedSurveyId);
+        console.log('Fetching insights for survey ID:', savedSurveyId);
         fetchInsights(savedSurveyId);
+      } else {
+        console.log('No survey ID found, insights will not be loaded');
       }
       
       toast({
@@ -54,6 +64,7 @@ const Results = () => {
         description: "הנתונים כבר נשמרו במערכת בהצלחה"
       });
     } else {
+      console.log('No results found in localStorage, redirecting to home');
       toast({
         title: "לא נמצאו תוצאות",
         description: "אנא מלא/י את השאלון תחילה",
@@ -66,7 +77,10 @@ const Results = () => {
   const fetchInsights = async (surveyId: string) => {
     setIsLoadingInsights(true);
     try {
+      console.log('Fetching insights for survey ID:', surveyId);
       const data = await getSurveyWithInsights(surveyId);
+      console.log('Insights data received:', data);
+      
       setInsights({
         insight_strategy: data.insight_strategy,
         insight_adaptive: data.insight_adaptive,

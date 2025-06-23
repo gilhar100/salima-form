@@ -6,7 +6,6 @@ import { calculateSurveyResults } from "@/lib/calculations";
 import { saveSurveyToDatabase, saveColleagueSurveyToDatabase } from "@/lib/survey-service";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { supabase } from "@/integrations/supabase/client";
 
 export const useSurveyLogic = (surveyType: SurveyType) => {
   const navigate = useNavigate();
@@ -59,34 +58,6 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
     });
   };
   
-  // Function to call the SALIMA insights Edge Function
-  const generateSalimaInsights = async (recordId: string, answers: Answer[]) => {
-    try {
-      console.log('Calling SALIMA insights Edge Function for record:', recordId);
-      
-      // Build the record object with all questions
-      const record: any = { id: recordId };
-      
-      // Add all questions q1-q90 to the record
-      for (let i = 1; i <= 90; i++) {
-        const answer = answers.find(a => a.questionId === i);
-        record[`q${i}`] = answer ? answer.value : null;
-      }
-      
-      const { data, error } = await supabase.functions.invoke('generate_salima_insights', {
-        body: { record }
-      });
-      
-      if (error) {
-        console.error('Error calling SALIMA insights function:', error);
-      } else {
-        console.log('SALIMA insights generated successfully:', data);
-      }
-    } catch (error) {
-      console.error('Failed to generate SALIMA insights:', error);
-    }
-  };
-  
   // מעבר לשלב הבא
   const handleNext = async () => {
     const nextStep = currentStep + 1;
@@ -120,6 +91,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           // Save the survey ID for later retrieval of insights
           if (savedRecord && savedRecord.id) {
             localStorage.setItem('salimaSurveyId', savedRecord.id);
+            console.log('Survey ID saved to localStorage:', savedRecord.id);
           }
           
           toast({
@@ -127,7 +99,11 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
             description: "הנתונים נשמרו במסד הנתונים. מעבר לדף התוצאות...",
           });
           
-          navigate('/results');
+          // Small delay to ensure everything is saved
+          setTimeout(() => {
+            navigate('/results');
+          }, 1000);
+          
         } catch (error) {
           console.error('שגיאה בעיבוד תוצאות המנהל:', error);
           toast({
