@@ -2,11 +2,11 @@
 import { getEnhancedPersonalizedAnalysis } from './enhanced-personalized-analysis';
 
 // פונקציה מרכזית לקבלת ניתוח מותאם אישית משופר ללא ציונים
-export const getPersonalizedAnalysis = (
+export const getPersonalizedAnalysis = async (
   dimension: string, 
   answersForDimension: { questionId: number; value: number }[],
   userIdentifier?: string
-): string => {
+): Promise<string> => {
   console.log(`Getting personalized paragraph for dimension ${dimension}:`, answersForDimension);
   
   if (answersForDimension.length === 0) {
@@ -14,7 +14,7 @@ export const getPersonalizedAnalysis = (
   }
 
   // שימוש במנוע הניתוח החדש
-  const analysis = getEnhancedPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
+  const analysis = await getEnhancedPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
   
   // וידוא איכות הפסקה
   if (!analysis || analysis.trim().length < 20) {
@@ -39,11 +39,10 @@ const getDimensionDisplayName = (dimension: string): string => {
 };
 
 // פונקציה לניתוח מפורט של תשובות (נשמרת לתאימות לאחור)
-export const analyzeSpecificAnswers = (
+export const analyzeSpecificAnswers = async (
   dimension: string, 
   answersForDimension: { questionId: number; value: number }[],
   userIdentifier?: string
-): string => {
-  return getPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
+): Promise<string> => {
+  return await getPersonalizedAnalysis(dimension, answersForDimension, userIdentifier);
 };
-
