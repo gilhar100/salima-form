@@ -87,7 +87,7 @@ export const saveSurveyToDatabase = async (
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabase.supabaseKey}`,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobXJnaGViZHRjYmhtZ3RicWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxNzU2MTksImV4cCI6MjA2Mzc1MTYxOX0.zipgFg0ZVfyJj6m_Ys7TUwVFj62Myhprm_pOSGizwWU`,
         },
         body: JSON.stringify(payload)
       });
