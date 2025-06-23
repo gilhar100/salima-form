@@ -1,4 +1,5 @@
 
+
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
 
@@ -23,6 +24,9 @@ export const saveSurveyToDatabase = async (
     
     // Prepare raw answers as individual columns
     const rawAnswersObject = convertRawAnswersToObject(rawAnswers);
+    
+    // Convert Answer[] to number[] for database compatibility
+    const answersArray = rawAnswers.map(answer => answer.value);
     
     const surveyResponse = {
       // Basic info
@@ -50,7 +54,7 @@ export const saveSurveyToDatabase = async (
       
       // Raw answers as individual columns and array
       ...rawAnswersObject,
-      answers: rawAnswers
+      answers: answersArray // Convert to simple number array
     };
 
     const { data, error } = await supabase
@@ -88,6 +92,9 @@ export const saveColleagueSurveyToDatabase = async (
       rawAnswersObject[`q${i}`] = answer ? answer.value : null;
     }
 
+    // Convert Answer[] to number[] for database compatibility
+    const answersArray = rawAnswers.map(answer => answer.value);
+
     const colleagueResponse = {
       // Manager info
       manager_name: submission.evaluatorInfo.managerName,
@@ -116,7 +123,7 @@ export const saveColleagueSurveyToDatabase = async (
       
       // Raw answers as individual columns and array
       ...rawAnswersObject,
-      answers: rawAnswers
+      answers: answersArray // Convert to simple number array
     };
 
     const { data, error } = await supabase
@@ -199,3 +206,4 @@ export const getManagerComparisonData = async (managerName: string, managerEmail
     throw error;
   }
 };
+
