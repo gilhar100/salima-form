@@ -1,3 +1,4 @@
+
 import { SurveyResult, Dimension } from "@/lib/types";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { dimensionInfo } from "@/data/questions";
@@ -9,73 +10,73 @@ interface ResultsRadarProps {
   hideScores?: boolean;
 }
 
+// New colorblind-friendly SALIMA color palette with intensity levels
+export const dimensionColors = {
+  S: { 
+    strongest: "#0D4F8C",
+    strong: "#1F77B4",
+    medium: "#4A90E2",
+    weak: "#87CEEB",
+    weakest: "#E6F3FF",
+    light: "#F0F8FF",
+    primary: "#1F77B4"
+  },
+  L: { 
+    strongest: "#1E7A1E",
+    strong: "#2CA02C",
+    medium: "#5CB85C",
+    weak: "#90EE90",
+    weakest: "#F0FFF0",
+    light: "#F0FDF7",
+    primary: "#2CA02C"
+  },
+  I: { 
+    strongest: "#A01E1E",
+    strong: "#D62728",
+    medium: "#E74C3C",
+    weak: "#FFB6C1",
+    weakest: "#FFE4E1",
+    light: "#FEF7F0",
+    primary: "#D62728"
+  },
+  M: { 
+    strongest: "#6A4C93",
+    strong: "#9467BD",
+    medium: "#B19CD9",
+    weak: "#DDA0DD",
+    weakest: "#F8F4FF",
+    light: "#FEF7FB",
+    primary: "#9467BD"
+  },
+  A: { 
+    strongest: "#CC5500",
+    strong: "#FF7F0E",
+    medium: "#FFA500",
+    weak: "#FFCC99",
+    weakest: "#FFF8DC",
+    light: "#FFFBF0",
+    primary: "#FF7F0E"
+  },
+  A2: { 
+    strongest: "#8B8B00",
+    strong: "#BCBD22",
+    medium: "#CCCC33",
+    weak: "#FFFF99",
+    weakest: "#FFFACD",
+    light: "#FEFEF0",
+    primary: "#BCBD22"
+  }
+};
+
 // פונקציה לקבלת עוצמת צבע בהתאם לציון
 const getColorIntensity = (score: number, baseColors: any) => {
-  const normalizedScore = Math.max(0, Math.min(5, score)) / 5; // נרמול לטווח 0-1
+  const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
   
   if (normalizedScore >= 0.9) return baseColors.strongest;
   if (normalizedScore >= 0.75) return baseColors.strong;
   if (normalizedScore >= 0.55) return baseColors.medium;
   if (normalizedScore >= 0.35) return baseColors.weak;
   return baseColors.weakest;
-};
-
-// צבעים חדשים ידידותיים לעיוורי צבעים עם דרגות עוצמה
-export const dimensionColors = {
-  S: { 
-    strongest: "#003d6b",   // Strategy - Dark Blue (darkest)
-    strong: "#0072B2",     // Strategy - Dark Blue (main)
-    medium: "#4a9de0",     // Strategy - Dark Blue (lighter)
-    weak: "#87ceeb",       // Strategy - Dark Blue (light)
-    weakest: "#e6f3ff",    // Strategy - Dark Blue (lightest)
-    light: "#f0f8ff",
-    primary: "#0072B2"
-  },
-  L: { 
-    strongest: "#006d52",  // Learning - Teal Green (darkest)
-    strong: "#009E73",     // Learning - Teal Green (main)
-    medium: "#33b088",     // Learning - Teal Green (lighter)
-    weak: "#66c39e",       // Learning - Teal Green (light)
-    weakest: "#ccede5",    // Learning - Teal Green (lightest)
-    light: "#f0fdf7",
-    primary: "#009E73"
-  },
-  I: { 
-    strongest: "#a03f00",  // Inspiration - Vermillion (darkest)
-    strong: "#D55E00",     // Inspiration - Vermillion (main)
-    medium: "#e07e33",     // Inspiration - Vermillion (lighter)
-    weak: "#eb9f66",       // Inspiration - Vermillion (light)
-    weakest: "#f6d6c4",    // Inspiration - Vermillion (lightest)
-    light: "#fef7f0",
-    primary: "#D55E00"
-  },
-  M: { 
-    strongest: "#9c5a85",  // Meaning - Pink/Purple (darkest)
-    strong: "#CC79A7",     // Meaning - Pink/Purple (main)
-    medium: "#d493b8",     // Meaning - Pink/Purple (lighter)
-    weak: "#dcadc9",       // Meaning - Pink/Purple (light)
-    weakest: "#f5e8f0",    // Meaning - Pink/Purple (lightest)
-    light: "#fef7fb",
-    primary: "#CC79A7"
-  },
-  A: { 
-    strongest: "#b8760a",  // Adaptive - Orange (darkest)
-    strong: "#E69F00",     // Adaptive - Orange (main)
-    medium: "#eab233",     // Adaptive - Orange (lighter)
-    weak: "#efc666",       // Adaptive - Orange (light)
-    weakest: "#faebd7",    // Adaptive - Orange (lightest)
-    light: "#fffbf0",
-    primary: "#E69F00"
-  },
-  A2: { 
-    strongest: "#c7c100",  // Authentic - Yellow (darkest)
-    strong: "#F0E442",     // Authentic - Yellow (main)
-    medium: "#f3e968",     // Authentic - Yellow (lighter)
-    weak: "#f6ee8e",       // Authentic - Yellow (light)
-    weakest: "#fcf8d4",    // Authentic - Yellow (lightest)
-    light: "#fefef0",
-    primary: "#F0E442"
-  }
 };
 
 const ResultsRadar: React.FC<ResultsRadarProps> = ({ result, hideScores = false }) => {

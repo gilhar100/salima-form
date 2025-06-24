@@ -44,10 +44,11 @@ const ColorIntensityBar: React.FC<ColorIntensityBarProps> = ({ score, color, dim
           />
         </div>
         
-        {/* Scale labels */}
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>5</span>
-          <span>1</span>
+        {/* Center label only */}
+        <div className="flex justify-center text-xs text-gray-500 mt-1">
+          <span style={{ position: 'absolute', left: '37.5%', transform: 'translateX(-50%)' }}>
+            2.5
+          </span>
         </div>
       </div>
     </div>

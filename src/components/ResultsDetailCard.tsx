@@ -13,14 +13,14 @@ interface ResultsDetailCardProps {
 }
 
 const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDetailCardProps) => {
-  // SALIMA color palette
+  // New colorblind-friendly SALIMA color palette
   const dimensionColors = {
-    'S': '#0072B2', // אסטרטגיה
-    'A': '#E69F00', // אדפטיביות
-    'L': '#009E73', // למידה
-    'I': '#D55E00', // השראה
-    'M': '#CC79A7', // משמעות
-    'A2': '#F0E442' // אותנטיות
+    'S': '#1F77B4', // אסטרטגיה
+    'A': '#FF7F0E', // אדפטיביות
+    'L': '#2CA02C', // למידה
+    'I': '#D62728', // השראה
+    'M': '#9467BD', // משמעות
+    'A2': '#BCBD22' // אותנטיות
   };
 
   const getIntensityColor = (score: number) => {
@@ -52,7 +52,7 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
   };
 
   const getDimensionColor = (dimension: string) => {
-    return dimensionColors[dimension as keyof typeof dimensionColors] || '#4F46E5';
+    return dimensionColors[dimension as keyof typeof dimensionColors] || '#1F77B4';
   };
 
   return (

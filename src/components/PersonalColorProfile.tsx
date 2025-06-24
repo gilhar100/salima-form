@@ -3,7 +3,6 @@ import React from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { dimensionColors } from "./ResultsRadar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface PersonalColorProfileProps {
@@ -14,11 +13,56 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const isMobile = useIsMobile();
   const { dimensions } = result;
   
-  // פונקציה לקבלת עוצמת צבע בהתאם לציון - משופרת עם ניגודיות חזקה יותר
+  // New colorblind-friendly SALIMA color palette
+  const dimensionColors = {
+    'S': {
+      strongest: '#0D4F8C',
+      strong: '#1F77B4',
+      medium: '#4A90E2',
+      weak: '#87CEEB',
+      weakest: '#E6F3FF'
+    },
+    'L': {
+      strongest: '#1E7A1E',
+      strong: '#2CA02C',
+      medium: '#5CB85C',
+      weak: '#90EE90',
+      weakest: '#F0FFF0'
+    },
+    'I': {
+      strongest: '#A01E1E',
+      strong: '#D62728',
+      medium: '#E74C3C',
+      weak: '#FFB6C1',
+      weakest: '#FFE4E1'
+    },
+    'M': {
+      strongest: '#6A4C93',
+      strong: '#9467BD',
+      medium: '#B19CD9',
+      weak: '#DDA0DD',
+      weakest: '#F8F4FF'
+    },
+    'A': {
+      strongest: '#CC5500',
+      strong: '#FF7F0E',
+      medium: '#FFA500',
+      weak: '#FFCC99',
+      weakest: '#FFF8DC'
+    },
+    'A2': {
+      strongest: '#8B8B00',
+      strong: '#BCBD22',
+      medium: '#CCCC33',
+      weak: '#FFFF99',
+      weakest: '#FFFACD'
+    }
+  };
+  
+  // פונקציה לקבלת עוצמת צבע בהתאם לציון
   function getIntensityColor(score: number, baseColors: any) {
     const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
     
-    // Much more aggressive intensity differences with extreme contrast
     if (normalizedScore >= 0.9) return baseColors.strongest;
     if (normalizedScore >= 0.75) return baseColors.strong;
     if (normalizedScore >= 0.6) return baseColors.medium;
@@ -26,11 +70,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return baseColors.weakest;
   }
 
-  // פונקציה לסקיילה לא ליניארית עם הגברה דרמטית של ההבדלים הוויזואליים
+  // פונקציה לסקיילה לא ליניארית
   function getExtremeNonLinearSize(score: number): number {
     const normalizedScore = Math.max(0, Math.min(5, score));
     
-    // Extremely aggressive scaling to maximize visual differences
     if (normalizedScore >= 4.8) return 100;
     if (normalizedScore >= 4.5) return 85;
     if (normalizedScore >= 4.2) return 72;
@@ -138,7 +181,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           </ResponsiveContainer>
         </div>
         
-        {/* מקרא צבעים - ללא ציונים מספריים */}
+        {/* מקרא צבעים */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 w-full max-w-md">
           {profileData.map((dimension) => (
             <div 

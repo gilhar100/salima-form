@@ -9,14 +9,14 @@ interface LollipopChartProps {
 const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
   const personalAverage = result.slq;
 
-  // SALIMA color palette
+  // New colorblind-friendly SALIMA color palette
   const dimensionColors = {
-    'S': '#0072B2', // אסטרטגיה
-    'A': '#E69F00', // אדפטיביות
-    'L': '#009E73', // למידה
-    'I': '#D55E00', // השראה
-    'M': '#CC79A7', // משמעות
-    'A2': '#F0E442' // אותנטיות
+    'S': '#1F77B4', // אסטרטגיה
+    'A': '#FF7F0E', // אדפטיביות
+    'L': '#2CA02C', // למידה
+    'I': '#D62728', // השראה
+    'M': '#9467BD', // משמעות
+    'A2': '#BCBD22' // אותנטיות
   };
 
   // Dimension names in Hebrew
@@ -70,13 +70,6 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
           
           return (
             <div key={dimension.dimension} className="flex items-center justify-center gap-4">
-              {/* Right side label */}
-              <div className="w-24 text-right">
-                <span className="font-medium text-sm text-black">
-                  {hebrewName}
-                </span>
-              </div>
-              
               {/* Left side for below-average */}
               <div className="flex-1 flex justify-end items-center">
                 {direction === 'left' && (
@@ -118,10 +111,10 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
                 )}
               </div>
               
-              {/* Status indicator */}
-              <div className="w-20 text-right">
-                <span className="text-xs text-gray-600">
-                  {direction === 'right' ? 'מעל הממוצע' : 'מתחת לממוצע'}
+              {/* Parameter label on the right */}
+              <div className="w-24 text-right">
+                <span className="font-medium text-sm text-black">
+                  {hebrewName}
                 </span>
               </div>
             </div>
