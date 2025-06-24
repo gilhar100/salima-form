@@ -19,7 +19,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
     'A2': '#EEDE04' // אותנטיות - yellow
   };
 
-  // Dimension names in Hebrew
+  // Dimension names in Hebrew - Fixed names
   const dimensionNames = {
     'S': 'אסטרטגיה',
     'A': 'אדפטיביות',

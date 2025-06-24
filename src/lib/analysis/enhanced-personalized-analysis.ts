@@ -18,10 +18,10 @@ export const getEnhancedPersonalizedAnalysis = async (
     // יצירת פסקאות SALIMA מותאמות אישית
     const paragraphs = await generateSalimaParagraphs(answers, userIdentifier);
     
-    // מיפוי הממדים לשמות התצוגה
+    // מיפוי הממדים לשמות התצוגה - Fixed names
     const dimensionNameMap: Record<string, string> = {
       'S': 'אסטרטגיה',
-      'L': 'לומד',
+      'L': 'למידה',
       'I': 'השראה',
       'M': 'משמעות',
       'A': 'אדפטיביות',
@@ -42,14 +42,14 @@ export const getEnhancedPersonalizedAnalysis = async (
   }
 };
 
-// פונקציה לקבלת שם תצוגה של ממד
+// פונקציה לקבלת שם תצוגה של ממד - Fixed names
 const getDimensionDisplayName = (dimension: string): string => {
   const dimensionNames: Record<string, string> = {
-    'S': 'חשיבה אסטרטגית',
+    'S': 'אסטרטגיה',
     'L': 'למידה',
     'I': 'השראה',
     'M': 'משמעות',
-    'A': 'הסתגלות',
+    'A': 'אדפטיביות',
     'A2': 'אותנטיות'
   };
   

@@ -169,20 +169,23 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           </ResponsiveContainer>
         </div>
         
-        {/* מקרא צבעים */}
+        {/* מקרא צבעים עם נראות משופרת */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 w-full max-w-md">
           {profileData.map((dimension, index) => (
             <div 
               key={index} 
-              className="flex items-center gap-2 p-2 rounded-lg border"
-              style={{ backgroundColor: `${dimension.color}20` }}
+              className="flex items-center gap-2 p-3 rounded-lg border-2 shadow-sm"
+              style={{ 
+                backgroundColor: 'white',
+                borderColor: dimension.color
+              }}
             >
               <div 
-                className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0"
                 style={{ backgroundColor: dimension.color }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-black font-medium truncate" style={{ fontSize: '16px' }}>
+                <p className="text-black font-medium truncate" style={{ fontSize: '14px' }}>
                   {dimension.name}
                 </p>
               </div>

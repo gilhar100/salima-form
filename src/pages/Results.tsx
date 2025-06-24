@@ -216,7 +216,7 @@ const Results = () => {
           <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
             <CardHeader className="text-center">
               <CardTitle className="font-bold text-salima-800 mb-2" style={{ fontSize: '22px' }}>
-                תוצאות שאלון מנהיגות SALIMA-WOCA
+                תוצאות שאלון מנהיגות
               </CardTitle>
               <CardDescription style={{ fontSize: '18px' }}>
                 הנה התוצאות המפורטות שלך מהשאלון - {new Date(results.date).toLocaleDateString('he-IL')}
@@ -236,25 +236,22 @@ const Results = () => {
                   <div className="text-5xl font-bold text-salima-600 mb-2">
                     {results.slq}/5
                   </div>
-                  <p className="text-black" style={{ fontSize: '16px' }}>
-                    ציון SLQ (Strategic Leadership Quotient)
-                  </p>
                 </div>
               </div>
 
               {/* תקציר כללי ללא ציונים מספריים */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                <div className="p-4 bg-green-50 rounded-lg border-2 border-green-200">
-                  <h3 className="font-semibold mb-2 text-green-700" style={{ fontSize: '18px' }}>הממד החזק ביותר</h3>
-                  <div className="font-bold text-green-600 mb-1" style={{ fontSize: '22px' }}>
+                <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <h3 className="font-semibold mb-2 text-gray-700" style={{ fontSize: '18px' }}>הממד החזק ביותר</h3>
+                  <div className="font-bold text-gray-600 mb-1" style={{ fontSize: '22px' }}>
                     {highestDimension.title}
                   </div>
                   <p className="text-black" style={{ fontSize: '16px' }}>אזור של כוח וחוזק</p>
                 </div>
                 
-                <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
-                  <h3 className="font-semibold mb-2 text-orange-700" style={{ fontSize: '18px' }}>הממד לפיתוח</h3>
-                  <div className="font-bold text-orange-600 mb-1" style={{ fontSize: '22px' }}>
+                <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <h3 className="font-semibold mb-2 text-gray-700" style={{ fontSize: '18px' }}>הממד לפיתוח</h3>
+                  <div className="font-bold text-gray-600 mb-1" style={{ fontSize: '22px' }}>
                     {lowestDimension.title}
                   </div>
                   <p className="text-black" style={{ fontSize: '16px' }}>אזור להשקעה ופיתוח</p>
