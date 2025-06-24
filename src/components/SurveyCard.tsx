@@ -40,7 +40,7 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
   return (
     <Card className="shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg sm:text-xl leading-tight">
+        <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
           {currentStep === 0 ? instructionText : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
       </CardHeader>
@@ -66,6 +66,7 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
           onClick={handlePrevious}
           disabled={currentStep === 0}
           className={isMobile ? 'w-full order-2' : 'w-auto'}
+          style={{ fontSize: '16px' }}
         >
           הקודם
         </Button>
@@ -75,10 +76,11 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
           onClick={handleNext}
           disabled={!canProceed() || isSubmitting}
           className={`${surveyType === 'manager' ? 'bg-salima-600 hover:bg-salima-700' : 'bg-blue-600 hover:bg-blue-700'} ${isMobile ? 'w-full order-1' : 'w-auto'}`}
+          style={{ fontSize: '16px' }}
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2" style={{ width: '20px', height: '20px' }} />
               שומר...
             </>
           ) : (
@@ -86,6 +88,11 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
           )}
         </Button>
       </CardFooter>
+      
+      {/* Copyright footer */}
+      <div className="text-center p-4 text-black" style={{ fontSize: '16px' }}>
+        כל הזכויות שמורות לד״ר יוסי שרעבי
+      </div>
     </Card>
   );
 };

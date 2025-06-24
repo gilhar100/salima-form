@@ -14,29 +14,32 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const isMobile = useIsMobile();
   const { dimensions } = result;
   
-  // פונקציה לקבלת עוצמת צבע בהתאם לציון
+  // פונקציה לקבלת עוצמת צבע בהתאם לציון - משופרת עם ניגודיות חזקה יותר
   function getIntensityColor(score: number, baseColors: any) {
     const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
     
-    if (normalizedScore >= 0.9) return baseColors.strongest;
-    if (normalizedScore >= 0.75) return baseColors.strong;
-    if (normalizedScore >= 0.55) return baseColors.medium;
-    if (normalizedScore >= 0.35) return baseColors.weak;
+    // Enhanced contrast with stronger intensity differences
+    if (normalizedScore >= 0.85) return baseColors.strongest;
+    if (normalizedScore >= 0.65) return baseColors.strong;
+    if (normalizedScore >= 0.45) return baseColors.medium;
+    if (normalizedScore >= 0.25) return baseColors.weak;
     return baseColors.weakest;
   }
 
-  // פונקציה לסקיילה לא ליניארית להגברת ההבדלים הוויזואליים
+  // פונקציה לסקיילה לא ליניארית משופרת להגברת ההבדלים הוויזואליים
   function getNonLinearSize(score: number): number {
     const normalizedScore = Math.max(0, Math.min(5, score));
     
-    // Non-linear scaling to amplify visual differences
-    if (normalizedScore >= 4.5) return 100;
-    if (normalizedScore >= 4.0) return 80;
-    if (normalizedScore >= 3.5) return 60;
-    if (normalizedScore >= 3.0) return 40;
-    if (normalizedScore >= 2.5) return 25;
-    if (normalizedScore >= 2.0) return 15;
-    if (normalizedScore >= 1.5) return 10;
+    // Much more aggressive non-linear scaling to amplify visual differences
+    if (normalizedScore >= 4.7) return 100;
+    if (normalizedScore >= 4.3) return 85;
+    if (normalizedScore >= 4.0) return 70;
+    if (normalizedScore >= 3.7) return 55;
+    if (normalizedScore >= 3.4) return 42;
+    if (normalizedScore >= 3.1) return 30;
+    if (normalizedScore >= 2.8) return 20;
+    if (normalizedScore >= 2.5) return 12;
+    if (normalizedScore >= 2.2) return 8;
     return 5;
   }
   
@@ -94,10 +97,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   return (
     <Card className="w-full">
       <CardHeader className="pb-4">
-        <CardTitle className="text-center text-lg sm:text-xl leading-tight text-salima-800">
+        <CardTitle className="text-center text-black" style={{ fontSize: '22px' }}>
           טביעת צבע אישית
         </CardTitle>
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-black" style={{ fontSize: '16px' }}>
           הפרופיל הצבעוני הייחודי שלך במנהיגות SALIMA
         </p>
       </CardHeader>
@@ -146,10 +149,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 style={{ backgroundColor: dimension.color }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-700 truncate">
+                <p className="text-black font-medium truncate" style={{ fontSize: '16px' }}>
                   {dimension.name}
                 </p>
-                <p className="text-sm font-bold" style={{ color: dimension.color }}>
+                <p className="font-bold" style={{ color: dimension.color, fontSize: '16px' }}>
                   {dimension.originalScore}
                 </p>
               </div>
@@ -157,7 +160,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           ))}
         </div>
         
-        <div className="text-xs text-gray-500 text-center mt-4 max-w-sm">
+        <div className="text-black text-center mt-4 max-w-sm" style={{ fontSize: '16px' }}>
           גודל הפרק ועוצמת הצבע משקפים את חוזק הממד בפרופיל המנהיגות שלך
         </div>
       </CardContent>

@@ -21,13 +21,12 @@ const SurveyHeader: React.FC<SurveyHeaderProps> = ({
 
   return (
     <div className="mb-4 space-y-3">
-      <h1 className="text-xl sm:text-2xl font-bold text-center">{surveyTitle}</h1>
-      <h2 className="text-lg sm:text-xl font-semibold text-center text-gray-600">ד"ר יוסי שרעבי</h2>
+      <h1 className="font-bold text-center text-black" style={{ fontSize: '22px' }}>{surveyTitle}</h1>
       {surveyType === 'colleague' && colleagueInfo && (
-        <p className="text-center text-gray-600">מעריך את: {colleagueInfo.managerName}</p>
+        <p className="text-center text-black" style={{ fontSize: '16px' }}>מעריך את: {colleagueInfo.managerName}</p>
       )}
       <Progress value={progress} className="h-2 sm:h-3" />
-      <div className="text-center text-sm text-gray-500">
+      <div className="text-center text-black" style={{ fontSize: '16px' }}>
         שלב {currentStep + 1} מתוך {totalSteps}
       </div>
     </div>

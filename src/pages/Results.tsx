@@ -4,7 +4,7 @@ import { SurveyResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Award, RefreshCw } from "lucide-react";
+import { Loader2, Award, RefreshCw, Download } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
@@ -133,11 +133,20 @@ const Results = () => {
     }
   };
 
+  const handleDownloadPDF = () => {
+    // Trigger browser print dialog which can save as PDF
+    window.print();
+    toast({
+      title: "הורדת PDF",
+      description: "בחר 'שמור כ-PDF' בחלון ההדפסה",
+    });
+  };
+
   if (!results) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">טוען תוצאות...</span>
+        <Loader2 style={{ width: '20px', height: '20px' }} className="animate-spin" />
+        <span className="ml-2 text-black" style={{ fontSize: '16px' }}>טוען תוצאות...</span>
       </div>
     );
   }
@@ -155,10 +164,10 @@ const Results = () => {
     <div className="container py-6 max-w-6xl mx-auto px-4">
       <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-salima-800 mb-2">
+          <CardTitle className="font-bold text-salima-800 mb-2" style={{ fontSize: '22px' }}>
             תוצאות שאלון מנהיגות SALIMA-WOCA
           </CardTitle>
-          <CardDescription className="text-lg">
+          <CardDescription style={{ fontSize: '18px' }}>
             הנה התוצאות המפורטות שלך מהשאלון - {new Date(results.date).toLocaleDateString('he-IL')}
           </CardDescription>
         </CardHeader>
@@ -168,15 +177,15 @@ const Results = () => {
           <div className="flex justify-center">
             <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-salima-200 text-center">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <Award className="h-8 w-8 text-salima-600" />
-                <h3 className="text-2xl font-bold text-salima-800">
+                <Award style={{ width: '20px', height: '20px' }} className="text-salima-600" />
+                <h3 className="font-bold text-salima-800" style={{ fontSize: '22px' }}>
                   ציון מנהיגות כללי
                 </h3>
               </div>
               <div className="text-5xl font-bold text-salima-600 mb-2">
                 {results.slq}/5
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-black" style={{ fontSize: '16px' }}>
                 ציון SLQ (Strategic Leadership Quotient)
               </p>
             </div>
@@ -185,19 +194,19 @@ const Results = () => {
           {/* תקציר כללי ללא ציונים מספריים */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
             <div className="p-4 bg-green-50 rounded-lg border-2 border-green-200">
-              <h3 className="text-lg font-semibold mb-2 text-green-700">הממד החזק ביותר</h3>
-              <div className="text-2xl font-bold text-green-600 mb-1">
+              <h3 className="font-semibold mb-2 text-green-700" style={{ fontSize: '18px' }}>הממד החזק ביותר</h3>
+              <div className="font-bold text-green-600 mb-1" style={{ fontSize: '22px' }}>
                 {highestDimension.title}
               </div>
-              <p className="text-sm text-gray-600">אזור של כוח וחוזק</p>
+              <p className="text-black" style={{ fontSize: '16px' }}>אזור של כוח וחוזק</p>
             </div>
             
             <div className="p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
-              <h3 className="text-lg font-semibold mb-2 text-orange-700">הממד לפיתוח</h3>
-              <div className="text-2xl font-bold text-orange-600 mb-1">
+              <h3 className="font-semibold mb-2 text-orange-700" style={{ fontSize: '18px' }}>הממד לפיתוח</h3>
+              <div className="font-bold text-orange-600 mb-1" style={{ fontSize: '22px' }}>
                 {lowestDimension.title}
               </div>
-              <p className="text-sm text-gray-600">אזור להשקעה ופיתוח</p>
+              <p className="text-black" style={{ fontSize: '16px' }}>אזור להשקעה ופיתוח</p>
             </div>
           </div>
           
@@ -217,7 +226,7 @@ const Results = () => {
           {/* כרטיסי פירוט עם תובנות מהמסד נתונים */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-salima-800">
+              <h2 className="font-bold text-salima-800" style={{ fontSize: '22px' }}>
                 ניתוח מפורט לכל ממד
               </h2>
               {!isLoadingInsights && !insightsAvailable && (
@@ -225,22 +234,23 @@ const Results = () => {
                   onClick={handleRefreshInsights}
                   variant="outline"
                   className="flex items-center gap-2"
+                  style={{ fontSize: '16px' }}
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  <RefreshCw style={{ width: '20px', height: '20px' }} />
                   רענן תובנות
                 </Button>
               )}
             </div>
             
             {isLoadingInsights && (
-              <div className="text-center text-gray-600 mb-4 p-4 bg-blue-50 rounded-lg">
-                <Loader2 className="h-6 w-6 animate-spin inline-block mr-2" />
+              <div className="text-center text-black mb-4 p-4 bg-blue-50 rounded-lg" style={{ fontSize: '16px' }}>
+                <Loader2 style={{ width: '20px', height: '20px' }} className="animate-spin inline-block mr-2" />
                 התובנות נטענות כעת... אנא המתן מספר שניות
               </div>
             )}
             
             {!isLoadingInsights && !insightsAvailable && (
-              <div className="text-center text-orange-600 mb-4 p-4 bg-orange-50 rounded-lg">
+              <div className="text-center text-orange-600 mb-4 p-4 bg-orange-50 rounded-lg" style={{ fontSize: '16px' }}>
                 התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
               </div>
             )}
@@ -258,7 +268,7 @@ const Results = () => {
             </div>
           </div>
           
-          <div className="text-center text-green-600 font-medium text-lg">
+          <div className="text-center text-green-600 font-medium" style={{ fontSize: '18px' }}>
             ✓ הנתונים נשמרו בהצלחה במערכת
           </div>
         </CardContent>
@@ -269,10 +279,23 @@ const Results = () => {
         <BellCurveVisualization userScore={results.slq} />
       </div>
       
-      <div className="flex gap-4 justify-center flex-wrap">
-        <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-auto">
+      <div className="flex gap-4 justify-center flex-wrap mb-6">
+        <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-auto" style={{ fontSize: '16px' }}>
           חזור לעמוד הבית
         </Button>
+        <Button 
+          onClick={handleDownloadPDF} 
+          className="bg-green-600 hover:bg-green-700 w-auto flex items-center gap-2"
+          style={{ fontSize: '16px' }}
+        >
+          <Download style={{ width: '20px', height: '20px' }} />
+          הורד דוח אישי (PDF)
+        </Button>
+      </div>
+      
+      {/* Copyright footer */}
+      <div className="text-center text-black" style={{ fontSize: '16px' }}>
+        כל הזכויות שמורות לד״ר יוסי שרעבי
       </div>
     </div>
   );

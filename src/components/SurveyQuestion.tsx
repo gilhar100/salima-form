@@ -54,10 +54,11 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
     <Card className="w-full mb-4 shadow-sm">
       <CardContent className="pt-4 px-3 sm:pt-6 sm:px-6">
         <div className="mb-4 flex items-start sm:items-center">
-          <span className={`ml-2 ${surveyType === 'manager' ? 'bg-salima-600' : 'bg-blue-600'} text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full text-xs sm:text-sm font-semibold flex-shrink-0 mt-0.5 sm:mt-0`}>
+          <span className={`ml-2 ${surveyType === 'manager' ? 'bg-salima-600' : 'bg-blue-600'} text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full font-semibold flex-shrink-0 mt-0.5 sm:mt-0`}
+                style={{ fontSize: '16px' }}>
             {question.id}
           </span>
-          <p className="font-medium text-sm sm:text-lg mr-2 leading-tight">{questionText}</p>
+          <p className="font-medium mr-2 leading-tight text-black" style={{ fontSize: '16px' }}>{questionText}</p>
         </div>
         
         <RadioGroup
@@ -76,11 +77,13 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
                 <Label
                   htmlFor={`q${question.id}-${option.value}`}
                   className={getOptionClasses(option.value)}
+                  style={{ fontSize: '16px' }}
                 >
                   {option.value}
                 </Label>
               </div>
-              <span className={`text-xs ${isMobile ? 'mr-3 flex-1' : 'mt-1'} text-gray-500 ${isMobile ? 'text-right' : 'text-center'}`}>
+              <span className={`${isMobile ? 'mr-3 flex-1' : 'mt-1'} text-black ${isMobile ? 'text-right' : 'text-center'}`}
+                    style={{ fontSize: '16px' }}>
                 {option.label}
               </span>
             </div>
