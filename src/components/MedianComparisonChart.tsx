@@ -11,11 +11,11 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
   // Use the SLQ score as the median reference point
   const medianScore = result.slq;
 
-  // Get all dimensions with their Hebrew names
+  // Get all dimensions with their Hebrew names - Updated terminology
   const dimensionNames = {
     strategic: 'אסטרטגי',
-    adaptive: 'אדפטיבי', 
-    learning: 'לומד',
+    adaptive: 'אדפטיביות', // Fixed: was אדפטיבי
+    learning: 'למידה', // Fixed: was לומד
     inspiring: 'השראה',
     meaningful: 'משמעות',
     authentic: 'אותנטיות'

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { DimensionResult } from "@/lib/types";
 import { Loader2 } from "lucide-react";
+import ColorIntensityBar from "./ColorIntensityBar";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -12,6 +13,16 @@ interface ResultsDetailCardProps {
 }
 
 const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDetailCardProps) => {
+  // SALIMA color palette
+  const dimensionColors = {
+    'S': '#0072B2', // אסטרטגיה
+    'A': '#E69F00', // אדפטיביות
+    'L': '#009E73', // למידה
+    'I': '#D55E00', // השראה
+    'M': '#CC79A7', // משמעות
+    'A2': '#F0E442' // אותנטיות
+  };
+
   const getIntensityColor = (score: number) => {
     if (score >= 4.5) return "bg-green-500";
     if (score >= 4.0) return "bg-green-400";
@@ -40,6 +51,10 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
     return titles[dimension] || dimension;
   };
 
+  const getDimensionColor = (dimension: string) => {
+    return dimensionColors[dimension as keyof typeof dimensionColors] || '#4F46E5';
+  };
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -58,11 +73,14 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
       </CardHeader>
       
       <CardContent className="space-y-4">
+        {/* Color Intensity Bar */}
+        <ColorIntensityBar 
+          score={dimension.score}
+          color={getDimensionColor(dimension.dimension)}
+          dimensionName={getDimensionTitle(dimension.dimension)}
+        />
+
         <div>
-          <h4 className="text-lg font-bold text-salima-700 mb-3">
-            {getDimensionTitle(dimension.dimension)}
-          </h4>
-          
           {isLoadingInsight ? (
             <div className="flex items-center justify-center p-4">
               <Loader2 className="h-5 w-5 animate-spin mr-2" />

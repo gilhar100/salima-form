@@ -8,9 +8,9 @@ import { Loader2, Award, RefreshCw, Download } from "lucide-react";
 import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
-import MedianComparisonChart from "@/components/MedianComparisonChart";
 import PersonalColorProfile from "@/components/PersonalColorProfile";
 import { getSurveyWithInsights } from "@/lib/survey-service";
+import LollipopChart from "@/components/LollipopChart";
 
 interface DatabaseInsights {
   insight_strategy?: string;
@@ -261,9 +261,9 @@ const Results = () => {
                 </div>
               </div>
               
-              {/* גרף הרדאר עם גרף השוואה לחציון */}
+              {/* גרף הלוליפופ עם גרף הרדאר */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <MedianComparisonChart result={results} />
+                <LollipopChart result={results} />
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <ResultsRadar result={results} hideScores={true} />
                 </div>
