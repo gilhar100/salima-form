@@ -76,7 +76,7 @@ const SurveySelection = () => {
         </div>
         
         <div className="text-black px-4" style={{ fontSize: '16px' }}>
-          <p>כל הזכויות שמורות לד״ר יוסי שרעבי</p>
+          <p>™ כל הזכויות שמורות לד״ר יוסי שרעבי</p>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -43,8 +44,8 @@ const Index = () => {
           </CardFooter>
         </Card>
         
-        <div className="text-gray-600 text-xs sm:text-sm px-4">
-          <p>מערכת SALIMA-WOCA © כל הזכויות שמורות</p>
+        <div className="text-black text-xs sm:text-sm px-4" style={{ fontSize: '16px' }}>
+          <p>™ כל הזכויות שמורות לד״ר יוסי שרעבי</p>
         </div>
       </div>
     </div>;

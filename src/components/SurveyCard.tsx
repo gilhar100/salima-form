@@ -88,11 +88,6 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
           )}
         </Button>
       </CardFooter>
-      
-      {/* Copyright footer */}
-      <div className="text-center p-4 text-black" style={{ fontSize: '16px' }}>
-        כל הזכויות שמורות לד״ר יוסי שרעבי
-      </div>
     </Card>
   );
 };

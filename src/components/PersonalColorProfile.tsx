@@ -18,29 +18,30 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   function getIntensityColor(score: number, baseColors: any) {
     const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
     
-    // Enhanced contrast with stronger intensity differences
-    if (normalizedScore >= 0.85) return baseColors.strongest;
-    if (normalizedScore >= 0.65) return baseColors.strong;
-    if (normalizedScore >= 0.45) return baseColors.medium;
-    if (normalizedScore >= 0.25) return baseColors.weak;
+    // Much more aggressive intensity differences with extreme contrast
+    if (normalizedScore >= 0.9) return baseColors.strongest;
+    if (normalizedScore >= 0.75) return baseColors.strong;
+    if (normalizedScore >= 0.6) return baseColors.medium;
+    if (normalizedScore >= 0.4) return baseColors.weak;
     return baseColors.weakest;
   }
 
-  // פונקציה לסקיילה לא ליניארית משופרת להגברת ההבדלים הוויזואליים
-  function getNonLinearSize(score: number): number {
+  // פונקציה לסקיילה לא ליניארית עם הגברה דרמטית של ההבדלים הוויזואליים
+  function getExtremeNonLinearSize(score: number): number {
     const normalizedScore = Math.max(0, Math.min(5, score));
     
-    // Much more aggressive non-linear scaling to amplify visual differences
-    if (normalizedScore >= 4.7) return 100;
-    if (normalizedScore >= 4.3) return 85;
-    if (normalizedScore >= 4.0) return 70;
-    if (normalizedScore >= 3.7) return 55;
-    if (normalizedScore >= 3.4) return 42;
-    if (normalizedScore >= 3.1) return 30;
-    if (normalizedScore >= 2.8) return 20;
-    if (normalizedScore >= 2.5) return 12;
-    if (normalizedScore >= 2.2) return 8;
-    return 5;
+    // Extremely aggressive scaling to maximize visual differences
+    if (normalizedScore >= 4.8) return 100;
+    if (normalizedScore >= 4.5) return 85;
+    if (normalizedScore >= 4.2) return 72;
+    if (normalizedScore >= 3.9) return 60;
+    if (normalizedScore >= 3.6) return 48;
+    if (normalizedScore >= 3.3) return 36;
+    if (normalizedScore >= 3.0) return 25;
+    if (normalizedScore >= 2.7) return 16;
+    if (normalizedScore >= 2.4) return 10;
+    if (normalizedScore >= 2.1) return 6;
+    return 3;
   }
   
   // הכנת הנתונים לתצוגה בגלגל הצבעים
@@ -48,42 +49,42 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     { 
       name: 'אסטרטגיה', 
       label: 'S',
-      value: getNonLinearSize(dimensions.S.score), 
+      value: getExtremeNonLinearSize(dimensions.S.score), 
       color: getIntensityColor(dimensions.S.score, dimensionColors.S),
       originalScore: dimensions.S.score
     },
     { 
       name: 'למידה', 
       label: 'L',
-      value: getNonLinearSize(dimensions.L.score), 
+      value: getExtremeNonLinearSize(dimensions.L.score), 
       color: getIntensityColor(dimensions.L.score, dimensionColors.L),
       originalScore: dimensions.L.score
     },
     { 
       name: 'השראה', 
       label: 'I',
-      value: getNonLinearSize(dimensions.I.score), 
+      value: getExtremeNonLinearSize(dimensions.I.score), 
       color: getIntensityColor(dimensions.I.score, dimensionColors.I),
       originalScore: dimensions.I.score
     },
     { 
       name: 'משמעות', 
       label: 'M',
-      value: getNonLinearSize(dimensions.M.score), 
+      value: getExtremeNonLinearSize(dimensions.M.score), 
       color: getIntensityColor(dimensions.M.score, dimensionColors.M),
       originalScore: dimensions.M.score
     },
     { 
       name: 'אדפטיביות', 
       label: 'A',
-      value: getNonLinearSize(dimensions.A.score), 
+      value: getExtremeNonLinearSize(dimensions.A.score), 
       color: getIntensityColor(dimensions.A.score, dimensionColors.A),
       originalScore: dimensions.A.score
     },
     { 
       name: 'אותנטיות', 
       label: 'A2',
-      value: getNonLinearSize(dimensions.A2.score), 
+      value: getExtremeNonLinearSize(dimensions.A2.score), 
       color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
       originalScore: dimensions.A2.score
     }
@@ -124,19 +125,20 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value, name, props) => [`${props.payload.originalScore}/5`, name]}
+                formatter={(value, name, props) => [name, '']}
+                labelFormatter={() => ''}
                 contentStyle={{
                   backgroundColor: 'white',
                   border: '1px solid #ccc',
                   borderRadius: '8px',
-                  fontSize: '12px'
+                  fontSize: '16px'
                 }}
               />
             </PieChart>
           </ResponsiveContainer>
         </div>
         
-        {/* מקרא צבעים */}
+        {/* מקרא צבעים - ללא ציונים מספריים */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 w-full max-w-md">
           {profileData.map((dimension) => (
             <div 
@@ -151,9 +153,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
               <div className="flex-1 min-w-0">
                 <p className="text-black font-medium truncate" style={{ fontSize: '16px' }}>
                   {dimension.name}
-                </p>
-                <p className="font-bold" style={{ color: dimension.color, fontSize: '16px' }}>
-                  {dimension.originalScore}
                 </p>
               </div>
             </div>
