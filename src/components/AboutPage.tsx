@@ -18,7 +18,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onContinue }) => {
             <img 
               src="/lovable-uploads/97bb30f6-a7bc-4ce4-a840-c7e1bd4b4c3f.png" 
               alt="ד״ר יוסי שרעבי" 
-              className="w-32 h-32 sm:w-40 sm:h-40 rounded-lg object-cover shadow-lg"
+              className="w-32 h-32 sm:w-40 sm:h-40 rounded-full object-cover shadow-lg"
             />
           </div>
           <CardTitle className="text-2xl sm:text-3xl font-bold text-salima-800 mb-6">
