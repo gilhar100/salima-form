@@ -1,4 +1,3 @@
-
 import { Question, Dimension } from "@/lib/types";
 
 // שאלות השאלון החדש - 90 שאלות
@@ -648,7 +647,7 @@ questions.forEach(question => {
 // מידע על הממדים
 export const dimensionInfo = {
   S: {
-    title: "חשיבה אסטרטגית",
+    title: "אסטרטגיה",
     description: "יכולת לראות תמונה גדולה, לתכנן ארוך טווח ולהוביל שינוי אסטרטגי"
   },
   L: {
@@ -672,4 +671,3 @@ export const dimensionInfo = {
     description: "כנות, שקיפות ויכולת להיות אמיתי ומהימן בקשרים"
   }
 };
-

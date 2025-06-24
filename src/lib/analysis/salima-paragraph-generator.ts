@@ -101,7 +101,7 @@ const synthesizeStrategyParagraph = (insights: string[], userSeed: number): stri
 };
 
 const synthesizeAdaptiveParagraph = (insights: string[], userSeed: number): string => {
-  if (insights.length === 0) return "לא נמצאו תובנות מתאימות לממד ההסתגלות.";
+  if (insights.length === 0) return "לא נמצאו תובנות מתאימות לממד האדפטיביות.";
   
   const selectedInsights = selectInsightsForSynthesis(insights, userSeed, 3);
   const positiveCount = selectedInsights.filter(insight => 
@@ -111,7 +111,7 @@ const synthesizeAdaptiveParagraph = (insights: string[], userSeed: number): stri
   if (positiveCount > selectedInsights.length / 2) {
     return `אתה מגלה גמישות ויכולת הסתגלות ראויה לציון במצבים משתנים. ${selectedInsights[0]} ${selectedInsights.length > 1 ? "בנוסף לכך, " + selectedInsights[1] : ""} ${selectedInsights.length > 2 ? "יחד עם זאת, " + selectedInsights[2] : ""} כישורים אלו מחזקים את עמידותך מול אתגרים.`;
   } else {
-    return `בתחום ההסתגלות למצבים חדשים ניכרים אתגרים הדורשים טיפול. ${selectedInsights[0]} ${selectedInsights.length > 1 ? "מנגד, " + selectedInsights[1] : ""} ${selectedInsights.length > 2 ? "לצד זאת, " + selectedInsights[2] : ""} פיתוח גמישות רבה יותר יסייע בהתמודדות עם שינויים.`;
+    return `בתחום האדפטיביות למצבים חדשים ניכרים אתגרים הדורשים טיפול. ${selectedInsights[0]} ${selectedInsights.length > 1 ? "מנגד, " + selectedInsights[1] : ""} ${selectedInsights.length > 2 ? "לצד זאת, " + selectedInsights[2] : ""} פיתוח גמישות רבה יותר יסייע בהתמודדות עם שינויים.`;
   }
 };
 
@@ -214,7 +214,7 @@ export const generateSalimaParagraphs = async (
           paragraphs['אדפטיביות'] = synthesizeAdaptiveParagraph(insights, userSeed + 1);
           break;
         case 'L':
-          paragraphs['לומד'] = synthesizeLearningParagraph(insights, userSeed + 2);
+          paragraphs['למידה'] = synthesizeLearningParagraph(insights, userSeed + 2);
           break;
         case 'I':
           paragraphs['השראה'] = synthesizeInspirationParagraph(insights, userSeed + 3);
@@ -233,8 +233,8 @@ export const generateSalimaParagraphs = async (
     console.error('Error generating SALIMA paragraphs:', error);
     return {
       'אסטרטגיה': 'שגיאה ביצירת ניתוח לממד האסטרטגיה.',
-      'אדפטיביות': 'שגיאה ביצירת ניתוח לממד ההסתגלות.',
-      'לומד': 'שגיאה ביצירת ניתוח לממד הלמידה.',
+      'אדפטיביות': 'שגיאה ביצירת ניתוח לממד האדפטיביות.',
+      'למידה': 'שגיאה ביצירת ניתוח לממד הלמידה.',
       'השראה': 'שגיאה ביצירת ניתוח לממד ההשראה.',
       'משמעות': 'שגיאה ביצירת ניתוח לממד המשמעות.',
       'אותנטיות': 'שגיאה ביצירת ניתוח לממד האותנטיות.'
