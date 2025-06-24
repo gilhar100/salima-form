@@ -35,7 +35,7 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
     if (score >= 4.5) return "מצוין";
     if (score >= 4.0) return "חזק";
     if (score >= 3.5) return "בינוני";
-    if (score >= 3.0) return "מתפתח";
+    if (score >= 3.0) return "מתפתح";
     return "לפיתוח";
   };
 

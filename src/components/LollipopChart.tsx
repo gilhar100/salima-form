@@ -31,25 +31,15 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
 
   const dimensions = Object.values(result.dimensions);
   
-  // Calculate maximum distance from center for scaling
-  const maxDistance = Math.max(
-    ...dimensions.map(d => Math.abs(d.score - personalAverage))
-  );
-
-  const getLineLength = (score: number) => {
-    if (maxDistance === 0) return 0;
-    const distance = Math.abs(score - personalAverage);
-    return Math.min((distance / maxDistance) * 150, 150); // Max 150px
-  };
-
-  const getDirection = (score: number) => {
-    return score >= personalAverage ? 'right' : 'left';
+  // Calculate the height of each stick based on score (0-5 scale)
+  const getStickHeight = (score: number) => {
+    return Math.max(20, (score / 5) * 180); // Min 20px, max 180px
   };
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border">
       <h3 className="text-xl font-bold mb-2 text-center text-black">
-        ממדי SALIMA ביחס לציון הממוצע האישי
+        ממדי SALIMA
       </h3>
       
       {/* Display personal average at the top */}
@@ -61,59 +51,33 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
         </div>
       </div>
       
-      <div className="space-y-6">
+      {/* Vertical lollipop chart */}
+      <div className="flex items-end justify-center gap-8 mb-6" style={{ height: '220px' }}>
         {dimensions.map((dimension) => {
           const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
           const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
-          const lineLength = getLineLength(dimension.score);
-          const direction = getDirection(dimension.score);
+          const stickHeight = getStickHeight(dimension.score);
           
           return (
-            <div key={dimension.dimension} className="flex items-center justify-center gap-4">
-              {/* Left side for below-average */}
-              <div className="flex-1 flex justify-end items-center">
-                {direction === 'left' && (
-                  <div className="flex items-center">
-                    <div 
-                      className="h-1 rounded-l-full"
-                      style={{ 
-                        backgroundColor: color,
-                        width: `${lineLength}px`
-                      }}
-                    />
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: color }}
-                    />
-                  </div>
-                )}
-              </div>
+            <div key={dimension.dimension} className="flex flex-col items-center">
+              {/* Colored dot at top */}
+              <div 
+                className="w-4 h-4 rounded-full mb-1"
+                style={{ backgroundColor: color }}
+              />
               
-              {/* Center vertical line */}
-              <div className="w-1 h-8 bg-orange-400 rounded" />
+              {/* Vertical stick */}
+              <div 
+                className="w-1 rounded-b-full"
+                style={{ 
+                  backgroundColor: color,
+                  height: `${stickHeight}px`
+                }}
+              />
               
-              {/* Right side for above-average */}
-              <div className="flex-1 flex justify-start items-center">
-                {direction === 'right' && (
-                  <div className="flex items-center">
-                    <div 
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: color }}
-                    />
-                    <div 
-                      className="h-1 rounded-r-full"
-                      style={{ 
-                        backgroundColor: color,
-                        width: `${lineLength}px`
-                      }}
-                    />
-                  </div>
-                )}
-              </div>
-              
-              {/* Parameter label on the right */}
-              <div className="w-24 text-right">
-                <span className="font-medium text-sm text-black">
+              {/* Parameter label at bottom */}
+              <div className="mt-2 text-center min-w-0">
+                <span className="font-medium text-sm text-black block">
                   {hebrewName}
                 </span>
               </div>
