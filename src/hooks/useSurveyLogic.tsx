@@ -12,7 +12,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  const [consentGiven, setConsentGiven] = useState(false);
+  const [aboutViewed, setAboutViewed] = useState(false);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [colleagueInfo, setColleagueInfo] = useState<ColleagueEvaluatorInfo | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -32,10 +32,10 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   
   // חישוב ההתקדמות
   const hasInfo = surveyType === 'manager' ? userInfo : colleagueInfo;
-  const progress = (hasInfo && consentGiven) ? ((currentStep) / totalSteps) * 100 : 0;
+  const progress = (hasInfo && aboutViewed) ? ((currentStep) / totalSteps) * 100 : 0;
   
   // השאלות הנוכחיות להצגה
-  const currentQuestions = (hasInfo && consentGiven) 
+  const currentQuestions = (hasInfo && aboutViewed) 
     ? questions.slice(currentStep * questionsPerPage, (currentStep + 1) * questionsPerPage)
     : [];
   
@@ -128,7 +128,6 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           setIsSubmitting(false);
         }
       } else if (surveyType === 'colleague' && colleagueInfo) {
-        // ... keep existing code (colleague survey handling)
         console.log('Processing colleague survey...');
         const fakeUserInfo: UserInfo = {
           name: colleagueInfo.evaluatorName,
@@ -186,29 +185,21 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   
   // בדיקה אם אפשר להמשיך לשלב הבא
   const canProceed = () => {
-    if (!hasInfo || !consentGiven) return false;
+    if (!hasInfo || !aboutViewed) return false;
     
     const allAnswered = currentQuestions.every(q => getAnswerValue(q.id) !== null);
     console.log(`Can proceed: ${allAnswered}, Current questions: ${currentQuestions.length}, Answered: ${currentQuestions.filter(q => getAnswerValue(q.id) !== null).length}`);
     return allAnswered;
   };
   
-  // הסכמה למחקר
-  const handleConsentResponse = (consented: boolean) => {
-    console.log('Consent response:', consented);
-    if (consented) {
-      setConsentGiven(true);
-      toast({
-        title: "תודה על ההסכמה",
-        description: "כעת תוכל להמשיך למילוי השאלון",
-      });
-    } else {
-      toast({
-        title: "נדרשת הסכמה",
-        description: "לא ניתן להמשיך ללא הסכמה לשימוש בנתונים למחקר",
-        variant: "destructive"
-      });
-    }
+  // צפייה בעמוד האודות
+  const handleAboutViewed = () => {
+    console.log('About page viewed');
+    setAboutViewed(true);
+    toast({
+      title: "תודה על הקריאה",
+      description: "כעת תוכל להמשיך למילוי השאלון",
+    });
   };
   
   // התחלת השאלון אחרי הזנת פרטי המשתמש
@@ -232,7 +223,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
   };
 
   return {
-    consentGiven,
+    aboutViewed,
     userInfo,
     colleagueInfo,
     currentStep,
@@ -247,7 +238,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
     handleNext,
     handlePrevious,
     canProceed,
-    handleConsentResponse,
+    handleAboutViewed,
     handleUserInfoSubmit,
     handleColleagueInfoSubmit
   };

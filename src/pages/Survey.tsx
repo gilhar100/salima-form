@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { SurveyType } from "@/lib/types";
 import UserInfoForm from "@/components/UserInfoForm";
 import ColleagueInfoForm from "@/components/ColleagueInfoForm";
-import ResearchConsentForm from "@/components/ResearchConsentForm";
+import AboutPage from "@/components/AboutPage";
 import SurveyHeader from "@/components/SurveyHeader";
 import SurveyCard from "@/components/SurveyCard";
 import { useSurveyLogic } from "@/hooks/useSurveyLogic";
@@ -13,7 +13,7 @@ const Survey = () => {
   const surveyType: SurveyType = (searchParams.get('type') as SurveyType) || 'manager';
   
   const {
-    consentGiven,
+    aboutViewed,
     userInfo,
     colleagueInfo,
     currentStep,
@@ -27,17 +27,17 @@ const Survey = () => {
     handleNext,
     handlePrevious,
     canProceed,
-    handleConsentResponse,
+    handleAboutViewed,
     handleUserInfoSubmit,
     handleColleagueInfoSubmit
   } = useSurveyLogic(surveyType);
   
-  // אם לא ניתנה הסכמה למחקר
-  if (!consentGiven) {
+  // אם לא נצפה עמוד האודות
+  if (!aboutViewed) {
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1">
-          <ResearchConsentForm onConsent={handleConsentResponse} />
+          <AboutPage onContinue={handleAboutViewed} />
         </div>
         <div className="text-center p-4 text-black" style={{ fontSize: '16px' }}>
           ™ כל הזכויות שמורות לד״ר יוסי שרעבי
