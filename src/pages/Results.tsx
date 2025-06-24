@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -10,6 +9,7 @@ import ResultsRadar from "@/components/ResultsRadar";
 import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
 import MedianComparisonChart from "@/components/MedianComparisonChart";
+import PersonalColorProfile from "@/components/PersonalColorProfile";
 import { getSurveyWithInsights } from "@/lib/survey-service";
 
 interface DatabaseInsights {
@@ -207,6 +207,11 @@ const Results = () => {
             <div className="bg-white rounded-lg p-4 shadow-sm">
               <ResultsRadar result={results} hideScores={true} />
             </div>
+          </div>
+          
+          {/* Personal Color Profile - New visualization */}
+          <div className="w-full">
+            <PersonalColorProfile result={results} />
           </div>
           
           {/* כרטיסי פירוט עם תובנות מהמסד נתונים */}

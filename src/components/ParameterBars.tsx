@@ -21,6 +21,17 @@ const ParameterBars: React.FC<ParameterBarsProps> = ({ result }) => {
     { key: 'A2', dimension: dimensions.A2 }
   ];
 
+  // פונקציה לקבלת עוצמת צבע בהתאם לציון
+  const getIntensityColorLocal = (score: number, baseColors: any) => {
+    const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
+    
+    if (normalizedScore >= 0.9) return baseColors.strongest;
+    if (normalizedScore >= 0.75) return baseColors.strong;
+    if (normalizedScore >= 0.55) return baseColors.medium;
+    if (normalizedScore >= 0.35) return baseColors.weak;
+    return baseColors.weakest;
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-center text-salima-800 mb-4">
@@ -29,7 +40,7 @@ const ParameterBars: React.FC<ParameterBarsProps> = ({ result }) => {
       <div className="space-y-3">
         {parameterData.map(({ key, dimension }) => {
           const baseColors = dimensionColors[key as keyof typeof dimensionColors];
-          const intensityColor = getColorIntensity(dimension.score, baseColors);
+          const intensityColor = getIntensityColorLocal(dimension.score, baseColors);
           const percentage = (dimension.score / 5) * 100;
           
           return (

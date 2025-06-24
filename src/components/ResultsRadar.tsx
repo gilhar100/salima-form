@@ -21,61 +21,61 @@ const getColorIntensity = (score: number, baseColors: any) => {
   return baseColors.weakest;
 };
 
-// צבעים ייחודיים לכל ממד עם דרגות עוצמה
+// צבעים חדשים ידידותיים לעיוורי צבעים עם דרגות עוצמה
 export const dimensionColors = {
   S: { 
-    strongest: "#1e3a8a", // כחול עמוק מאוד
-    strong: "#1e40af",    // כחול עמוק
-    medium: "#3b82f6",    // כחול בינוני
-    weak: "#93c5fd",      // כחול בהיר
-    weakest: "#dbeafe",   // כחול בהיר מאוד
-    light: "#eff6ff",
-    primary: "#1e40af"
+    strongest: "#003d6b",   // Strategy - Dark Blue (darkest)
+    strong: "#0072B2",     // Strategy - Dark Blue (main)
+    medium: "#4a9de0",     // Strategy - Dark Blue (lighter)
+    weak: "#87ceeb",       // Strategy - Dark Blue (light)
+    weakest: "#e6f3ff",    // Strategy - Dark Blue (lightest)
+    light: "#f0f8ff",
+    primary: "#0072B2"
   },
   L: { 
-    strongest: "#14532d", // ירוק עמוק מאוד
-    strong: "#166534",    // ירוק עמוק
-    medium: "#16a34a",    // ירוק בינוני
-    weak: "#4ade80",      // ירוק בהיר
-    weakest: "#bbf7d0",   // ירוק בהיר מאוד
-    light: "#f0fdf4",
-    primary: "#166534"
+    strongest: "#2a7fb8",  // Learning - Sky Blue (darkest)
+    strong: "#56B4E9",     // Learning - Sky Blue (main)
+    medium: "#7ac5ec",     // Learning - Sky Blue (lighter)
+    weak: "#a8d6f0",       // Learning - Sky Blue (light)
+    weakest: "#e5f4fc",    // Learning - Sky Blue (lightest)
+    light: "#f0f9ff",
+    primary: "#56B4E9"
   },
   I: { 
-    strongest: "#7f1d1d", // אדום עמוק מאוד
-    strong: "#b91c1c",    // אדום עמוק
-    medium: "#dc2626",    // אדום בינוני
-    weak: "#f87171",      // אדום בהיר
-    weakest: "#fecaca",   // אדום בהיר מאוד
-    light: "#fef2f2",
-    primary: "#b91c1c"
+    strongest: "#a03f00",  // Inspiration - Vermillion (darkest)
+    strong: "#D55E00",     // Inspiration - Vermillion (main)
+    medium: "#e07e33",     // Inspiration - Vermillion (lighter)
+    weak: "#eb9f66",       // Inspiration - Vermillion (light)
+    weakest: "#f6d6c4",    // Inspiration - Vermillion (lightest)
+    light: "#fef7f0",
+    primary: "#D55E00"
   },
   M: { 
-    strongest: "#581c87", // סגול עמוק מאוד
-    strong: "#7c2d12",    // חום-סגול עמוק
-    medium: "#a855f7",    // סגול בינוני
-    weak: "#c084fc",      // סגול בהיר
-    weakest: "#e9d5ff",   // סגול בהיר מאוד
-    light: "#faf5ff",
-    primary: "#7c2d12"
+    strongest: "#006d52",  // Meaning - Bluish Green (darkest)
+    strong: "#009E73",     // Meaning - Bluish Green (main)
+    medium: "#33b088",     // Meaning - Bluish Green (lighter)
+    weak: "#66c39e",       // Meaning - Bluish Green (light)
+    weakest: "#ccede5",    // Meaning - Bluish Green (lightest)
+    light: "#f0fdf7",
+    primary: "#009E73"
   },
   A: { 
-    strongest: "#9a3412", // כתום עמוק מאוד
-    strong: "#c2410c",    // כתום עמוק
-    medium: "#ea580c",    // כתום בינוני
-    weak: "#fb923c",      // כתום בהיר
-    weakest: "#fed7aa",   // כתום בהיר מאוד
-    light: "#fff7ed",
-    primary: "#c2410c"
+    strongest: "#b8760a",  // Adaptive - Orange (darkest)
+    strong: "#E69F00",     // Adaptive - Orange (main)
+    medium: "#eab233",     // Adaptive - Orange (lighter)
+    weak: "#efc666",       // Adaptive - Orange (light)
+    weakest: "#faebd7",    // Adaptive - Orange (lightest)
+    light: "#fffbf0",
+    primary: "#E69F00"
   },
   A2: { 
-    strongest: "#831843", // ורוד עמוק מאוד
-    strong: "#be185d",    // ורוד עמוק
-    medium: "#db2777",    // ורוד בינוני
-    weak: "#f472b6",      // ורוד בהיר
-    weakest: "#fce7f3",   // ורוד בהיר מאוד
-    light: "#fdf2f8",
-    primary: "#be185d"
+    strongest: "#c7c100",  // Authentic - Yellow (darkest)
+    strong: "#F0E442",     // Authentic - Yellow (main)
+    medium: "#f3e968",     // Authentic - Yellow (lighter)
+    weak: "#f6ee8e",       // Authentic - Yellow (light)
+    weakest: "#fcf8d4",    // Authentic - Yellow (lightest)
+    light: "#fefef0",
+    primary: "#F0E442"
   }
 };
 
