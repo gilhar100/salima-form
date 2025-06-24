@@ -14,52 +14,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const isMobile = useIsMobile();
   const { dimensions } = result;
   
-  // הכנת הנתונים לתצוגה בגלגל הצבעים
-  const profileData = [
-    { 
-      name: 'אסטרטגיה', 
-      label: 'S',
-      value: dimensions.S.score, 
-      color: getIntensityColor(dimensions.S.score, dimensionColors.S),
-      angle: (dimensions.S.score / 5) * 60 // כל פרק יכול לקחת עד 60 מעלות
-    },
-    { 
-      name: 'למידה', 
-      label: 'L',
-      value: dimensions.L.score, 
-      color: getIntensityColor(dimensions.L.score, dimensionColors.L),
-      angle: (dimensions.L.score / 5) * 60
-    },
-    { 
-      name: 'השראה', 
-      label: 'I',
-      value: dimensions.I.score, 
-      color: getIntensityColor(dimensions.I.score, dimensionColors.I),
-      angle: (dimensions.I.score / 5) * 60
-    },
-    { 
-      name: 'משמעות', 
-      label: 'M',
-      value: dimensions.M.score, 
-      color: getIntensityColor(dimensions.M.score, dimensionColors.M),
-      angle: (dimensions.M.score / 5) * 60
-    },
-    { 
-      name: 'אדפטיביות', 
-      label: 'A',
-      value: dimensions.A.score, 
-      color: getIntensityColor(dimensions.A.score, dimensionColors.A),
-      angle: (dimensions.A.score / 5) * 60
-    },
-    { 
-      name: 'אותנטיות', 
-      label: 'A2',
-      value: dimensions.A2.score, 
-      color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
-      angle: (dimensions.A2.score / 5) * 60
-    }
-  ];
-
   // פונקציה לקבלת עוצמת צבע בהתאם לציון
   function getIntensityColor(score: number, baseColors: any) {
     const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
@@ -70,6 +24,67 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     if (normalizedScore >= 0.35) return baseColors.weak;
     return baseColors.weakest;
   }
+
+  // פונקציה לסקיילה לא ליניארית להגברת ההבדלים הוויזואליים
+  function getNonLinearSize(score: number): number {
+    const normalizedScore = Math.max(0, Math.min(5, score));
+    
+    // Non-linear scaling to amplify visual differences
+    if (normalizedScore >= 4.5) return 100;
+    if (normalizedScore >= 4.0) return 80;
+    if (normalizedScore >= 3.5) return 60;
+    if (normalizedScore >= 3.0) return 40;
+    if (normalizedScore >= 2.5) return 25;
+    if (normalizedScore >= 2.0) return 15;
+    if (normalizedScore >= 1.5) return 10;
+    return 5;
+  }
+  
+  // הכנת הנתונים לתצוגה בגלגל הצבעים
+  const profileData = [
+    { 
+      name: 'אסטרטגיה', 
+      label: 'S',
+      value: getNonLinearSize(dimensions.S.score), 
+      color: getIntensityColor(dimensions.S.score, dimensionColors.S),
+      originalScore: dimensions.S.score
+    },
+    { 
+      name: 'למידה', 
+      label: 'L',
+      value: getNonLinearSize(dimensions.L.score), 
+      color: getIntensityColor(dimensions.L.score, dimensionColors.L),
+      originalScore: dimensions.L.score
+    },
+    { 
+      name: 'השראה', 
+      label: 'I',
+      value: getNonLinearSize(dimensions.I.score), 
+      color: getIntensityColor(dimensions.I.score, dimensionColors.I),
+      originalScore: dimensions.I.score
+    },
+    { 
+      name: 'משמעות', 
+      label: 'M',
+      value: getNonLinearSize(dimensions.M.score), 
+      color: getIntensityColor(dimensions.M.score, dimensionColors.M),
+      originalScore: dimensions.M.score
+    },
+    { 
+      name: 'אדפטיביות', 
+      label: 'A',
+      value: getNonLinearSize(dimensions.A.score), 
+      color: getIntensityColor(dimensions.A.score, dimensionColors.A),
+      originalScore: dimensions.A.score
+    },
+    { 
+      name: 'אותנטיות', 
+      label: 'A2',
+      value: getNonLinearSize(dimensions.A2.score), 
+      color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
+      originalScore: dimensions.A2.score
+    }
+  ];
 
   // Custom label renderer for the pie chart
   const renderLabel = (entry: any) => {
@@ -106,7 +121,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value, name) => [`${value}/5`, name]}
+                formatter={(value, name, props) => [`${props.payload.originalScore}/5`, name]}
                 contentStyle={{
                   backgroundColor: 'white',
                   border: '1px solid #ccc',
@@ -135,7 +150,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                   {dimension.name}
                 </p>
                 <p className="text-sm font-bold" style={{ color: dimension.color }}>
-                  {dimension.value}
+                  {dimension.originalScore}
                 </p>
               </div>
             </div>

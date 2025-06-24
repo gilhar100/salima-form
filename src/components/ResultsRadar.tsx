@@ -1,4 +1,3 @@
-
 import { SurveyResult, Dimension } from "@/lib/types";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { dimensionInfo } from "@/data/questions";
@@ -33,13 +32,13 @@ export const dimensionColors = {
     primary: "#0072B2"
   },
   L: { 
-    strongest: "#2a7fb8",  // Learning - Sky Blue (darkest)
-    strong: "#56B4E9",     // Learning - Sky Blue (main)
-    medium: "#7ac5ec",     // Learning - Sky Blue (lighter)
-    weak: "#a8d6f0",       // Learning - Sky Blue (light)
-    weakest: "#e5f4fc",    // Learning - Sky Blue (lightest)
-    light: "#f0f9ff",
-    primary: "#56B4E9"
+    strongest: "#006d52",  // Learning - Teal Green (darkest)
+    strong: "#009E73",     // Learning - Teal Green (main)
+    medium: "#33b088",     // Learning - Teal Green (lighter)
+    weak: "#66c39e",       // Learning - Teal Green (light)
+    weakest: "#ccede5",    // Learning - Teal Green (lightest)
+    light: "#f0fdf7",
+    primary: "#009E73"
   },
   I: { 
     strongest: "#a03f00",  // Inspiration - Vermillion (darkest)
@@ -51,13 +50,13 @@ export const dimensionColors = {
     primary: "#D55E00"
   },
   M: { 
-    strongest: "#006d52",  // Meaning - Bluish Green (darkest)
-    strong: "#009E73",     // Meaning - Bluish Green (main)
-    medium: "#33b088",     // Meaning - Bluish Green (lighter)
-    weak: "#66c39e",       // Meaning - Bluish Green (light)
-    weakest: "#ccede5",    // Meaning - Bluish Green (lightest)
-    light: "#f0fdf7",
-    primary: "#009E73"
+    strongest: "#9c5a85",  // Meaning - Pink/Purple (darkest)
+    strong: "#CC79A7",     // Meaning - Pink/Purple (main)
+    medium: "#d493b8",     // Meaning - Pink/Purple (lighter)
+    weak: "#dcadc9",       // Meaning - Pink/Purple (light)
+    weakest: "#f5e8f0",    // Meaning - Pink/Purple (lightest)
+    light: "#fef7fb",
+    primary: "#CC79A7"
   },
   A: { 
     strongest: "#b8760a",  // Adaptive - Orange (darkest)
