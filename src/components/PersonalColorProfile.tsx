@@ -13,48 +13,48 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const isMobile = useIsMobile();
   const { dimensions } = result;
   
-  // New colorblind-friendly SALIMA color palette
+  // Updated SALIMA color palette
   const dimensionColors = {
     'S': {
-      strongest: '#0D4F8C',
-      strong: '#1F77B4',
-      medium: '#4A90E2',
-      weak: '#87CEEB',
-      weakest: '#E6F3FF'
+      strongest: '#B30000',
+      strong: '#FD0100',
+      medium: '#FF4D4D',
+      weak: '#FF9999',
+      weakest: '#FFE6E6'
     },
     'L': {
-      strongest: '#1E7A1E',
-      strong: '#2CA02C',
-      medium: '#5CB85C',
-      weak: '#90EE90',
-      weakest: '#F0FFF0'
+      strongest: '#0000B3',
+      strong: '#333ED4',
+      medium: '#6666FF',
+      weak: '#9999FF',
+      weakest: '#E6E6FF'
     },
     'I': {
-      strongest: '#A01E1E',
-      strong: '#D62728',
-      medium: '#E74C3C',
-      weak: '#FFB6C1',
-      weakest: '#FFE4E1'
+      strongest: '#CC4400',
+      strong: '#F76915',
+      medium: '#FF8533',
+      weak: '#FFAA66',
+      weakest: '#FFE6CC'
     },
     'M': {
-      strongest: '#6A4C93',
-      strong: '#9467BD',
-      medium: '#B19CD9',
-      weak: '#DDA0DD',
-      weakest: '#F8F4FF'
+      strongest: '#8A3399',
+      strong: '#BF4ED6',
+      medium: '#CC66E0',
+      weak: '#DD99E6',
+      weakest: '#F5E6FF'
     },
     'A': {
-      strongest: '#CC5500',
-      strong: '#FF7F0E',
-      medium: '#FFA500',
-      weak: '#FFCC99',
-      weakest: '#FFF8DC'
+      strongest: '#1F6B1F',
+      strong: '#2FA236',
+      medium: '#5CB85C',
+      weak: '#90EE90',
+      weakest: '#E6FFE6'
     },
     'A2': {
-      strongest: '#8B8B00',
-      strong: '#BCBD22',
-      medium: '#CCCC33',
-      weak: '#FFFF99',
+      strongest: '#B8B800',
+      strong: '#EEDE04',
+      medium: '#F0E833',
+      weak: '#F5F566',
       weakest: '#FFFACD'
     }
   };
@@ -87,56 +87,45 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return 3;
   }
   
-  // הכנת הנתונים לתצוגה בגלגל הצבעים
+  // הכנת הנתונים לתצוגה בגלגל הצבעים - Remove labels from data
   const profileData = [
     { 
       name: 'אסטרטגיה', 
-      label: 'S',
       value: getExtremeNonLinearSize(dimensions.S.score), 
       color: getIntensityColor(dimensions.S.score, dimensionColors.S),
       originalScore: dimensions.S.score
     },
     { 
       name: 'למידה', 
-      label: 'L',
       value: getExtremeNonLinearSize(dimensions.L.score), 
       color: getIntensityColor(dimensions.L.score, dimensionColors.L),
       originalScore: dimensions.L.score
     },
     { 
       name: 'השראה', 
-      label: 'I',
       value: getExtremeNonLinearSize(dimensions.I.score), 
       color: getIntensityColor(dimensions.I.score, dimensionColors.I),
       originalScore: dimensions.I.score
     },
     { 
       name: 'משמעות', 
-      label: 'M',
       value: getExtremeNonLinearSize(dimensions.M.score), 
       color: getIntensityColor(dimensions.M.score, dimensionColors.M),
       originalScore: dimensions.M.score
     },
     { 
       name: 'אדפטיביות', 
-      label: 'A',
       value: getExtremeNonLinearSize(dimensions.A.score), 
       color: getIntensityColor(dimensions.A.score, dimensionColors.A),
       originalScore: dimensions.A.score
     },
     { 
       name: 'אותנטיות', 
-      label: 'A2',
       value: getExtremeNonLinearSize(dimensions.A2.score), 
       color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
       originalScore: dimensions.A2.score
     }
   ];
-
-  // Custom label renderer for the pie chart
-  const renderLabel = (entry: any) => {
-    return entry.label;
-  };
 
   return (
     <Card className="w-full">
@@ -160,8 +149,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 innerRadius={isMobile ? 40 : 50}
                 paddingAngle={2}
                 dataKey="value"
-                label={renderLabel}
-                labelLine={false}
+                // Remove label prop to hide letters
               >
                 {profileData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
@@ -183,9 +171,9 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         
         {/* מקרא צבעים */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 w-full max-w-md">
-          {profileData.map((dimension) => (
+          {profileData.map((dimension, index) => (
             <div 
-              key={dimension.label} 
+              key={index} 
               className="flex items-center gap-2 p-2 rounded-lg border"
               style={{ backgroundColor: `${dimension.color}20` }}
             >

@@ -13,14 +13,14 @@ interface ResultsDetailCardProps {
 }
 
 const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDetailCardProps) => {
-  // New colorblind-friendly SALIMA color palette
+  // Updated SALIMA color palette
   const dimensionColors = {
-    'S': '#1F77B4', // אסטרטגיה
-    'A': '#FF7F0E', // אדפטיביות
-    'L': '#2CA02C', // למידה
-    'I': '#D62728', // השראה
-    'M': '#9467BD', // משמעות
-    'A2': '#BCBD22' // אותנטיות
+    'S': '#FD0100', // אסטרטגיה - red
+    'A': '#2FA236', // אדפטיביות - green
+    'L': '#333ED4', // למידה - blue
+    'I': '#F76915', // השראה - orange
+    'M': '#BF4ED6', // משמעות - purple
+    'A2': '#EEDE04' // אותנטיות - yellow
   };
 
   const getIntensityColor = (score: number) => {
@@ -35,7 +35,7 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
     if (score >= 4.5) return "מצוין";
     if (score >= 4.0) return "חזק";
     if (score >= 3.5) return "בינוני";
-    if (score >= 3.0) return "מתפתح";
+    if (score >= 3.0) return "מתפתח";
     return "לפיתוח";
   };
 
@@ -52,7 +52,7 @@ const ResultsDetailCard = ({ dimension, insight, isLoadingInsight }: ResultsDeta
   };
 
   const getDimensionColor = (dimension: string) => {
-    return dimensionColors[dimension as keyof typeof dimensionColors] || '#1F77B4';
+    return dimensionColors[dimension as keyof typeof dimensionColors] || '#FD0100';
   };
 
   return (

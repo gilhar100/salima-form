@@ -10,61 +10,61 @@ interface ResultsRadarProps {
   hideScores?: boolean;
 }
 
-// New colorblind-friendly SALIMA color palette with intensity levels
+// Updated SALIMA color palette with intensity levels
 export const dimensionColors = {
   S: { 
-    strongest: "#0D4F8C",
-    strong: "#1F77B4",
-    medium: "#4A90E2",
-    weak: "#87CEEB",
-    weakest: "#E6F3FF",
-    light: "#F0F8FF",
-    primary: "#1F77B4"
+    strongest: "#B30000",
+    strong: "#FD0100",
+    medium: "#FF4D4D",
+    weak: "#FF9999",
+    weakest: "#FFE6E6",
+    light: "#FFF5F5",
+    primary: "#FD0100"
   },
   L: { 
-    strongest: "#1E7A1E",
-    strong: "#2CA02C",
-    medium: "#5CB85C",
-    weak: "#90EE90",
-    weakest: "#F0FFF0",
-    light: "#F0FDF7",
-    primary: "#2CA02C"
+    strongest: "#0000B3",
+    strong: "#333ED4",
+    medium: "#6666FF",
+    weak: "#9999FF",
+    weakest: "#E6E6FF",
+    light: "#F5F5FF",
+    primary: "#333ED4"
   },
   I: { 
-    strongest: "#A01E1E",
-    strong: "#D62728",
-    medium: "#E74C3C",
-    weak: "#FFB6C1",
-    weakest: "#FFE4E1",
-    light: "#FEF7F0",
-    primary: "#D62728"
+    strongest: "#CC4400",
+    strong: "#F76915",
+    medium: "#FF8533",
+    weak: "#FFAA66",
+    weakest: "#FFE6CC",
+    light: "#FFF8F0",
+    primary: "#F76915"
   },
   M: { 
-    strongest: "#6A4C93",
-    strong: "#9467BD",
-    medium: "#B19CD9",
-    weak: "#DDA0DD",
-    weakest: "#F8F4FF",
-    light: "#FEF7FB",
-    primary: "#9467BD"
+    strongest: "#8A3399",
+    strong: "#BF4ED6",
+    medium: "#CC66E0",
+    weak: "#DD99E6",
+    weakest: "#F5E6FF",
+    light: "#FCF7FF",
+    primary: "#BF4ED6"
   },
   A: { 
-    strongest: "#CC5500",
-    strong: "#FF7F0E",
-    medium: "#FFA500",
-    weak: "#FFCC99",
-    weakest: "#FFF8DC",
-    light: "#FFFBF0",
-    primary: "#FF7F0E"
+    strongest: "#1F6B1F",
+    strong: "#2FA236",
+    medium: "#5CB85C",
+    weak: "#90EE90",
+    weakest: "#E6FFE6",
+    light: "#F0FFF0",
+    primary: "#2FA236"
   },
   A2: { 
-    strongest: "#8B8B00",
-    strong: "#BCBD22",
-    medium: "#CCCC33",
-    weak: "#FFFF99",
+    strongest: "#B8B800",
+    strong: "#EEDE04",
+    medium: "#F0E833",
+    weak: "#F5F566",
     weakest: "#FFFACD",
     light: "#FEFEF0",
-    primary: "#BCBD22"
+    primary: "#EEDE04"
   }
 };
 

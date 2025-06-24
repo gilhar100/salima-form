@@ -9,14 +9,14 @@ interface LollipopChartProps {
 const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
   const personalAverage = result.slq;
 
-  // New colorblind-friendly SALIMA color palette
+  // Updated SALIMA color palette
   const dimensionColors = {
-    'S': '#1F77B4', // אסטרטגיה
-    'A': '#FF7F0E', // אדפטיביות
-    'L': '#2CA02C', // למידה
-    'I': '#D62728', // השראה
-    'M': '#9467BD', // משמעות
-    'A2': '#BCBD22' // אותנטיות
+    'S': '#FD0100', // אסטרטגיה - red
+    'A': '#2FA236', // אדפטיביות - green
+    'L': '#333ED4', // למידה - blue
+    'I': '#F76915', // השראה - orange
+    'M': '#BF4ED6', // משמעות - purple
+    'A2': '#EEDE04' // אותנטיות - yellow
   };
 
   // Dimension names in Hebrew

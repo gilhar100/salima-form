@@ -30,7 +30,7 @@ const DimensionRadarChart: React.FC<DimensionRadarChartProps> = ({ statistics, u
       { key: 'L', title: 'למידה' }, 
       { key: 'I', title: 'השראה' },
       { key: 'M', title: 'משמעות' },
-      { key: 'A', title: 'הסתגלות' },
+      { key: 'A', title: 'אדפטיביות' },
       { key: 'A2', title: 'אותנטיות' }
     ];
     

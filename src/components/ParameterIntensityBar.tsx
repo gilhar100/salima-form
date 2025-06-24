@@ -13,8 +13,18 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
   parameterKey,
   parameterName
 }) => {
+  // Updated color mapping for new palette
+  const updatedDimensionColors = {
+    S: { primary: '#FD0100' },
+    L: { primary: '#333ED4' },
+    I: { primary: '#F76915' },
+    M: { primary: '#BF4ED6' },
+    A: { primary: '#2FA236' },
+    A2: { primary: '#EEDE04' }
+  };
+
   // Get the base color for this parameter
-  const baseColors = dimensionColors[parameterKey as keyof typeof dimensionColors];
+  const baseColors = updatedDimensionColors[parameterKey as keyof typeof updatedDimensionColors] || { primary: '#FD0100' };
   
   // Calculate opacity based on score (1-5 scale) for intensity effect
   const intensity = Math.min(Math.max(score / 5, 0.2), 1);

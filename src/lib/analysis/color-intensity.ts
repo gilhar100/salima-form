@@ -1,5 +1,5 @@
 
-// פונקציה לקבלת עוצמת צבע בהתאם לציון
+// פונקציה לקבלת עוצמת צבע בהתאם לציון - Updated for new color palette
 export const getColorIntensity = (score: number, baseColors: any) => {
   const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
   
