@@ -1,16 +1,23 @@
-
 import React from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, Legend } from 'recharts';
 import { SurveyResult } from '@/lib/types';
 
-// FIXED TERMINOLOGY - Updated dimension colors and names
+// FIXED TERMINOLOGY - Updated dimension colors and names with backward compatibility
 export const dimensionColors = {
-  strategic: { primary: '#FF6B35', secondary: '#FFE5DB' },     // Orange-red
-  adaptive: { primary: '#4ECDC4', secondary: '#E8F8F7' },      // Teal - CORRECTED terminology
-  learning: { primary: '#45B7D1', secondary: '#E8F4F8' },      // Blue
-  inspiring: { primary: '#96CEB4', secondary: '#F0F9F4' },     // Green
-  meaningful: { primary: '#FFEAA7', secondary: '#FFF9E6' },    // Yellow
-  authentic: { primary: '#DDA0DD', secondary: '#F5E6F5' }      // Purple
+  strategic: { primary: '#FF6B35', secondary: '#FFE5DB', light: '#FFE5DB', medium: '#FFB899', strongest: '#CC3B00', strong: '#FF6B35', weak: '#FFB899', weakest: '#FFF2ED' },
+  adaptive: { primary: '#4ECDC4', secondary: '#E8F8F7', light: '#E8F8F7', medium: '#A3E4E0', strongest: '#2BA59A', strong: '#4ECDC4', weak: '#A3E4E0', weakest: '#F4FCFB' },
+  learning: { primary: '#45B7D1', secondary: '#E8F4F8', light: '#E8F4F8', medium: '#92CBE5', strongest: '#2980B9', strong: '#45B7D1', weak: '#92CBE5', weakest: '#F4F9FC' },
+  inspiring: { primary: '#96CEB4', secondary: '#F0F9F4', light: '#F0F9F4', medium: '#BBDECA', strongest: '#5BA876', strong: '#96CEB4', weak: '#BBDECA', weakest: '#F8FCFA' },
+  meaningful: { primary: '#FFEAA7', secondary: '#FFF9E6', light: '#FFF9E6', medium: '#FFF0C4', strongest: '#D4C441', strong: '#FFEAA7', weak: '#FFF0C4', weakest: '#FFFCF3' },
+  authentic: { primary: '#DDA0DD', secondary: '#F5E6F5', light: '#F5E6F5', medium: '#E8C3E8', strongest: '#B370B3', strong: '#DDA0DD', weak: '#E8C3E8', weakest: '#FAF0FA' },
+  
+  // Backward compatibility with short keys
+  S: { primary: '#FF6B35', secondary: '#FFE5DB', light: '#FFE5DB', medium: '#FFB899', strongest: '#CC3B00', strong: '#FF6B35', weak: '#FFB899', weakest: '#FFF2ED' },
+  L: { primary: '#45B7D1', secondary: '#E8F4F8', light: '#E8F4F8', medium: '#92CBE5', strongest: '#2980B9', strong: '#45B7D1', weak: '#92CBE5', weakest: '#F4F9FC' },
+  I: { primary: '#96CEB4', secondary: '#F0F9F4', light: '#F0F9F4', medium: '#BBDECA', strongest: '#5BA876', strong: '#96CEB4', weak: '#BBDECA', weakest: '#F8FCFA' },
+  M: { primary: '#FFEAA7', secondary: '#FFF9E6', light: '#FFF9E6', medium: '#FFF0C4', strongest: '#D4C441', strong: '#FFEAA7', weak: '#FFF0C4', weakest: '#FFFCF3' },
+  A: { primary: '#4ECDC4', secondary: '#E8F8F7', light: '#E8F8F7', medium: '#A3E4E0', strongest: '#2BA59A', strong: '#4ECDC4', weak: '#A3E4E0', weakest: '#F4FCFB' },
+  A2: { primary: '#DDA0DD', secondary: '#F5E6F5', light: '#F5E6F5', medium: '#E8C3E8', strongest: '#B370B3', strong: '#DDA0DD', weak: '#E8C3E8', weakest: '#FAF0FA' }
 };
 
 interface ResultsRadarProps {

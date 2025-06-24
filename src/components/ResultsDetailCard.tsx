@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DimensionResult, Question } from '@/lib/types';
-import { getDimensionQuestions } from '@/data/questions';
+import { getDimensionQuestions } from '@/lib/dimension-questions';
 import { dimensionColors } from './ResultsRadar';
 import { Loader2 } from 'lucide-react';
 
