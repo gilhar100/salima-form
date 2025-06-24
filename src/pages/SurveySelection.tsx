@@ -20,7 +20,7 @@ const SurveySelection = () => {
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* שאלון מנהלים */}
           <Card 
-            className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+            className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer transform hover:scale-105"
             onClick={() => handleSurveySelection('manager')}
           >
             <CardHeader className="px-4 sm:px-6 text-center">
@@ -48,7 +48,7 @@ const SurveySelection = () => {
 
           {/* שאלון עמיתים */}
           <Card 
-            className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+            className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer transform hover:scale-105"
             onClick={() => handleSurveySelection('colleague')}
           >
             <CardHeader className="px-4 sm:px-6 text-center">
@@ -67,7 +67,7 @@ const SurveySelection = () => {
               </p>
               <ul className="list-disc list-inside space-y-1 text-right text-black" style={{ fontSize: '16px' }}>
                 <li>הערכת מנהל על ידי עמית</li>
-                <li>שאלות מותאמות לנקודת מבט חיצונית</li>
+                <li>תוצאות מפורטות וגרפים</li>
                 <li>משוב אנונימי</li>
                 <li>תרומה לפיתוח המנהל</li>
               </ul>

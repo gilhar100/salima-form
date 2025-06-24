@@ -83,7 +83,7 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({ result, hideScores = false 
   const isMobile = useIsMobile();
   const { dimensions, slq } = result;
   
-  // הכנת הנתונים לתצוגה בגרף
+  // הכנת הנתונים לתצוגה בגרف
   const radarData = [
     { dimension: dimensionInfo.S.title, value: dimensions.S.score, fullMark: 5, color: getColorIntensity(dimensions.S.score, dimensionColors.S) },
     { dimension: dimensionInfo.L.title, value: dimensions.L.score, fullMark: 5, color: getColorIntensity(dimensions.L.score, dimensionColors.L) },

@@ -39,7 +39,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
   const getLineLength = (score: number) => {
     if (maxDistance === 0) return 0;
     const distance = Math.abs(score - personalAverage);
-    return Math.min((distance / maxDistance) * 120, 120); // Max 120px
+    return Math.min((distance / maxDistance) * 150, 150); // Max 150px
   };
 
   const getDirection = (score: number) => {
@@ -75,7 +75,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
                 {direction === 'left' && (
                   <div className="flex items-center">
                     <div 
-                      className="h-0.5 rounded-l-full"
+                      className="h-1 rounded-l-full"
                       style={{ 
                         backgroundColor: color,
                         width: `${lineLength}px`
@@ -90,7 +90,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
               </div>
               
               {/* Center vertical line */}
-              <div className="w-0.5 h-8 bg-orange-400 rounded" />
+              <div className="w-1 h-8 bg-orange-400 rounded" />
               
               {/* Right side for above-average */}
               <div className="flex-1 flex justify-start items-center">
@@ -101,7 +101,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
                       style={{ backgroundColor: color }}
                     />
                     <div 
-                      className="h-0.5 rounded-r-full"
+                      className="h-1 rounded-r-full"
                       style={{ 
                         backgroundColor: color,
                         width: `${lineLength}px`
