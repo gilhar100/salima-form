@@ -96,23 +96,27 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
     return Math.max(20, (difference / Math.max(maxDifference, 0.5)) * 120); // Min 20px, max 120px
   };
 
+  // Calculate total chart height for single continuous line
+  const totalRows = aboveAverage.length + belowAverage.length;
+  const chartHeight = totalRows * 48; // 48px per row (including spacing)
+
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border">
       <h3 className="text-xl font-bold mb-6 text-center text-black">
         ממדי SALIMA
       </h3>
       
-      {/* Personal average score - placed above the chart */}
-      <div className="text-center mb-6">
+      {/* Personal average score - centered above the chart */}
+      <div className="text-center mb-4">
         <div className="text-lg font-semibold text-black">
           ממוצע אישי: {personalAverage.toFixed(2)}
         </div>
       </div>
       
       {/* Chart container with labels */}
-      <div className="relative">
-        {/* Side labels */}
-        <div className="flex justify-between mb-4">
+      <div className="relative px-8">
+        {/* Side labels - corrected positions */}
+        <div className="flex justify-between mb-6">
           <div className="text-black font-bold text-sm">
             מתחת לממוצע האישי
           </div>
@@ -122,13 +126,13 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
         </div>
         
         {/* Chart with continuous center line */}
-        <div className="relative flex flex-col items-center space-y-2">
+        <div className="relative flex flex-col items-center space-y-3">
           {/* Single continuous vertical line */}
           <div 
             className="absolute bg-gray-300 z-10" 
             style={{ 
               width: '2px', 
-              height: `${(aboveAverage.length + belowAverage.length + 1) * 44}px`,
+              height: `${chartHeight}px`,
               left: '50%',
               transform: 'translateX(-50%)',
               top: '0px'
@@ -143,10 +147,10 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
             const barWidth = getBarWidth(dimension.score);
             
             return (
-              <div key={dimension.dimension} className="flex items-center w-full justify-center relative z-20">
-                <div className="flex items-center" style={{ minWidth: '400px' }}>
+              <div key={dimension.dimension} className="flex items-center w-full justify-center relative z-20" style={{ height: '40px' }}>
+                <div className="flex items-center" style={{ minWidth: '480px' }}>
                   {/* Left spacer */}
-                  <div style={{ width: '200px' }}></div>
+                  <div style={{ width: '240px' }}></div>
                   
                   {/* Bar extending to the right */}
                   <div className="flex items-center">
@@ -174,10 +178,10 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
             const barWidth = getBarWidth(dimension.score);
             
             return (
-              <div key={dimension.dimension} className="flex items-center w-full justify-center relative z-20">
-                <div className="flex items-center" style={{ minWidth: '400px' }}>
+              <div key={dimension.dimension} className="flex items-center w-full justify-center relative z-20" style={{ height: '40px' }}>
+                <div className="flex items-center" style={{ minWidth: '480px' }}>
                   {/* Bar extending to the left */}
-                  <div className="flex items-center justify-end" style={{ width: '200px' }}>
+                  <div className="flex items-center justify-end" style={{ width: '240px' }}>
                     <span className="ml-3 text-base font-medium text-black whitespace-nowrap">
                       {hebrewName}
                     </span>
@@ -191,7 +195,7 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
                   </div>
                   
                   {/* Right spacer */}
-                  <div style={{ width: '200px' }}></div>
+                  <div style={{ width: '240px' }}></div>
                 </div>
               </div>
             );
