@@ -46,96 +46,94 @@ const DivergingBarChart: React.FC<DivergingBarChartProps> = ({ result }) => {
   
   const getBarWidth = (score: number) => {
     const difference = Math.abs(score - personalAverage);
-    return Math.max(10, (difference / Math.max(maxDifference, 0.5)) * 120); // Min 10px, max 120px
+    return Math.max(15, (difference / Math.max(maxDifference, 0.5)) * 150); // Min 15px, max 150px
   };
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm border">
-      <h3 className="text-xl font-bold mb-2 text-center text-black">
+      <h3 className="text-xl font-bold mb-6 text-center text-black">
         ממדי SALIMA
       </h3>
       
+      {/* Personal average score - placed above the chart */}
+      <div className="text-center mb-6">
+        <div className="text-lg font-semibold text-black">
+          ממוצע אישי: {personalAverage.toFixed(2)}
+        </div>
+      </div>
+      
       {/* Chart container */}
-      <div className="relative flex flex-col items-center" style={{ minHeight: '300px' }}>
+      <div className="relative flex flex-col items-center space-y-3">
         {/* Above average bars (right side) */}
-        <div className="w-full mb-4">
-          {aboveAverage.map((dimension, index) => {
-            const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-            const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
-            const barWidth = getBarWidth(dimension.score);
-            
-            return (
-              <div key={dimension.dimension} className="flex items-center justify-center mb-2">
-                <div className="flex items-center" style={{ minWidth: '200px' }}>
-                  {/* Empty space for left side alignment */}
-                  <div style={{ width: '120px' }}></div>
-                  
-                  {/* Center divider area */}
-                  <div className="w-1 bg-gray-300 mx-2" style={{ height: '24px' }}></div>
-                  
-                  {/* Bar extending to the right */}
-                  <div className="flex items-center">
-                    <div 
-                      className="h-6 rounded-r-full"
-                      style={{ 
-                        backgroundColor: color,
-                        width: `${barWidth}px`
-                      }}
-                    />
-                    <span className="mr-3 text-sm font-medium text-black">
-                      {hebrewName}
-                    </span>
-                  </div>
+        {aboveAverage.map((dimension, index) => {
+          const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+          const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
+          const barWidth = getBarWidth(dimension.score);
+          
+          return (
+            <div key={dimension.dimension} className="flex items-center w-full justify-center">
+              <div className="flex items-center" style={{ minWidth: '400px' }}>
+                {/* Left spacer */}
+                <div style={{ width: '150px' }}></div>
+                
+                {/* Center line */}
+                <div className="w-px bg-gray-300" style={{ height: '32px' }}></div>
+                
+                {/* Bar extending to the right */}
+                <div className="flex items-center mr-2">
+                  <div 
+                    className="h-8 rounded-r-md"
+                    style={{ 
+                      backgroundColor: color,
+                      width: `${barWidth}px`
+                    }}
+                  />
+                  <span className="mr-3 text-base font-medium text-black whitespace-nowrap">
+                    {hebrewName}
+                  </span>
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Center line with personal average */}
-        <div className="flex items-center justify-center mb-4 relative">
-          <div className="absolute inset-x-0 flex items-center justify-center">
-            <div className="bg-gray-800 text-white px-4 py-2 rounded-full text-sm font-semibold">
-              ממוצע אישי: {personalAverage.toFixed(2)}
             </div>
-          </div>
-          <div className="w-full h-px bg-gray-400"></div>
+          );
+        })}
+
+        {/* Center reference line */}
+        <div className="w-full flex justify-center">
+          <div className="w-px bg-gray-400" style={{ height: '2px', width: '300px' }}></div>
         </div>
 
         {/* Below average bars (left side) */}
-        <div className="w-full">
-          {belowAverage.map((dimension, index) => {
-            const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-            const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
-            const barWidth = getBarWidth(dimension.score);
-            
-            return (
-              <div key={dimension.dimension} className="flex items-center justify-center mb-2">
-                <div className="flex items-center" style={{ minWidth: '200px' }}>
-                  {/* Bar extending to the left */}
-                  <div className="flex items-center justify-end" style={{ width: '120px' }}>
-                    <span className="ml-3 text-sm font-medium text-black">
-                      {hebrewName}
-                    </span>
-                    <div 
-                      className="h-6 rounded-l-full"
-                      style={{ 
-                        backgroundColor: color,
-                        width: `${barWidth}px`
-                      }}
-                    />
-                  </div>
-                  
-                  {/* Center divider area */}
-                  <div className="w-1 bg-gray-300 mx-2" style={{ height: '24px' }}></div>
-                  
-                  {/* Empty space for right side alignment */}
-                  <div style={{ width: '120px' }}></div>
+        {belowAverage.map((dimension, index) => {
+          const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+          const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
+          const barWidth = getBarWidth(dimension.score);
+          
+          return (
+            <div key={dimension.dimension} className="flex items-center w-full justify-center">
+              <div className="flex items-center" style={{ minWidth: '400px' }}>
+                {/* Bar extending to the left */}
+                <div className="flex items-center justify-end ml-2" style={{ width: '150px' }}>
+                  <span className="ml-3 text-base font-medium text-black whitespace-nowrap">
+                    {hebrewName}
+                  </span>
+                  <div 
+                    className="h-8 rounded-l-md"
+                    style={{ 
+                      backgroundColor: color,
+                      width: `${barWidth}px`
+                    }}
+                  />
                 </div>
+                
+                {/* Center line */}
+                <div className="w-px bg-gray-300" style={{ height: '32px' }}></div>
+                
+                {/* Right spacer */}
+                <div style={{ width: '150px' }}></div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
