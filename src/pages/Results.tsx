@@ -10,7 +10,7 @@ import ResultsDetailCard from "@/components/ResultsDetailCard";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
 import PersonalColorProfile from "@/components/PersonalColorProfile";
 import { getSurveyWithInsights } from "@/lib/survey-service";
-import LollipopChart from "@/components/LollipopChart";
+import DivergingBarChart from "@/components/DivergingBarChart";
 
 interface DatabaseInsights {
   insight_strategy?: string;
@@ -258,9 +258,9 @@ const Results = () => {
                 </div>
               </div>
               
-              {/* גרף הלוליפופ עם גרף הרדאר */}
+              {/* גרף הדיברג'ינג עם גרף הרדאר */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <LollipopChart result={results} />
+                <DivergingBarChart result={results} />
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <ResultsRadar result={results} hideScores={true} />
                 </div>
