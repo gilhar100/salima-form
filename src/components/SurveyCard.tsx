@@ -37,6 +37,10 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
     ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
     : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
 
+  // Calculate the starting display number for this step
+  const questionsPerStep = currentQuestions.length;
+  const startingDisplayNumber = (currentStep * questionsPerStep) + 1;
+
   return (
     <Card className="shadow-sm">
       <CardHeader className="pb-4">
@@ -47,13 +51,14 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
       
       <CardContent className="px-3 sm:px-6">
         <div className="space-y-4">
-          {currentQuestions.map((question) => (
+          {currentQuestions.map((question, index) => (
             <SurveyQuestion
               key={question.id}
               question={question}
               selectedValue={getAnswerValue(question.id)}
               onChange={(value) => handleAnswerChange(question.id, value)}
               surveyType={surveyType}
+              displayNumber={startingDisplayNumber + index}
             />
           ))}
         </div>

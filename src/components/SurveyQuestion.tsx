@@ -11,13 +11,15 @@ interface SurveyQuestionProps {
   selectedValue: number | null;
   onChange: (value: number) => void;
   surveyType?: SurveyType;
+  displayNumber?: number; // Visual question number for display
 }
 
 const SurveyQuestion: React.FC<SurveyQuestionProps> = ({ 
   question, 
   selectedValue, 
   onChange,
-  surveyType = 'manager'
+  surveyType = 'manager',
+  displayNumber
 }) => {
   const isMobile = useIsMobile();
 
@@ -50,13 +52,16 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
     }
   };
 
+  // Use displayNumber if provided, otherwise fall back to question.id
+  const questionNumber = displayNumber || question.id;
+
   return (
     <Card className="w-full mb-4 shadow-sm">
       <CardContent className="pt-4 px-3 sm:pt-6 sm:px-6">
         <div className="mb-4 flex items-start sm:items-center">
           <span className={`ml-2 ${surveyType === 'manager' ? 'bg-salima-600' : 'bg-blue-600'} text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full font-semibold flex-shrink-0 mt-0.5 sm:mt-0`}
                 style={{ fontSize: '16px' }}>
-            {question.id}
+            {questionNumber}
           </span>
           <p className="font-medium mr-2 leading-tight text-black" style={{ fontSize: '16px' }}>{questionText}</p>
         </div>

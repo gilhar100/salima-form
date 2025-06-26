@@ -29,7 +29,7 @@ const DimensionSpectrum: React.FC<DimensionSpectrumProps> = ({
               }}
             />
             
-            {/* קו מרכזי מודגש ב-2.5 */}
+            {/* קו מרכזי קבוע ב-50% (2.5) */}
             <div 
               className="absolute top-0 bottom-0 w-0.5 bg-black z-20"
               style={{ 
@@ -38,11 +38,11 @@ const DimensionSpectrum: React.FC<DimensionSpectrumProps> = ({
               }}
             />
             
-            {/* מחוון המיקום הנוכחי - ללא מספר */}
+            {/* מחוון המיקום הנוכחי של הציון */}
             <div 
               className="absolute top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-gray-400 z-10"
               style={{ 
-                left: `${(score / 5) * 100}%`,
+                left: `${((score - 1) / 4) * 100}%`,
                 marginLeft: '-1px'
               }}
             />
