@@ -20,12 +20,7 @@ const DimensionSpectrum: React.FC<DimensionSpectrumProps> = ({
     <div>
       {!hideScore && (
         <>
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>1.0</span>
-            <span>2.5</span>
-            <span>5.0</span>
-          </div>
-          <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+          <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden mb-2">
             {/* רקע הספקטרום */}
             <div 
               className="absolute inset-0 rounded-full"
@@ -33,19 +28,42 @@ const DimensionSpectrum: React.FC<DimensionSpectrumProps> = ({
                 background: `linear-gradient(to right, ${baseColors.weakest} 0%, ${baseColors.weak} 25%, ${baseColors.medium} 50%, ${baseColors.strong} 75%, ${baseColors.strongest} 100%)`
               }}
             />
-            {/* מחוון המיקום הנוכחי */}
+            
+            {/* קו מרכזי מודגש ב-2.5 */}
             <div 
-              className="absolute top-1/2 transform -translate-y-1/2 w-1 h-6 bg-white border-2 rounded-full shadow-lg"
+              className="absolute top-0 bottom-0 w-0.5 bg-black z-20"
+              style={{ 
+                left: '50%',
+                transform: 'translateX(-50%)'
+              }}
+            />
+            
+            {/* מחוון המיקום הנוכחי - ללא מספר */}
+            <div 
+              className="absolute top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-gray-400 z-10"
               style={{ 
                 left: `${(score / 5) * 100}%`,
-                borderColor: intensityColor,
-                marginLeft: '-2px'
+                marginLeft: '-1px'
               }}
             />
           </div>
+          
+          {/* תווית 2.5 מתחת לקו המרכזי */}
+          <div className="relative">
+            <div 
+              className="absolute text-xs font-bold text-black"
+              style={{ 
+                left: '50%',
+                transform: 'translateX(-50%)',
+                top: '-2px'
+              }}
+            >
+              2.5
+            </div>
+          </div>
         </>
       )}
-      <p className="text-sm text-gray-600 mt-2 text-center">
+      <p className="text-sm text-gray-600 mt-4 text-center">
         {levelDescription}
       </p>
     </div>
