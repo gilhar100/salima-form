@@ -45,9 +45,8 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-blue-800">
-            שאלון מנהלים
+            טופס פרטים אישיים לתחילת שאלון מנהלים
           </CardTitle>
-          <CardDescription className="text-lg font-semibold text-gray-600">ד"ר יוסי שרעבי</CardDescription>
           <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בשאלון SALIMA</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
