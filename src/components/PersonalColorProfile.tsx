@@ -129,24 +129,24 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-center text-black" style={{ fontSize: '22px' }}>
+      <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
+        <CardTitle className="text-center text-black text-xl sm:text-2xl">
           טביעת צבע אישית
         </CardTitle>
-        <p className="text-center text-black" style={{ fontSize: '16px' }}>
+        <p className="text-center text-black text-sm sm:text-base">
           הפרופיל הצבעוני הייחודי שלך במנהיגות SALIMA
         </p>
       </CardHeader>
-      <CardContent className="flex flex-col items-center">
-        <div className={`w-full ${isMobile ? 'h-[300px]' : 'h-[400px]'}`}>
+      <CardContent className="flex flex-col items-center px-4 sm:px-6">
+        <div className="w-full h-64 sm:h-80 lg:h-96">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={profileData}
                 cx="50%"
                 cy="50%"
-                outerRadius={isMobile ? 120 : 150}
-                innerRadius={isMobile ? 40 : 50}
+                outerRadius={isMobile ? "70%" : "75%"}
+                innerRadius={isMobile ? "25%" : "30%"}
                 paddingAngle={2}
                 dataKey="value"
                 // Remove label prop to hide letters
@@ -162,7 +162,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                   backgroundColor: 'white',
                   border: '1px solid #ccc',
                   borderRadius: '8px',
-                  fontSize: '16px'
+                  fontSize: isMobile ? '14px' : '16px'
                 }}
               />
             </PieChart>
@@ -170,22 +170,22 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         </div>
         
         {/* מקרא צבעים עם נראות משופרת */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 w-full max-w-md">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mt-3 sm:mt-4 w-full max-w-2xl">
           {profileData.map((dimension, index) => (
             <div 
               key={index} 
-              className="flex items-center gap-2 p-3 rounded-lg border-2 shadow-sm"
+              className="flex items-center gap-2 p-2 sm:p-3 rounded-lg border-2 shadow-sm"
               style={{ 
                 backgroundColor: 'white',
                 borderColor: dimension.color
               }}
             >
               <div 
-                className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0"
+                className="w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0"
                 style={{ backgroundColor: dimension.color }}
               />
               <div className="flex-1 min-w-0">
-                <p className="text-black font-medium truncate" style={{ fontSize: '14px' }}>
+                <p className="text-black font-medium truncate text-xs sm:text-sm">
                   {dimension.name}
                 </p>
               </div>
@@ -193,7 +193,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           ))}
         </div>
         
-        <div className="text-black text-center mt-4 max-w-sm" style={{ fontSize: '16px' }}>
+        <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-sm sm:text-base px-2">
           גודל הפרק ועוצמת הצבע משקפים את חוזק הממד בפרופיל המנהיגות שלך
         </div>
       </CardContent>

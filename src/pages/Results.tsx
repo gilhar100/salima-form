@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -144,7 +145,7 @@ const Results = () => {
         }
         body {
           font-family: Arial, sans-serif !important;
-          font-size: 12pt !important;
+          font-size: 14pt !important;
           line-height: 1.4 !important;
           color: black !important;
           background: white !important;
@@ -160,18 +161,44 @@ const Results = () => {
         .card {
           break-inside: avoid;
           page-break-inside: avoid;
-          margin-bottom: 1rem !important;
+          margin-bottom: 1.5rem !important;
+          box-shadow: none !important;
+          border: 1px solid #e5e7eb !important;
         }
         .grid {
           break-inside: avoid;
+          page-break-inside: avoid;
         }
         h1, h2, h3 {
           break-after: avoid;
           page-break-after: avoid;
+          font-size: 18pt !important;
+          margin-bottom: 12pt !important;
         }
         .recharts-wrapper {
           break-inside: avoid;
           page-break-inside: avoid;
+          width: 100% !important;
+          height: auto !important;
+          min-height: 300px !important;
+        }
+        .recharts-surface {
+          width: 100% !important;
+          height: auto !important;
+        }
+        .chart-container {
+          width: 100% !important;
+          height: 400px !important;
+          page-break-inside: avoid;
+          margin-bottom: 20pt !important;
+        }
+        .mobile-stack {
+          flex-direction: column !important;
+          width: 100% !important;
+        }
+        .mobile-stack > * {
+          width: 100% !important;
+          margin-bottom: 20pt !important;
         }
       }
     `;
@@ -194,8 +221,8 @@ const Results = () => {
   if (!results) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 style={{ width: '20px', height: '20px' }} className="animate-spin" />
-        <span className="ml-2 text-black" style={{ fontSize: '16px' }}>טוען תוצאות...</span>
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <span className="ml-2 text-black text-base">טוען תוצאות...</span>
       </div>
     );
   }
@@ -212,98 +239,105 @@ const Results = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1">
-        <div className="container py-6 max-w-6xl mx-auto px-4">
-          <Card className="mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
-            <CardHeader className="text-center">
-              <CardTitle className="font-bold text-salima-800 mb-2" style={{ fontSize: '22px' }}>
+        <div className="container py-4 sm:py-6 max-w-full xl:max-w-6xl mx-auto px-4 sm:px-6">
+          <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
+            <CardHeader className="text-center px-4 sm:px-6 py-4 sm:py-6">
+              <CardTitle className="font-bold text-salima-800 mb-2 text-xl sm:text-2xl">
                 תוצאות שאלון מנהיגות
               </CardTitle>
-              <CardDescription style={{ fontSize: '18px' }}>
+              <CardDescription className="text-base sm:text-lg">
                 הנה התוצאות המפורטות שלך מהשאלון - {new Date(results.date).toLocaleDateString('he-IL')}
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               {/* תצוגת ציון SLQ מרכזי */}
               <div className="flex justify-center">
-                <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-salima-200 text-center">
-                  <div className="flex items-center justify-center gap-3 mb-2">
-                    <Award style={{ width: '20px', height: '20px' }} className="text-salima-600" />
-                    <h3 className="font-bold text-salima-800" style={{ fontSize: '22px' }}>
+                <div className="bg-white rounded-xl p-4 sm:p-6 shadow-lg border-2 border-salima-200 text-center w-full max-w-sm">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
+                    <Award className="w-5 h-5 sm:w-6 sm:h-6 text-salima-600" />
+                    <h3 className="font-bold text-salima-800 text-lg sm:text-xl">
                       ציון מנהיגות כללי
                     </h3>
                   </div>
-                  <div className="text-5xl font-bold text-salima-600 mb-2">
+                  <div className="text-4xl sm:text-5xl font-bold text-salima-600 mb-2">
                     {results.slq}/5
                   </div>
                 </div>
               </div>
 
               {/* תקציר כללי ללא ציונים מספריים */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
-                  <h3 className="font-semibold mb-2 text-gray-700" style={{ fontSize: '18px' }}>הממד החזק ביותר</h3>
-                  <div className="font-bold text-gray-600 mb-1" style={{ fontSize: '22px' }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-center">
+                <div className="p-3 sm:p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <h3 className="font-semibold mb-2 text-gray-700 text-base sm:text-lg">הממד החזק ביותר</h3>
+                  <div className="font-bold text-gray-600 mb-1 text-lg sm:text-xl">
                     {highestDimension.title}
                   </div>
-                  <p className="text-black" style={{ fontSize: '16px' }}>אזור של כוח וחוזק</p>
+                  <p className="text-black text-sm sm:text-base">אזור של כוח וחוזק</p>
                 </div>
                 
-                <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
-                  <h3 className="font-semibold mb-2 text-gray-700" style={{ fontSize: '18px' }}>הממד לפיתוח</h3>
-                  <div className="font-bold text-gray-600 mb-1" style={{ fontSize: '22px' }}>
+                <div className="p-3 sm:p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <h3 className="font-semibold mb-2 text-gray-700 text-base sm:text-lg">הממד לפיתוח</h3>
+                  <div className="font-bold text-gray-600 mb-1 text-lg sm:text-xl">
                     {lowestDimension.title}
                   </div>
-                  <p className="text-black" style={{ fontSize: '16px' }}>אזור להשקעה ופיתוח</p>
+                  <p className="text-black text-sm sm:text-base">אזור להשקעה ופיתוח</p>
                 </div>
               </div>
               
-              {/* גרף הדיברג'ינג עם גרף הרדאר */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <DivergingBarChart result={results} />
-                <div className="bg-white rounded-lg p-4 shadow-sm">
-                  <ResultsRadar result={results} hideScores={true} />
+              {/* גרף הדיברג'ינג עם גרף הרדאר - מחולק לעמודים נפרדים במובייל */}
+              <div className="space-y-4 sm:space-y-6">
+                <div className="mobile-stack flex flex-col lg:flex-row gap-4 sm:gap-6">
+                  <div className="w-full lg:w-1/2">
+                    <div className="chart-container">
+                      <DivergingBarChart result={results} />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/2">
+                    <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm chart-container">
+                      <ResultsRadar result={results} hideScores={true} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              {/* Personal Color Profile - New visualization */}
-              <div className="w-full">
-                <PersonalColorProfile result={results} />
+                
+                {/* Personal Color Profile - תצוגה מלאה */}
+                <div className="w-full chart-container">
+                  <PersonalColorProfile result={results} />
+                </div>
               </div>
               
               {/* כרטיסי פירוט עם תובנות מהמסד נתונים */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-bold text-salima-800" style={{ fontSize: '22px' }}>
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <h2 className="font-bold text-salima-800 text-lg sm:text-xl">
                     ניתוח מפורט לכל ממד
                   </h2>
                   {!isLoadingInsights && !insightsAvailable && (
                     <Button 
                       onClick={handleRefreshInsights}
                       variant="outline"
-                      className="flex items-center gap-2 print:hidden"
-                      style={{ fontSize: '16px' }}
+                      className="flex items-center gap-2 print:hidden text-sm sm:text-base w-full sm:w-auto"
                     >
-                      <RefreshCw style={{ width: '20px', height: '20px' }} />
+                      <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
                       רענן תובנות
                     </Button>
                   )}
                 </div>
                 
                 {isLoadingInsights && (
-                  <div className="text-center text-black mb-4 p-4 bg-blue-50 rounded-lg print:hidden" style={{ fontSize: '16px' }}>
-                    <Loader2 style={{ width: '20px', height: '20px' }} className="animate-spin inline-block mr-2" />
+                  <div className="text-center text-black mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg print:hidden text-sm sm:text-base">
+                    <Loader2 className="w-5 h-5 animate-spin inline-block mr-2" />
                     התובנות נטענות כעת... אנא המתן מספר שניות
                   </div>
                 )}
                 
                 {!isLoadingInsights && !insightsAvailable && (
-                  <div className="text-center text-orange-600 mb-4 p-4 bg-orange-50 rounded-lg print:hidden" style={{ fontSize: '16px' }}>
+                  <div className="text-center text-orange-600 mb-4 p-3 sm:p-4 bg-orange-50 rounded-lg print:hidden text-sm sm:text-base">
                     התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
                   </div>
                 )}
                 
-                <div className="grid gap-6 lg:grid-cols-2">
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
                   {Object.values(results.dimensions).map(dimension => (
                     <ResultsDetailCard 
                       key={dimension.dimension} 
@@ -316,27 +350,29 @@ const Results = () => {
                 </div>
               </div>
               
-              <div className="text-center text-green-600 font-medium print:hidden" style={{ fontSize: '18px' }}>
+              <div className="text-center text-green-600 font-medium print:hidden text-base sm:text-lg">
                 ✓ הנתונים נשמרו בהצלחה במערכת
               </div>
             </CardContent>
           </Card>
           
           {/* Bell curve at the end of the results/analysis page */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8 chart-container">
             <BellCurveVisualization userScore={results.slq} />
           </div>
           
-          <div className="flex gap-4 justify-center flex-wrap mb-6 print:hidden">
-            <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-auto" style={{ fontSize: '16px' }}>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-4 sm:mb-6 print:hidden px-4">
+            <Button 
+              onClick={() => navigate('/')} 
+              className="bg-salima-600 hover:bg-salima-700 w-full sm:w-auto text-sm sm:text-base"
+            >
               חזור לעמוד הבית
             </Button>
             <Button 
               onClick={handleDownloadPDF} 
-              className="bg-green-600 hover:bg-green-700 w-auto flex items-center gap-2"
-              style={{ fontSize: '16px' }}
+              className="bg-green-600 hover:bg-green-700 w-full sm:w-auto flex items-center gap-2 text-sm sm:text-base"
             >
-              <Download style={{ width: '20px', height: '20px' }} />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
               הורד דוח אישי (PDF)
             </Button>
           </div>
@@ -344,7 +380,7 @@ const Results = () => {
       </div>
       
       {/* Copyright footer */}
-      <div className="text-center text-black p-4" style={{ fontSize: '16px' }}>
+      <div className="text-center text-black p-4 text-sm sm:text-base">
         ™ כל הזכויות שמורות לד״ר יוסי שרעבי
       </div>
     </div>

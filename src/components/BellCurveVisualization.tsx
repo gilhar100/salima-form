@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface BellCurveVisualizationProps {
   userScore: number;
@@ -12,6 +13,8 @@ const BellCurveVisualization: React.FC<BellCurveVisualizationProps> = ({
   userScore, 
   title = "מיקום הציון שלך" 
 }) => {
+  const isMobile = useIsMobile();
+  
   // Generate bell curve data points
   const generateBellCurveData = () => {
     const data = [];
@@ -41,8 +44,8 @@ const BellCurveVisualization: React.FC<BellCurveVisualizationProps> = ({
     if (Math.abs(props.payload.score - userScore) < 0.05) {
       return (
         <g>
-          <circle cx={cx} cy={cy} r={6} fill="#dc2626" stroke="#fff" strokeWidth={2} />
-          <circle cx={cx} cy={cy} r={3} fill="#fff" />
+          <circle cx={cx} cy={cy} r={isMobile ? 4 : 6} fill="#dc2626" stroke="#fff" strokeWidth={2} />
+          <circle cx={cx} cy={cy} r={isMobile ? 2 : 3} fill="#fff" />
         </g>
       );
     }
@@ -59,28 +62,33 @@ const BellCurveVisualization: React.FC<BellCurveVisualizationProps> = ({
   };
 
   return (
-    <Card className="text-center">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base sm:text-lg">{title}</CardTitle>
+    <Card className="text-center w-full">
+      <CardHeader className="pb-2 sm:pb-3 px-4 sm:px-6">
+        <CardTitle className="text-base sm:text-lg lg:text-xl">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="h-48 sm:h-56 w-full mb-4">
+      <CardContent className="pt-0 px-4 sm:px-6">
+        <div className="w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={bellCurveData} margin={{ top: 20, right: 10, left: 10, bottom: 20 }}>
+            <LineChart 
+              data={bellCurveData} 
+              margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+            >
               <XAxis 
                 dataKey="score" 
                 domain={[1, 5]}
                 type="number"
                 scale="linear"
                 tickFormatter={(value) => value.toFixed(1)}
-                fontSize={12}
+                fontSize={isMobile ? 10 : 12}
+                axisLine={true}
+                tickLine={true}
               />
               <YAxis hide />
               <Line
                 type="monotone"
                 dataKey="frequency"
                 stroke="#94a3b8"
-                strokeWidth={3}
+                strokeWidth={isMobile ? 2 : 3}
                 dot={false}
                 activeDot={false}
               />
@@ -95,17 +103,21 @@ const BellCurveVisualization: React.FC<BellCurveVisualizationProps> = ({
                 x={3} 
                 stroke="#cbd5e1" 
                 strokeDasharray="2 2" 
-                label={{ value: "ממוצע", position: "top", fontSize: 10 }}
+                label={{ 
+                  value: "ממוצע", 
+                  position: "top", 
+                  fontSize: isMobile ? 8 : 10 
+                }}
               />
             </LineChart>
           </ResponsiveContainer>
         </div>
         
         <div className="space-y-2">
-          <p className="text-3xl sm:text-4xl font-bold text-salima-600">{userScore}</p>
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-salima-600">{userScore}</p>
           <p className="text-sm sm:text-base text-gray-600">{getPositionDescription(userScore)}</p>
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <div className="w-3 h-3 bg-red-600 rounded-full"></div>
+          <div className="flex items-center justify-center gap-2 mt-2 sm:mt-3">
+            <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-600 rounded-full"></div>
             <span className="text-xs sm:text-sm text-gray-600">המיקום שלך</span>
           </div>
         </div>
