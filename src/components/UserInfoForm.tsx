@@ -47,6 +47,11 @@ const UserInfoForm: React.FC<UserInfoFormProps> = ({ onSubmit }) => {
           <CardTitle className="text-2xl font-bold text-blue-800">
             טופס פרטים אישיים לתחילת שאלון מנהלים
           </CardTitle>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-gray-700 leading-relaxed text-right">
+              ברוכים הבאים לשאלון המנהלים של חברת OPPORTUNITY. מטרת השאלון היא לאפשר לך לקבל תמונה עמוקה ומדויקת של סגנון הניהול שלך – דרך חוזקות, דפוסים והתנהגויות יומיומיות. השאלון כולל 90 היגדים. אנו מזמינים אותך להשיב בכנות מירבית – אין תשובות נכונות או שגויות, אלא ניסיון להבין אותך טוב יותר, כדי לאפשר לך צמיחה ניהולית אמיתית.
+            </p>
+          </div>
           <CardDescription>אנא מלא/י את הפרטים כדי להתחיל בשאלון SALIMA</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
