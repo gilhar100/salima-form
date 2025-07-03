@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -12,7 +11,6 @@ import BellCurveVisualization from "@/components/BellCurveVisualization";
 import PersonalColorProfile from "@/components/PersonalColorProfile";
 import { getSurveyWithInsights } from "@/lib/survey-service";
 import DivergingBarChart from "@/components/DivergingBarChart";
-
 interface DatabaseInsights {
   insight_strategy?: string;
   insight_adaptive?: string;
@@ -21,41 +19,39 @@ interface DatabaseInsights {
   insight_meaning?: string;
   insight_authentic?: string;
 }
-
 const Results = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
-  const [answers, setAnswers] = useState<{ questionId: number; value: number; }[]>([]);
+  const [answers, setAnswers] = useState<{
+    questionId: number;
+    value: number;
+  }[]>([]);
   const [insights, setInsights] = useState<DatabaseInsights>({});
   const [surveyId, setSurveyId] = useState<string | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
   const [insightsAvailable, setInsightsAvailable] = useState(false);
-
   useEffect(() => {
     console.log('Results page mounted, checking localStorage...');
-    
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
     const savedSurveyId = localStorage.getItem('salimaSurveyId');
-    
     console.log('Loading results from localStorage:');
     console.log('- Results:', savedResults ? 'Found' : 'Not found');
-    console.log('- Answers:', savedAnswers ? 'Found' : 'Not found'); 
+    console.log('- Answers:', savedAnswers ? 'Found' : 'Not found');
     console.log('- Survey ID:', savedSurveyId);
-    
     if (savedResults) {
       try {
         const parsedResults = JSON.parse(savedResults);
         setResults(parsedResults);
         console.log('Parsed results:', parsedResults);
-
         if (savedAnswers) {
           const parsedAnswers = JSON.parse(savedAnswers);
           setAnswers(parsedAnswers);
           console.log('Parsed answers:', parsedAnswers.length, 'answers');
         }
-
         if (savedSurveyId) {
           setSurveyId(savedSurveyId);
           console.log('Starting delayed insights fetch for survey ID:', savedSurveyId);
@@ -63,7 +59,6 @@ const Results = () => {
         } else {
           console.log('No survey ID found, insights will not be loaded');
         }
-        
         toast({
           title: "תוצאות השאלון",
           description: "הנתונים כבר נשמרו במערכת בהצלחה"
@@ -87,38 +82,30 @@ const Results = () => {
       navigate('/');
     }
   }, [navigate, toast]);
-
   const fetchInsightsWithDelay = async (surveyId: string) => {
     setIsLoadingInsights(true);
-    
+
     // Wait 2-3 seconds before fetching
     console.log('Waiting 2.5 seconds before fetching insights...');
     await new Promise(resolve => setTimeout(resolve, 2500));
-    
     try {
       console.log('Fetching insights after delay for survey ID:', surveyId);
       const data = await getSurveyWithInsights(surveyId);
       console.log('Insights data received:', data);
-      
       const fetchedInsights = {
         insight_strategy: data.insight_strategy,
         insight_adaptive: data.insight_adaptive,
         insight_learning: data.insight_learning,
         insight_inspiration: data.insight_inspiration,
         insight_meaning: data.insight_meaning,
-        insight_authentic: data.insight_authentic,
+        insight_authentic: data.insight_authentic
       };
-      
       setInsights(fetchedInsights);
-      
+
       // Check if any insights are available
-      const hasAnyInsight = Object.values(fetchedInsights).some(insight => 
-        insight && insight.trim() !== ''
-      );
-      
+      const hasAnyInsight = Object.values(fetchedInsights).some(insight => insight && insight.trim() !== '');
       setInsightsAvailable(hasAnyInsight);
       console.log('Insights availability check:', hasAnyInsight);
-      
     } catch (error) {
       console.error('Error fetching insights:', error);
       setInsightsAvailable(false);
@@ -126,14 +113,12 @@ const Results = () => {
       setIsLoadingInsights(false);
     }
   };
-
   const handleRefreshInsights = () => {
     if (surveyId) {
       console.log('Manual refresh of insights requested');
       fetchInsightsWithDelay(surveyId);
     }
   };
-
   const handleDownloadPDF = () => {
     // Add print-specific styles before printing
     const printStyles = document.createElement('style');
@@ -203,41 +188,29 @@ const Results = () => {
       }
     `;
     document.head.appendChild(printStyles);
-    
+
     // Trigger browser print dialog
     window.print();
-    
+
     // Remove print styles after a delay
     setTimeout(() => {
       document.head.removeChild(printStyles);
     }, 1000);
-    
     toast({
       title: "הורדת PDF",
-      description: "בחר 'שמור כ-PDF' בחלון ההדפסה",
+      description: "בחר 'שמור כ-PDF' בחלון ההדפסה"
     });
   };
-
   if (!results) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
+    return <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
         <span className="ml-2 text-black text-base">טוען תוצאות...</span>
-      </div>
-    );
+      </div>;
   }
-
   console.log('Rendering results page with data:', results);
-
-  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => 
-    prev.score > current.score ? prev : current
-  );
-  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => 
-    prev.score < current.score ? prev : current
-  );
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  const highestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score > current.score ? prev : current);
+  const lowestDimension = Object.values(results.dimensions).reduce((prev, current) => prev.score < current.score ? prev : current);
+  return <div className="min-h-screen flex flex-col">
       <div className="flex-1">
         <div className="container py-4 sm:py-6 max-w-full xl:max-w-6xl mx-auto px-4 sm:px-6">
           <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
@@ -245,9 +218,7 @@ const Results = () => {
               <CardTitle className="font-bold text-salima-800 mb-2 text-xl sm:text-2xl">
                 תוצאות שאלון מנהיגות
               </CardTitle>
-              <CardDescription className="text-base sm:text-lg">
-                הנה התוצאות המפורטות שלך מהשאלון - {new Date(results.date).toLocaleDateString('he-IL')}
-              </CardDescription>
+              
             </CardHeader>
             
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
@@ -312,41 +283,23 @@ const Results = () => {
                   <h2 className="font-bold text-salima-800 text-lg sm:text-xl">
                     ניתוח מפורט לכל ממד
                   </h2>
-                  {!isLoadingInsights && !insightsAvailable && (
-                    <Button 
-                      onClick={handleRefreshInsights}
-                      variant="outline"
-                      className="flex items-center gap-2 print:hidden text-sm sm:text-base w-full sm:w-auto"
-                    >
+                  {!isLoadingInsights && !insightsAvailable && <Button onClick={handleRefreshInsights} variant="outline" className="flex items-center gap-2 print:hidden text-sm sm:text-base w-full sm:w-auto">
                       <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
                       רענן תובנות
-                    </Button>
-                  )}
+                    </Button>}
                 </div>
                 
-                {isLoadingInsights && (
-                  <div className="text-center text-black mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg print:hidden text-sm sm:text-base">
+                {isLoadingInsights && <div className="text-center text-black mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg print:hidden text-sm sm:text-base">
                     <Loader2 className="w-5 h-5 animate-spin inline-block mr-2" />
                     התובנות נטענות כעת... אנא המתן מספר שניות
-                  </div>
-                )}
+                  </div>}
                 
-                {!isLoadingInsights && !insightsAvailable && (
-                  <div className="text-center text-orange-600 mb-4 p-3 sm:p-4 bg-orange-50 rounded-lg print:hidden text-sm sm:text-base">
+                {!isLoadingInsights && !insightsAvailable && <div className="text-center text-orange-600 mb-4 p-3 sm:p-4 bg-orange-50 rounded-lg print:hidden text-sm sm:text-base">
                     התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
-                  </div>
-                )}
+                  </div>}
                 
                 <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
-                  {Object.values(results.dimensions).map(dimension => (
-                    <ResultsDetailCard 
-                      key={dimension.dimension} 
-                      dimension={dimension} 
-                      answers={answers}
-                      insight={getInsightForDimension(dimension.dimension, insights)}
-                      isLoadingInsight={isLoadingInsights}
-                    />
-                  ))}
+                  {Object.values(results.dimensions).map(dimension => <ResultsDetailCard key={dimension.dimension} dimension={dimension} answers={answers} insight={getInsightForDimension(dimension.dimension, insights)} isLoadingInsight={isLoadingInsights} />)}
                 </div>
               </div>
               
@@ -362,16 +315,10 @@ const Results = () => {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-4 sm:mb-6 print:hidden px-4">
-            <Button 
-              onClick={() => navigate('/')} 
-              className="bg-salima-600 hover:bg-salima-700 w-full sm:w-auto text-sm sm:text-base"
-            >
+            <Button onClick={() => navigate('/')} className="bg-salima-600 hover:bg-salima-700 w-full sm:w-auto text-sm sm:text-base">
               חזור לעמוד הבית
             </Button>
-            <Button 
-              onClick={handleDownloadPDF} 
-              className="bg-green-600 hover:bg-green-700 w-full sm:w-auto flex items-center gap-2 text-sm sm:text-base"
-            >
+            <Button onClick={handleDownloadPDF} className="bg-green-600 hover:bg-green-700 w-full sm:w-auto flex items-center gap-2 text-sm sm:text-base">
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
               הורד דוח אישי (PDF)
             </Button>
@@ -383,8 +330,7 @@ const Results = () => {
       <div className="text-center text-black p-4 text-sm sm:text-base">
         ™ כל הזכויות שמורות לד״ר יוסי שרעבי
       </div>
-    </div>
-  );
+    </div>;
 };
 
 // Helper function to get the appropriate insight for each dimension
@@ -397,11 +343,7 @@ const getInsightForDimension = (dimension: string, insights: DatabaseInsights): 
     'A': 'insight_adaptive',
     'A2': 'insight_authentic'
   };
-  
   const insightKey = dimensionInsightMap[dimension];
-  return insightKey && insights[insightKey] && insights[insightKey]!.trim() !== '' 
-    ? insights[insightKey] 
-    : undefined;
+  return insightKey && insights[insightKey] && insights[insightKey]!.trim() !== '' ? insights[insightKey] : undefined;
 };
-
 export default Results;
