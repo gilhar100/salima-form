@@ -145,6 +145,9 @@ export const saveColleagueSurveyToDatabase = async (
       evaluator_department: submission.evaluatorInfo.evaluatorDepartment || null,
       organization: submission.evaluatorInfo.organization || null,
       
+      // Group ID - convert string to integer
+      group_id: submission.evaluatorInfo.groupId ? parseInt(submission.evaluatorInfo.groupId) : null,
+      
       // Scores
       slq_score: submission.slq,
       dimension_s: submission.dimensions.S,

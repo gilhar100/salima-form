@@ -20,6 +20,7 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
     managerName: "",
     managerPosition: "",
     managerDepartment: "",
+    groupId: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +30,16 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEvaluatorInfo(prev => ({ ...prev, [name]: value }));
+    
+    // Special handling for groupId to ensure only integers
+    if (name === 'groupId') {
+      // Allow empty string or valid integers only
+      if (value === '' || /^\d+$/.test(value)) {
+        setEvaluatorInfo(prev => ({ ...prev, [name]: value }));
+      }
+    } else {
+      setEvaluatorInfo(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const isFormValid = evaluatorInfo.evaluatorName.trim() !== "" && 
@@ -142,6 +152,20 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
                 name="organization"
                 placeholder="שם הארגון"
                 value={evaluatorInfo.organization}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="groupId">מספר קבוצה</Label>
+              <Input
+                id="groupId"
+                name="groupId"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="הכנס מספר קבוצה (מספרים בלבד)"
+                value={evaluatorInfo.groupId}
                 onChange={handleChange}
               />
             </div>

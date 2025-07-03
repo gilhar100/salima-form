@@ -64,6 +64,7 @@ export interface ColleagueEvaluatorInfo {
   managerName: string;
   managerPosition?: string;
   managerDepartment?: string;
+  groupId?: string; // Adding group ID field
 }
 
 // מבנה התוצאה עבור שאלון עמיתים
