@@ -44,6 +44,7 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
 
   const isFormValid = evaluatorInfo.evaluatorName.trim() !== "" && 
                      evaluatorInfo.evaluatorEmail.trim() !== "" && 
+                     evaluatorInfo.groupId.trim() !== "" &&
                      evaluatorInfo.managerName.trim() !== "";
 
   return (
@@ -79,6 +80,21 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
                   type="email"
                   placeholder="כתובת האימייל שלך"
                   value={evaluatorInfo.evaluatorEmail}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="groupId">מספר קבוצה *</Label>
+                <Input
+                  id="groupId"
+                  name="groupId"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="הכנס מספר קבוצה (מספרים בלבד)"
+                  value={evaluatorInfo.groupId}
                   onChange={handleChange}
                   required
                 />
@@ -152,20 +168,6 @@ const ColleagueInfoForm: React.FC<ColleagueInfoFormProps> = ({ onSubmit }) => {
                 name="organization"
                 placeholder="שם הארגון"
                 value={evaluatorInfo.organization}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="groupId">מספר קבוצה</Label>
-              <Input
-                id="groupId"
-                name="groupId"
-                type="text"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                placeholder="הכנס מספר קבוצה (מספרים בלבד)"
-                value={evaluatorInfo.groupId}
                 onChange={handleChange}
               />
             </div>
