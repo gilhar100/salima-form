@@ -16,22 +16,21 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
 
   if (side === 'left') {
     return (
-      <div className="flex items-center w-full justify-center relative z-20" style={{ height: '40px' }}>
+      <div className="flex items-center w-full justify-center relative z-20" style={{ height: '50px' }}>
         <div className="flex items-center" style={{ minWidth: '480px' }}>
           {/* Bar extending to the left */}
           <div className="flex items-center justify-end" style={{ width: '240px' }}>
-            <span className="ml-3 text-base font-medium text-black whitespace-nowrap">
+            <span className="ml-4 text-base font-medium text-black whitespace-nowrap">
               {hebrewName}
             </span>
             <div 
-              className="h-8 mr-1"
+              className="h-10 mr-1 transition-all duration-300 ease-in-out shadow-sm"
               style={{ 
                 backgroundColor: color,
                 width: `${barWidth}px`,
-                borderTopLeftRadius: '6px',
-                borderBottomLeftRadius: '6px',
-                borderTopRightRadius: '0px',
-                borderBottomRightRadius: '0px'
+                borderRadius: '20px 2px 2px 20px',
+                border: '1px solid rgba(255,255,255,0.3)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
               }}
             />
           </div>
@@ -44,7 +43,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
   }
 
   return (
-    <div className="flex items-center w-full justify-center relative z-20" style={{ height: '40px' }}>
+    <div className="flex items-center w-full justify-center relative z-20" style={{ height: '50px' }}>
       <div className="flex items-center" style={{ minWidth: '480px' }}>
         {/* Left spacer */}
         <div style={{ width: '240px' }}></div>
@@ -52,17 +51,16 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
         {/* Bar extending to the right */}
         <div className="flex items-center">
           <div 
-            className="h-8 ml-1"
+            className="h-10 ml-1 transition-all duration-300 ease-in-out shadow-sm"
             style={{ 
               backgroundColor: color,
               width: `${barWidth}px`,
-              borderTopLeftRadius: '0px',
-              borderBottomLeftRadius: '0px',
-              borderTopRightRadius: '6px',
-              borderBottomRightRadius: '6px'
+              borderRadius: '2px 20px 20px 2px',
+              border: '1px solid rgba(255,255,255,0.3)',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
             }}
           />
-          <span className="mr-3 text-base font-medium text-black whitespace-nowrap">
+          <span className="mr-4 text-base font-medium text-black whitespace-nowrap">
             {hebrewName}
           </span>
         </div>
