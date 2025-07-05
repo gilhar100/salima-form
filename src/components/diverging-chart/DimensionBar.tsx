@@ -20,11 +20,11 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
         <div className="flex items-center" style={{ minWidth: '480px' }}>
           {/* Bar extending to the left */}
           <div className="flex items-center justify-end" style={{ width: '240px' }}>
-            <span className="ml-3 text-base font-medium text-black whitespace-nowrap">
+            <span className="ml-3 text-sm font-medium text-black whitespace-nowrap" dir="rtl">
               {hebrewName}
             </span>
             <div 
-              className="h-8 mr-1"
+              className="h-7 mr-1"
               style={{ 
                 backgroundColor: color,
                 width: `${barWidth}px`,
@@ -52,7 +52,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
         {/* Bar extending to the right */}
         <div className="flex items-center">
           <div 
-            className="h-8 ml-1"
+            className="h-7 ml-1"
             style={{ 
               backgroundColor: color,
               width: `${barWidth}px`,
@@ -62,7 +62,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
               borderBottomRightRadius: '6px'
             }}
           />
-          <span className="mr-3 text-base font-medium text-black whitespace-nowrap">
+          <span className="mr-3 text-sm font-medium text-black whitespace-nowrap" dir="rtl">
             {hebrewName}
           </span>
         </div>

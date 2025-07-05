@@ -47,7 +47,7 @@ export const dimensionColors = {
 export const dimensionNames = {
   'S': 'אסטרטגיה',
   'A': 'אדפטיביות',
-  'L': 'למידה',
+  'L': 'לומד',
   'I': 'השראה',
   'M': 'משמעות',
   'A2': 'אותנטיות'
