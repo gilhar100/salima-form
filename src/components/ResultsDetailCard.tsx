@@ -15,33 +15,6 @@ interface ResultsDetailCardProps {
   isLoadingInsight?: boolean;
 }
 
-// Helper function to parse and format insight text with Hebrew sections
-const parseInsightSections = (insight: string) => {
-  if (!insight) return null;
-  
-  // Split by the Hebrew section titles
-  const sections = insight.split(/(?=שימור|שיפור)/);
-  const parsedSections = [];
-  
-  for (const section of sections) {
-    const trimmedSection = section.trim();
-    if (!trimmedSection) continue;
-    
-    if (trimmedSection.startsWith('שימור')) {
-      const content = trimmedSection.replace('שימור', '').trim();
-      parsedSections.push({ title: 'שימור', content });
-    } else if (trimmedSection.startsWith('שיפור')) {
-      const content = trimmedSection.replace('שיפור', '').trim();
-      parsedSections.push({ title: 'שיפור', content });
-    } else {
-      // Handle content that doesn't start with section titles
-      parsedSections.push({ title: null, content: trimmedSection });
-    }
-  }
-  
-  return parsedSections;
-};
-
 const ResultsDetailCard = ({
   dimension,
   insight,
@@ -93,9 +66,6 @@ const ResultsDetailCard = ({
   const getDimensionColor = (dimension: string) => {
     return dimensionColors[dimension as keyof typeof dimensionColors] || '#FD0100';
   };
-
-  // Parse insight sections
-  const insightSections = insight ? parseInsightSections(insight) : null;
   
   return <Card className="h-full">
       <CardHeader>
@@ -117,30 +87,9 @@ const ResultsDetailCard = ({
               <Loader2 className="h-5 w-5 animate-spin mr-2" />
               <span className="text-sm text-gray-600">טוען ניתוח...</span>
             </div> : insight ? <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg border-r-4 border-salima-400">
-              {insightSections && insightSections.length > 0 ? (
-                <div className="space-y-4" dir="rtl">
-                  {insightSections.map((section, index) => (
-                    <div key={index}>
-                      {section.title ? (
-                        <div className="space-y-2">
-                          <h4 className="font-bold text-base text-gray-800">
-                            {section.title}
-                          </h4>
-                          <p className="text-sm leading-relaxed">
-                            {section.content}
-                          </p>
-                        </div>
-                      ) : (
-                        <p className="text-sm leading-relaxed">
-                          {section.content}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                insight
-              )}
+              <div dir="rtl" className="whitespace-pre-line">
+                {insight}
+              </div>
             </div> : <div className="text-sm leading-relaxed text-gray-500 bg-gray-50 p-4 rounded-lg border-r-4 border-gray-300 italic">
               ניתוח מותאם אישית בהכנה...
             </div>}
