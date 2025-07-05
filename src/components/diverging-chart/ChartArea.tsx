@@ -38,7 +38,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
           }}
         ></div>
         
-        {/* Above average bars (right side) */}
+        {/* Above average bars (left side) */}
         {aboveAverage.map((dimension) => {
           const barWidth = getBarWidth(dimension.score, personalAverage, maxDifference);
           
@@ -47,12 +47,12 @@ const ChartArea: React.FC<ChartAreaProps> = ({
               key={dimension.dimension}
               dimension={dimension}
               barWidth={barWidth}
-              side="right"
+              side="left"
             />
           );
         })}
 
-        {/* Below average bars (left side) */}
+        {/* Below average bars (right side) */}
         {belowAverage.map((dimension) => {
           const barWidth = getBarWidth(dimension.score, personalAverage, maxDifference);
           
@@ -61,7 +61,7 @@ const ChartArea: React.FC<ChartAreaProps> = ({
               key={dimension.dimension}
               dimension={dimension}
               barWidth={barWidth}
-              side="left"
+              side="right"
             />
           );
         })}
