@@ -218,6 +218,7 @@ const Results = () => {
               <CardTitle className="font-bold text-salima-800 mb-2 text-xl sm:text-2xl">
                 תוצאות שאלון מנהיגות
               </CardTitle>
+              
             </CardHeader>
             
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
@@ -259,13 +260,13 @@ const Results = () => {
               <div className="space-y-4 sm:space-y-6">
                 <div className="mobile-stack flex flex-col lg:flex-row gap-4 sm:gap-6">
                   <div className="w-full lg:w-1/2">
-                    <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm chart-container">
-                      <ResultsRadar result={results} hideScores={true} />
+                    <div className="chart-container">
+                      <DivergingBarChart result={results} />
                     </div>
                   </div>
                   <div className="w-full lg:w-1/2">
-                    <div className="chart-container">
-                      <DivergingBarChart result={results} />
+                    <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm chart-container">
+                      <ResultsRadar result={results} hideScores={true} />
                     </div>
                   </div>
                 </div>
@@ -345,5 +346,4 @@ const getInsightForDimension = (dimension: string, insights: DatabaseInsights): 
   const insightKey = dimensionInsightMap[dimension];
   return insightKey && insights[insightKey] && insights[insightKey]!.trim() !== '' ? insights[insightKey] : undefined;
 };
-
 export default Results;

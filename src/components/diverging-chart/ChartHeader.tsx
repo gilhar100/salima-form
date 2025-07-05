@@ -8,9 +8,16 @@ interface ChartHeaderProps {
 const ChartHeader: React.FC<ChartHeaderProps> = ({ personalAverage }) => {
   return (
     <>
-      <h3 className="text-lg font-bold mb-4 text-center text-black">
-        ציון SLQ ממוצע: {personalAverage.toFixed(2)}
+      <h3 className="text-xl font-bold mb-6 text-center text-black">
+        ממדי SALIMA
       </h3>
+      
+      {/* Personal average score - centered above the chart */}
+      <div className="text-center mb-4">
+        <div className="text-lg font-semibold text-black">
+          ממוצע אישי: {personalAverage.toFixed(2)}
+        </div>
+      </div>
     </>
   );
 };
