@@ -28,7 +28,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
               style={{ 
                 backgroundColor: color,
                 width: `${barWidth}px`,
-                borderRadius: '20px 2px 2px 20px',
+                borderRadius: '2px 20px 20px 2px',
                 border: '1px solid rgba(255,255,255,0.3)',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
               }}
@@ -55,7 +55,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
             style={{ 
               backgroundColor: color,
               width: `${barWidth}px`,
-              borderRadius: '2px 20px 20px 2px',
+              borderRadius: '20px 2px 2px 20px',
               border: '1px solid rgba(255,255,255,0.3)',
               boxShadow: '0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
             }}
