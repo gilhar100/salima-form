@@ -199,11 +199,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
         {selectedDimension && (
           <div className="mt-4 p-4 bg-white border-2 rounded-lg shadow-lg max-w-2xl w-full" 
                style={{ borderColor: profileData.find(d => d.dimension === selectedDimension)?.color }}>
-            <h3 className="font-bold text-lg mb-3 text-center" 
-                style={{ color: profileData.find(d => d.dimension === selectedDimension)?.color }}>
+            <h3 className="font-bold text-lg mb-3 text-center text-black">
               {profileData.find(d => d.dimension === selectedDimension)?.name}
             </h3>
-            <p className="text-sm sm:text-base leading-relaxed text-gray-700 text-right" dir="rtl">
+            <p className="text-sm sm:text-base leading-relaxed text-black text-right" dir="rtl">
               {dimensionDescriptions[selectedDimension as keyof typeof dimensionDescriptions]}
             </p>
           </div>
