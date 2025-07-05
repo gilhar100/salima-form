@@ -27,7 +27,11 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
               className="h-8 rounded-l-md mr-1"
               style={{ 
                 backgroundColor: color,
-                width: `${barWidth}px`
+                width: `${barWidth}px`,
+                borderTopLeftRadius: '6px',
+                borderBottomLeftRadius: '6px',
+                borderTopRightRadius: '0px',
+                borderBottomRightRadius: '0px'
               }}
             />
           </div>
@@ -51,7 +55,11 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
             className="h-8 rounded-r-md ml-1"
             style={{ 
               backgroundColor: color,
-              width: `${barWidth}px`
+              width: `${barWidth}px`,
+              borderTopLeftRadius: '0px',
+              borderBottomLeftRadius: '0px',
+              borderTopRightRadius: '6px',
+              borderBottomRightRadius: '6px'
             }}
           />
           <span className="mr-3 text-base font-medium text-black whitespace-nowrap">
