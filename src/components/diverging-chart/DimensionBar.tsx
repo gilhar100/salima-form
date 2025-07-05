@@ -24,7 +24,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
               {hebrewName}
             </span>
             <div 
-              className="h-8 rounded-l-md mr-1"
+              className="h-8 mr-1"
               style={{ 
                 backgroundColor: color,
                 width: `${barWidth}px`,
@@ -52,7 +52,7 @@ const DimensionBar: React.FC<DimensionBarProps> = ({ dimension, barWidth, side }
         {/* Bar extending to the right */}
         <div className="flex items-center">
           <div 
-            className="h-8 rounded-r-md ml-1"
+            className="h-8 ml-1"
             style={{ 
               backgroundColor: color,
               width: `${barWidth}px`,
