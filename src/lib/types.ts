@@ -1,5 +1,5 @@
 // סוגי הממדים בשאלון
-export type Dimension = 'S' | 'L' | 'I' | 'M' | 'A' | 'A2';
+export type Dimension = "S" | "L" | "I" | "M" | "A" | "A2" | "SA" | "AM" | "LI";
 
 // סוג השאלון
 export type SurveyType = 'manager' | 'colleague';
@@ -11,6 +11,8 @@ export interface Question {
   dimension: Dimension;
   isReversed: boolean;
   colleagueText?: string; // טקסט מותאם לשאלון עמיתים
+  archetype?: string;
+  meaning?: string;
 }
 
 // תשובה של משתמש

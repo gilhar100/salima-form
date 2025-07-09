@@ -54,10 +54,22 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
 
   // Use displayNumber if provided, otherwise fall back to question.id
   const questionNumber = displayNumber || question.id;
+  
+  // בדיקה אם זו שאלת אבטיפוס (91-105)
+  const isArchetypeQuestion = question.id >= 91 && question.id <= 105;
 
   return (
     <Card className="w-full mb-4 shadow-sm">
       <CardContent className="pt-4 px-3 sm:pt-6 sm:px-6">
+        {/* הצגת כותרת אבטיפוס אם זו שאלת אבטיפוס */}
+        {isArchetypeQuestion && question.archetype && (
+          <div className="mb-3 text-center">
+            <h3 className="text-black font-bold" style={{ fontSize: '18px' }}>
+              {question.archetype}
+            </h3>
+          </div>
+        )}
+        
         <div className="mb-4 flex items-start sm:items-center">
           <span className={`ml-2 ${surveyType === 'manager' ? 'bg-salima-600' : 'bg-blue-600'} text-white w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full font-semibold flex-shrink-0 mt-0.5 sm:mt-0`}
                 style={{ fontSize: '16px' }}>

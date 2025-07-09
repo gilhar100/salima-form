@@ -1,10 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
 
-// Helper function to convert raw answers array to object
+// Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
   const rawAnswersObject: Record<string, number | null> = {};
-  for (let i = 1; i <= 90; i++) {
+  // עכשיו נטפל בשאלות 1-105 (כולל שאלות האבטיפוסים)
+  for (let i = 1; i <= 105; i++) {
     const answer = rawAnswers.find(a => a.questionId === i);
     rawAnswersObject[`q${i}`] = answer ? answer.value : null;
   }
