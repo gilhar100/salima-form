@@ -40,9 +40,6 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
   // Calculate the starting display number for this step
   const questionsPerStep = currentQuestions.length;
   const startingDisplayNumber = (currentStep * questionsPerStep) + 1;
-  
-  // בדיקה אם אנחנו בשלב של שאלות האבטיפוסים (שאלות 91-105)
-  const isArchetypeSection = currentQuestions.some(q => q.id >= 91 && q.id <= 105);
 
   return (
     <Card className="shadow-sm">
@@ -50,18 +47,6 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
         <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
           {currentStep === 0 ? instructionText : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
-        {/* הוספת כותרת לחלק האבטיפוסים */}
-        {isArchetypeSection && (
-          <div className="mt-4 p-4 bg-gradient-to-r from-salima-50 to-blue-50 rounded-lg border-r-4 border-salima-600">
-            <h2 className="text-black font-bold mb-2" style={{ fontSize: '24px' }}>
-              חלק ב׳: אבטיפוסי מנהיגות
-            </h2>
-            <p className="text-black" style={{ fontSize: '16px' }}>
-              השאלות הבאות מתמקדות בזיהוי סגנונות המנהיגות הייחודיים שלך. 
-              התשובות לא ישפיעו על ציון ה-SLQ הכללי.
-            </p>
-          </div>
-        )}
       </CardHeader>
       
       <CardContent className="px-3 sm:px-6">

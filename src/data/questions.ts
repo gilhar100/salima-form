@@ -1,6 +1,7 @@
+
 import { Question, Dimension } from "@/lib/types";
 
-// שאלות השאלון החדש - 90 שאלות + 15 שאלות אבטיפוסים
+// שאלות השאלון החדש - 90 שאלות
 export const questions: Question[] = [
   {
     id: 82,
@@ -613,7 +614,7 @@ export const questions: Question[] = [
   },
   {
     id: 43,
-    text: "אני משלב ידע חדש בפעילות היומיומית",
+    text: "אני משלב ידע חדש בפעילות היומיימית",
     dimension: "L",
     isReversed: false,
     colleagueText: "הוא/היא משלב ידע חדש בפעילות היומיומית"
@@ -631,142 +632,6 @@ export const questions: Question[] = [
     dimension: "I",
     isReversed: false,
     colleagueText: "הוא/היא שם דגש על תקווה ואפשרות במצבי חוסר ודאות"
-  },
-  // שאלות אבטיפוסי מנהיגות חדשות (91-105)
-  {
-    id: 91,
-    text: "כשמתרחש שינוי פתאומי, אני משתדל לחשוב איך הוא משתלב עם הכיוון האסטרטגי שלנו.",
-    dimension: "SA", // Strategy + Adaptive
-    isReversed: false,
-    colleagueText: "כשמתרחש שינוי פתאומי, הוא/היא משתדל לחשוב איך הוא משתלב עם הכיוון האסטרטגי שלהם.",
-    archetype: "מנהל ההזדמנות",
-    meaning: "תגובה אסטרטגית לשינוי"
-  },
-  {
-    id: 92,
-    text: "אני מנסה להבין מה משמעותי לכל אדם בצוות כדי לאפשר לו לפרוח.",
-    dimension: "AM", // Authenticity + Meaning
-    isReversed: false,
-    colleagueText: "הוא/היא מנסה להבין מה משמעותי לכל אדם בצוות כדי לאפשר לו לפרוח.",
-    archetype: "המנהל המעצים",
-    meaning: "התאמה אישית למקורות משמעות"
-  },
-  {
-    id: 93,
-    text: "רעיונות חדשים מעוררים בי התלהבות גם אם הם עדיין לא פרקטיים.",
-    dimension: "LI", // Learning + Inspiration
-    isReversed: false,
-    colleagueText: "רעיונות חדשים מעוררים בו/בה התלהבות גם אם הם עדיין לא פרקטיים.",
-    archetype: "המנהל הסקרן",
-    meaning: "פתיחות לרעיונות ראשוניים"
-  },
-  {
-    id: 94,
-    text: "גם כשיש לחץ מיידי, אני שואל את עצמי אם אנחנו לא מפספסים את התמונה הגדולה.",
-    dimension: "SA", // Strategy + Adaptive
-    isReversed: false,
-    colleagueText: "גם כשיש לחץ מיידי, הוא/היא שואל את עצמו אם הם לא מפספסים את התמונה הגדולה.",
-    archetype: "מנהל ההזדמנות",
-    meaning: "חשיבה אסטרטגית תחת לחץ"
-  },
-  {
-    id: 95,
-    text: "בעיניי, מנהיגות טובה נבחנת ביכולת לגעת באנשים, לא רק בתוצאות.",
-    dimension: "AM", // Authenticity + Meaning
-    isReversed: false,
-    colleagueText: "בעיניו/בעיניה, מנהיגות טובה נבחנת ביכולת לגעת באנשים, לא רק בתוצאות.",
-    archetype: "המנהל המעצים",
-    meaning: "חיבור אישי כמפתח להובלה"
-  },
-  {
-    id: 96,
-    text: "כשאני לומד משהו חדש, אני מיד מדמיין איך זה יכול להלהיב את הצוות.",
-    dimension: "LI", // Learning + Inspiration
-    isReversed: false,
-    colleagueText: "כשהוא/היא לומד משהו חדש, הוא/היא מיד מדמיין איך זה יכול להלהיב את הצוות.",
-    archetype: "המנהל הסקרן",
-    meaning: "הפיכת למידה למוטיבציה קבוצתית"
-  },
-  {
-    id: 97,
-    text: "אני יודע לזהות הזדמנויות שנובעות מתוך כאוס או חוסר ודאות.",
-    dimension: "SA", // Strategy + Adaptive
-    isReversed: false,
-    colleagueText: "הוא/היא יודע לזהות הזדמנויות שנובעות מתוך כאוס או חוסר ודאות.",
-    archetype: "מנהל ההזדמנות",
-    meaning: "זיהוי תבניות בתוך אי-בהירות"
-  },
-  {
-    id: 98,
-    text: "אני משתדל להפוך חוויות למקור השראה ללמידה ולא רק למידע.",
-    dimension: "LI", // Learning + Inspiration
-    isReversed: false,
-    colleagueText: "הוא/היא משתדל להפוך חוויות למקור השראה ללמידה ולא רק למידע.",
-    archetype: "המנהל הסקרן",
-    meaning: "למידה מבוססת חוויה"
-  },
-  {
-    id: 99,
-    text: "חשוב לי להוביל מתוך חיבור אישי, גם אם זה דורש להיחשף.",
-    dimension: "AM", // Authenticity + Meaning
-    isReversed: false,
-    colleagueText: "חשוב לו/לה להוביל מתוך חיבור אישי, גם אם זה דורש להיחשף.",
-    archetype: "המנהל המעצים",
-    meaning: "מנהיגות אותנטית וחשופה"
-  },
-  {
-    id: 100,
-    text: "אני מרבה לשאול שאלות גם כשאין לי תשובה ברורה.",
-    dimension: "LI", // Learning + Inspiration
-    isReversed: false,
-    colleagueText: "הוא/היא מרבה לשאול שאלות גם כשאין לו תשובה ברורה.",
-    archetype: "המנהל הסקרן",
-    meaning: "סקרנות פעילה"
-  },
-  {
-    id: 101,
-    text: "אני נוהג לשנות את אופן הפעולה תוך כדי תנועה, כל עוד זה משרת את המטרה הרחבה.",
-    dimension: "SA", // Strategy + Adaptive
-    isReversed: false,
-    colleagueText: "הוא/היא נוהג לשנות את אופן הפעולה תוך כדי תנועה, כל עוד זה משרת את המטרה הרחבה.",
-    archetype: "מנהל ההזדמנות",
-    meaning: "גמישות מבוססת חזון"
-  },
-  {
-    id: 102,
-    text: "אני מתמודד עם החלטות מורכבות תוך שמירה על נאמנות לעצמי.",
-    dimension: "AM", // Authenticity + Meaning
-    isReversed: false,
-    colleagueText: "הוא/היא מתמודד עם החלטות מורכבות תוך שמירה על נאמנות לעצמו.",
-    archetype: "המנהל המעצים",
-    meaning: "נאמנות פנימית בקבלת החלטות"
-  },
-  {
-    id: 103,
-    text: "אני מוכן להשהות תגובה מהירה אם זה יאפשר לי לזהות מגמה עמוקה יותר.",
-    dimension: "SA", // Strategy + Adaptive
-    isReversed: false,
-    colleagueText: "הוא/היא מוכן להשהות תגובה מהירה אם זה יאפשר לו לזהות מגמה עמוקה יותר.",
-    archetype: "מנהל ההזדמנות",
-    meaning: "סבלנות אסטרטגית"
-  },
-  {
-    id: 104,
-    text: "אני מחפש דרכים להפוך משימות שגרתיות למשמעותיות עבור אחרים.",
-    dimension: "AM", // Authenticity + Meaning
-    isReversed: false,
-    colleagueText: "הוא/היא מחפש דרכים להפוך משימות שגרתיות למשמעותיות עבור אחרים.",
-    archetype: "המנהל המעצים",
-    meaning: "הענקת משמעות דרך עשייה יומיומית"
-  },
-  {
-    id: 105,
-    text: "אני אוהב לבחון דפוסים חוזרים ולשאול מה עוד אפשר לראות מתחת לפני השטח.",
-    dimension: "LI", // Learning + Inspiration
-    isReversed: false,
-    colleagueText: "הוא/היא אוהב לבחון דפוסים חוזרים ולשאול מה עוד אפשר לראות מתחת לפני השטח.",
-    archetype: "המנהל הסקרן",
-    meaning: "חשיבה מעמיקה וביקורתית"
   }
 ];
 
@@ -805,36 +670,5 @@ export const dimensionInfo = {
   A2: {
     title: "אותנטיות",
     description: "כנות, שקיפות ויכולת להיות אמיתי ומהימן בקשרים"
-  },
-  SA: {
-    title: "אסטרטגיה + אדפטיביות",
-    description: "שילוב חשיבה אסטרטגית עם גמישות ויכולת הסתגלות"
-  },
-  AM: {
-    title: "אותנטיות + משמעות", 
-    description: "שילוב כנות אישית עם יצירת תחושת תכלית ומשמעות"
-  },
-  LI: {
-    title: "למידה + השראה",
-    description: "שילוב סקרנות ולמידה עם יכולת להוביל ולהניע אחרים"
-  }
-};
-
-// מידע על האבטיפוסים
-export const archetypeInfo = {
-  "מנהל ההזדמנות": {
-    title: "מנהל ההזדמנות",
-    description: "מנהיג שיודע לזהות ולנצל הזדמנויות בתוך שינוי ואי-ודאות",
-    dimensions: ["SA"] // Strategy + Adaptive
-  },
-  "המנהל המעצים": {
-    title: "המנהל המעצים", 
-    description: "מנהיג שמתמקד בהעצמת אחרים ויצירת משמעות אישית",
-    dimensions: ["AM"] // Authenticity + Meaning
-  },
-  "המנהל הסקרן": {
-    title: "המנהל הסקרן",
-    description: "מנהיג שמוביל דרך למידה מתמדת והפיכתה למקור השראה",
-    dimensions: ["LI"] // Learning + Inspiration
   }
 };
