@@ -1,8 +1,8 @@
-
 import { Question, Dimension } from "@/lib/types";
+import { archetypeQuestions } from "./archetypeQuestions";
 
 // שאלות השאלון החדש - 90 שאלות
-export const questions: Question[] = [
+export const coreQuestions: Question[] = [
   {
     id: 82,
     text: "אני נמנע מלבקש עזרה גם כשאני זקוק לה",
@@ -635,10 +635,13 @@ export const questions: Question[] = [
   }
 ];
 
-// מיפוי השאלות לממדים
+// Combine core questions with archetype questions for the complete survey
+export const questions: Question[] = [...coreQuestions, ...archetypeQuestions];
+
+// מיפוי השאלות לממדים - only for core questions (SLQ calculation)
 export const dimensionMapping: Record<number, { dimension: Dimension; isReversed: boolean }> = {};
 
-questions.forEach(question => {
+coreQuestions.forEach(question => {
   dimensionMapping[question.id] = {
     dimension: question.dimension,
     isReversed: question.isReversed

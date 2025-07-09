@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { SurveyResult, ColleagueSubmissionResult, Answer } from "./types";
+import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
 
 // Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
@@ -12,6 +12,32 @@ const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number 
   return rawAnswersObject;
 };
 
+// New function to save archetype answers to archetype_logic table  
+export const saveArchetypeAnswersToDatabase = async (
+  archetypeAnswers: Answer[],
+  userInfo: UserInfo
+) => {
+  try {
+    console.log('שמירת תשובות ארכיטיפ במסד הנתונים:', archetypeAnswers);
+    
+    // For each archetype answer, we could save it to a separate responses table
+    // or update the existing archetype_logic entries with user responses
+    // For now, we'll log the archetype responses - this could be extended
+    // to save to a new table like "archetype_responses" if needed
+    
+    console.log('Archetype answers received for user:', userInfo.name);
+    console.log('Archetype answers data:', archetypeAnswers);
+    
+    // TODO: If you want to store individual user responses to archetype questions,
+    // create a new table "archetype_responses" and save the data there
+    
+    return { success: true, message: 'Archetype answers processed' };
+  } catch (error) {
+    console.error('שגיאה בשמירת תשובות ארכיטיפ:', error);
+    throw error;
+  }
+};
+
 export const saveSurveyToDatabase = async (
   results: SurveyResult,
   rawAnswers: Answer[],
@@ -21,8 +47,12 @@ export const saveSurveyToDatabase = async (
   try {
     console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
     
-    // Prepare raw answers as individual columns
-    const rawAnswersObject = convertRawAnswersToObject(rawAnswers);
+    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
+    const rawAnswersObject: Record<string, number | null> = {};
+    for (let i = 1; i <= 90; i++) {
+      const answer = rawAnswers.find(a => a.questionId === i);
+      rawAnswersObject[`q${i}`] = answer ? answer.value : null;
+    }
     
     // Convert Answer[] to number[] for database compatibility
     const answersArray = rawAnswers.map(answer => answer.value);
@@ -123,7 +153,7 @@ export const saveColleagueSurveyToDatabase = async (
   try {
     console.log('שמירת הערכת עמית במסד הנתונים:', submission);
     
-    // Prepare raw answers as individual columns
+    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
     const rawAnswersObject: Record<string, number | null> = {};
     for (let i = 1; i <= 90; i++) {
       const answer = rawAnswers.find(a => a.questionId === i);

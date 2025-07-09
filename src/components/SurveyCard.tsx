@@ -33,9 +33,20 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  const instructionText = surveyType === 'manager' 
-    ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
-    : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+  // Check if we're showing archetype questions (questions 91-105)
+  const isArchetypeSection = currentQuestions.some(q => q.id >= 91 && q.id <= 105);
+  
+  const getInstructionText = () => {
+    if (isArchetypeSection) {
+      return surveyType === 'manager' 
+        ? "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+        : "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+    }
+    
+    return surveyType === 'manager' 
+      ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+      : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+  };
 
   // Calculate the starting display number for this step
   const questionsPerStep = currentQuestions.length;
@@ -45,8 +56,13 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
     <Card className="shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
-          {currentStep === 0 ? instructionText : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
+          {currentStep === 0 ? getInstructionText() : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
+        {isArchetypeSection && (
+          <div className="text-sm text-gray-600 mt-2" style={{ fontSize: '14px' }}>
+            שאלות אלו לא משפיעות על ציון ה-SLQ שלך ומיועדות למחקר על ארכיטיפים של מנהיגות
+          </div>
+        )}
       </CardHeader>
       
       <CardContent className="px-3 sm:px-6">

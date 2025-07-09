@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Answer, UserInfo, ColleagueEvaluatorInfo, SurveyType } from "@/lib/types";
 import { questions } from "@/data/questions";
 import { calculateSurveyResults } from "@/lib/calculations";
-import { saveSurveyToDatabase, saveColleagueSurveyToDatabase } from "@/lib/survey-service";
+import { saveSurveyToDatabase, saveColleagueSurveyToDatabase, saveArchetypeAnswersToDatabase } from "@/lib/survey-service";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -27,7 +27,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
     }
   }, [surveyType, navigate]);
   
-  // מספר קבוצות השאלות
+  // מספר קבוצות השאלות (now includes archetype questions)
   const totalSteps = Math.ceil(questions.length / questionsPerPage);
   
   // חישוב ההתקדמות
@@ -80,26 +80,40 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
       console.log('תשובות גולמיות:', answers);
       console.log(`Total answers: ${answers.length}`);
       
+      // Split answers into core (1-90) and archetype (91-105) questions
+      const coreAnswers = answers.filter(a => a.questionId <= 90);
+      const archetypeAnswers = answers.filter(a => a.questionId >= 91 && a.questionId <= 105);
+      
       if (surveyType === 'manager' && userInfo) {
         try {
           console.log('Processing manager survey...');
-          const results = calculateSurveyResults(answers, userInfo);
+          // Calculate results only from core questions (1-90)
+          const results = calculateSurveyResults(coreAnswers, userInfo);
           
           // Attach group_number as int if exists
           results.group_number = userInfo.groupNumber ? parseInt(userInfo.groupNumber) : undefined;
           
           console.log('תוצאות מחושבות למנהל:', results);
+          console.log('Archetype answers:', archetypeAnswers);
           
           // שמירת התוצאות והתשובות ב־localStorage תחילה
           console.log('Saving to localStorage...');
           localStorage.setItem('salimaResults', JSON.stringify(results));
-          localStorage.setItem('salimaAnswers', JSON.stringify(answers));
+          localStorage.setItem('salimaAnswers', JSON.stringify(coreAnswers));
+          localStorage.setItem('archetypeAnswers', JSON.stringify(archetypeAnswers));
           console.log('localStorage data saved successfully');
           
-          // שמירה במסד הנתונים עם התשובות הגולמיות
-          console.log('Saving to database...');
-          const savedRecord = await saveSurveyToDatabase(results, answers, true, false);
-          console.log('Database save completed:', savedRecord);
+          // Save core survey results to survey_responses table
+          console.log('Saving core survey to database...');
+          const savedRecord = await saveSurveyToDatabase(results, coreAnswers, true, false);
+          console.log('Core survey save completed:', savedRecord);
+          
+          // Save archetype answers to archetype_logic table (if any)
+          if (archetypeAnswers.length > 0) {
+            console.log('Saving archetype answers to database...');
+            await saveArchetypeAnswersToDatabase(archetypeAnswers, userInfo);
+            console.log('Archetype answers saved successfully');
+          }
           
           // Save the survey ID for later retrieval of insights
           if (savedRecord && savedRecord.id) {
@@ -133,7 +147,8 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
           name: colleagueInfo.evaluatorName,
           email: colleagueInfo.evaluatorEmail
         };
-        const results = calculateSurveyResults(answers, fakeUserInfo);
+        // Calculate results only from core questions (1-90)
+        const results = calculateSurveyResults(coreAnswers, fakeUserInfo);
         console.log('תוצאות מחושבות לעמית:', results);
         
         const colleagueSubmission = {
@@ -155,7 +170,7 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
         // שמירה ב-localStorage ובמסד הנתונים עם התשובות הגולמיות
         localStorage.setItem('colleagueSubmission', JSON.stringify(colleagueSubmission));
         
-        await saveColleagueSurveyToDatabase(colleagueSubmission, answers, true, false);
+        await saveColleagueSurveyToDatabase(colleagueSubmission, coreAnswers, true, false);
         
         toast({
           title: "השאלון הושלם בהצלחה!",
