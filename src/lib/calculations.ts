@@ -59,7 +59,6 @@ export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo): S
     acc[dimensionKey] = {
       dimension: dimensionKey as any,
       score: Math.round(average * 100) / 100,
-      questionCount: scores.length,
       questions: questionIds,
       title: info.title,
       description: info.description
