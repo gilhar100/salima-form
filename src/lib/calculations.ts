@@ -1,5 +1,21 @@
-import { Answer, UserInfo, SurveyResult, Question } from "./types";
+
+import { Answer, UserInfo, SurveyResult, Question, DimensionResult } from "./types";
 import { dimensionMapping } from "@/data/questions";
+
+// Add the missing getAdjustedValue function and export it
+export const getAdjustedValue = (score: number, isReversed: boolean): number => {
+  return isReversed ? 6 - score : score;
+};
+
+// Dimension titles and descriptions
+const dimensionInfo = {
+  S: { title: "אסטרטגיה", description: "חשיבה אסטרטגית וחזון ארוך טווח" },
+  L: { title: "למידה", description: "פתיחות ללמידה ולשיפור מתמיד" },
+  I: { title: "השראה", description: "יכולת להשיב ולעורר מוטיבציה" },
+  M: { title: "משמעות", description: "יצירת תחושת מטרה ומשמעות" },
+  A: { title: "הסתגלות", description: "גמישות ויכולת הסתגלות לשינויים" },
+  A2: { title: "אותנטיות", description: "מנהיגות אמיתית ושקופה" }
+};
 
 export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo): SurveyResult => {
   console.log("Starting survey calculation with answers:", answers);
@@ -29,16 +45,27 @@ export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo): S
 
   console.log("Dimension scores arrays:", dimensionScores);
 
-  // חישוב ממוצעים לכל ממד
-  const dimensions = Object.keys(dimensionScores).reduce((acc, dimension) => {
-    const scores = dimensionScores[dimension];
+  // חישוב ממוצעים לכל ממד וליצור DimensionResult אובייקטים מלאים
+  const dimensions = Object.keys(dimensionScores).reduce((acc, dimensionKey) => {
+    const scores = dimensionScores[dimensionKey];
     const average = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
-    acc[dimension] = {
+    const info = dimensionInfo[dimensionKey as keyof typeof dimensionInfo];
+    
+    // Get question IDs for this dimension
+    const questionIds = Object.entries(dimensionMapping)
+      .filter(([_, mapping]) => mapping.dimension === dimensionKey && parseInt(_) <= 90)
+      .map(([questionId, _]) => parseInt(questionId));
+    
+    acc[dimensionKey] = {
+      dimension: dimensionKey as any,
       score: Math.round(average * 100) / 100,
-      questionCount: scores.length
+      questionCount: scores.length,
+      questions: questionIds,
+      title: info.title,
+      description: info.description
     };
     return acc;
-  }, {} as Record<string, { score: number; questionCount: number }>);
+  }, {} as Record<string, DimensionResult>);
 
   console.log("Calculated dimensions:", dimensions);
 
@@ -51,17 +78,15 @@ export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo): S
   const result: SurveyResult = {
     slq: roundedSlq,
     dimensions: {
-      S: dimensions.S || { score: 0, questionCount: 0 },
-      L: dimensions.L || { score: 0, questionCount: 0 },
-      I: dimensions.I || { score: 0, questionCount: 0 },
-      M: dimensions.M || { score: 0, questionCount: 0 },
-      A: dimensions.A || { score: 0, questionCount: 0 },
-      A2: dimensions.A2 || { score: 0, questionCount: 0 }
+      S: dimensions.S,
+      L: dimensions.L,
+      I: dimensions.I,
+      M: dimensions.M,
+      A: dimensions.A,
+      A2: dimensions.A2
     },
     userInfo,
-    date: new Date().toLocaleDateString('he-IL'),
-    totalQuestions: slqAnswers.length,
-    answeredQuestions: slqAnswers.length
+    date: new Date().toLocaleDateString('he-IL')
   };
 
   console.log("Final survey result:", result);
