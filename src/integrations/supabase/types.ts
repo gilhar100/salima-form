@@ -143,6 +143,10 @@ export type Database = {
           "9": number | null
           "90": number | null
           answers: number[] | null
+          archetype_1_score: number | null
+          archetype_2_score: number | null
+          archetype_3_score: number | null
+          archetype_question_scores: Json | null
           consent_for_research: boolean | null
           created_at: string
           dimension_a: number
@@ -151,6 +155,7 @@ export type Database = {
           dimension_l: number
           dimension_m: number
           dimension_s: number
+          dominant_archetype: string | null
           evaluator_department: string | null
           evaluator_email: string | null
           evaluator_name: string | null
@@ -346,6 +351,10 @@ export type Database = {
           "9"?: number | null
           "90"?: number | null
           answers?: number[] | null
+          archetype_1_score?: number | null
+          archetype_2_score?: number | null
+          archetype_3_score?: number | null
+          archetype_question_scores?: Json | null
           consent_for_research?: boolean | null
           created_at?: string
           dimension_a: number
@@ -354,6 +363,7 @@ export type Database = {
           dimension_l: number
           dimension_m: number
           dimension_s: number
+          dominant_archetype?: string | null
           evaluator_department?: string | null
           evaluator_email?: string | null
           evaluator_name?: string | null
@@ -549,6 +559,10 @@ export type Database = {
           "9"?: number | null
           "90"?: number | null
           answers?: number[] | null
+          archetype_1_score?: number | null
+          archetype_2_score?: number | null
+          archetype_3_score?: number | null
+          archetype_question_scores?: Json | null
           consent_for_research?: boolean | null
           created_at?: string
           dimension_a?: number
@@ -557,6 +571,7 @@ export type Database = {
           dimension_l?: number
           dimension_m?: number
           dimension_s?: number
+          dominant_archetype?: string | null
           evaluator_department?: string | null
           evaluator_email?: string | null
           evaluator_name?: string | null
@@ -783,6 +798,10 @@ export type Database = {
           "9": number | null
           "90": number | null
           answers: number[] | null
+          archetype_1_score: number | null
+          archetype_2_score: number | null
+          archetype_3_score: number | null
+          archetype_question_scores: Json | null
           consent_for_research: boolean | null
           created_at: string
           department: string | null
@@ -792,6 +811,7 @@ export type Database = {
           dimension_l: number
           dimension_m: number
           dimension_s: number
+          dominant_archetype: string | null
           group_number: number | null
           id: string
           insight_adaptive: string | null
@@ -990,6 +1010,10 @@ export type Database = {
           "9"?: number | null
           "90"?: number | null
           answers?: number[] | null
+          archetype_1_score?: number | null
+          archetype_2_score?: number | null
+          archetype_3_score?: number | null
+          archetype_question_scores?: Json | null
           consent_for_research?: boolean | null
           created_at?: string
           department?: string | null
@@ -999,6 +1023,7 @@ export type Database = {
           dimension_l: number
           dimension_m: number
           dimension_s?: number
+          dominant_archetype?: string | null
           group_number?: number | null
           id?: string
           insight_adaptive?: string | null
@@ -1197,6 +1222,10 @@ export type Database = {
           "9"?: number | null
           "90"?: number | null
           answers?: number[] | null
+          archetype_1_score?: number | null
+          archetype_2_score?: number | null
+          archetype_3_score?: number | null
+          archetype_question_scores?: Json | null
           consent_for_research?: boolean | null
           created_at?: string
           department?: string | null
@@ -1206,6 +1235,7 @@ export type Database = {
           dimension_l?: number
           dimension_m?: number
           dimension_s?: number
+          dominant_archetype?: string | null
           group_number?: number | null
           id?: string
           insight_adaptive?: string | null
