@@ -58,11 +58,6 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
         <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
           {currentStep === 0 ? getInstructionText() : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
-        {isArchetypeSection && (
-          <div className="text-sm text-gray-600 mt-2" style={{ fontSize: '14px' }}>
-            שאלות אלו לא משפיעות על ציון ה-SLQ שלך ומיועדות למחקר על ארכיטיפים של מנהיגות
-          </div>
-        )}
       </CardHeader>
       
       <CardContent className="px-3 sm:px-6">
