@@ -1,53 +1,84 @@
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
+import QuestionFetcher from "@/components/QuestionFetcher";
 
 const Index = () => {
-  const navigate = useNavigate();
-  const isMobile = useIsMobile();
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-50 p-4">
-      <div className="max-w-3xl w-full text-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-salima-800">SALIMA</h1>
-        
-        <Card className="mb-6 sm:mb-8 shadow-lg">
-          <CardHeader className="px-4 sm:px-6">
-            <CardTitle className="text-lg sm:text-xl">ברוכים הבאים למערכת OPPORTUNITY</CardTitle>
-            <CardDescription className="text-sm sm:text-base">
-              כלי להערכת יכולות מנהיגות ופיתוח אישי וארגוני
-            </CardDescription>
-          </CardHeader>
+    <div className="min-h-screen bg-gradient-to-b from-salima-50 to-white">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <img 
+            src="/lovable-uploads/97bb30f6-a7bc-4ce4-a840-c7e1bd4b4c3f.png" 
+            alt="SALIMA Logo" 
+            className="mx-auto mb-8 h-32 w-auto"
+          />
           
-          <CardContent className="px-4 sm:px-6">
-            <p className="mb-4 text-sm sm:text-base leading-relaxed">
-              מערכת SALIMA-WOCA היא כלי אבחון ארגוני מקיף המבוסס על שאלון מנהיגות הכולל 90 היגדים.
-              המערכת מציעה שני סוגי שאלונים:
-            </p>
+          <h1 className="text-5xl font-bold text-salima-800 mb-6">
+            ברוכים הבאים לשאלון SALIMA
+          </h1>
+          
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            השאלון המוביל לאבחון ופיתוח מנהיגות אסטרטגית. גלו את כישורי המנהיגות שלכם ואת הדרכים לפיתוחם.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/survey-selection">
+              <Button 
+                size="lg" 
+                className="bg-salima-600 hover:bg-salima-700 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+              >
+                התחל במילוי השאלון
+              </Button>
+            </Link>
             
-            <div className="grid md:grid-cols-2 gap-4 text-sm">
-              <div 
-                className="bg-salima-50 p-3 rounded-lg cursor-pointer hover:bg-salima-100 transition-colors border-2 border-transparent hover:border-salima-200"
-                onClick={() => navigate('/survey?type=manager')}
+            <Link to="/statistics">
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-salima-600 text-salima-600 hover:bg-salima-50 px-8 py-4 text-lg font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
               >
-                <h3 className="font-semibold text-salima-800 mb-1">שאלון מנהלים - הערכה אישית</h3>
-                <p>הערכה עצמית עם תוצאות מפורטות</p>
-              </div>
-              <div 
-                className="bg-blue-50 p-3 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border-2 border-transparent hover:border-blue-200"
-                onClick={() => navigate('/survey?type=colleague')}
-              >
-                <h3 className="font-semibold text-blue-800 mb-1">שאלון עמיתים</h3>
-                <p>הערכת מנהל על ידי עמית עבודה</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                צפייה בסטטיסטיקות
+              </Button>
+            </Link>
+          </div>
+        </div>
         
-        <div className="text-black text-xs sm:text-sm px-4" style={{ fontSize: '16px' }}>
-          <p>™ כל הזכויות שמורות לד״ר יוסי שרעבי</p>
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+            <div className="w-16 h-16 bg-salima-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span className="text-salima-600 text-2xl font-bold">S</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">אסטרטגיה</h3>
+            <p className="text-gray-600 text-center">
+              יכולת לראות תמונה גדולה, לתכנן ארוך טווח ולהוביל שינוי אסטרטגי
+            </p>
+          </div>
+          
+          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+            <div className="w-16 h-16 bg-salima-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span className="text-salima-600 text-2xl font-bold">L</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">למידה</h3>
+            <p className="text-gray-600 text-center">
+              סקרנות, פתיחות לידע חדש ויכולת להתפתח ולהסתגל
+            </p>
+          </div>
+          
+          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+            <div className="w-16 h-16 bg-salima-100 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <span className="text-salima-600 text-2xl font-bold">I</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">השראה</h3>
+            <p className="text-gray-600 text-center">
+              יכולת להניע, לעורר השראה ולהוביל אחרים למימוש מטרות
+            </p>
+          </div>
+        </div>
+
+        {/* Debug section - will be removed after questions are verified */}
+        <div className="mt-16">
+          <QuestionFetcher />
         </div>
       </div>
     </div>
