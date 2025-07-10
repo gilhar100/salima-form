@@ -14,21 +14,24 @@ const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominan
           name: "המנהל הסקרן",
           description: "המנהל הסקרן פועל מתוך סקרנות וחדוות גילוי. הוא מרבה לשאול שאלות, לשחק עם רעיונות חדשים, ולהפוך כל חוויה להזדמנות ללמידה. זהו מנהיג שמעורר השראה דרך חשיבה פתוחה ואינטואיטיבית, ומעודד את סביבתו לחקור את הלא נודע.",
           icon: Crown,
-          color: "text-yellow-600"
+          color: "text-yellow-600",
+          bgColor: "bg-yellow-50"
         };
       case "המנהל המעצים":
         return {
           name: "המנהל המעצים",
           description: "המנהל המעצים רואה את האנשים סביבו כשותפים למסע. הוא פועל מתוך חיבור אישי, מבקש להעניק משמעות גם לפעולות יומיומיות, ומוביל דרך אותנטיות. עבורו, מנהיגות היא לא שליטה אלא השפעה מתוך אמון.",
           icon: Users,
-          color: "text-green-600"
+          color: "text-green-600",
+          bgColor: "bg-green-50"
         };
       case "מנהל ההזדמנות":
         return {
           name: "מנהל ההזדמנות",
           description: "מנהל ההזדמנות ניחן ביכולת לראות רחוק גם בזמנים של חוסר ודאות. הוא משלב חשיבה אסטרטגית עם גמישות תפקודית, ומצליח להפוך שינויים למהות ולחזון. זהו מנהיג שיודע להשהות תגובה כדי לזהות מגמה עמוקה יותר, ולהוביל קדימה מתוך תבונה.",
           icon: Lightbulb,
-          color: "text-blue-600"
+          color: "text-blue-600",
+          bgColor: "bg-blue-50"
         };
       default:
         return null;
@@ -44,22 +47,26 @@ const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominan
   const IconComponent = archetypeInfo.icon;
 
   return (
-    <Card className="mb-4 sm:mb-6 bg-white border-2 border-gray-200">
-      <CardHeader className="px-4 sm:px-6 py-4 sm:py-6">
-        <CardTitle className="flex items-center justify-between" dir="rtl">
-          <span className="text-black" style={{ fontSize: '24px' }}>
+    <Card className={`mb-4 sm:mb-6 ${archetypeInfo.bgColor} border-2 border-gray-200 shadow-lg rounded-xl`} dir="rtl">
+      <CardContent className="px-4 sm:px-6 py-6 sm:py-8 text-center">
+        <div className="space-y-4 sm:space-y-6">
+          {/* Centered Icon */}
+          <div className="flex justify-center">
+            <IconComponent className={`w-10 h-10 ${archetypeInfo.color}`} />
+          </div>
+          
+          {/* Title */}
+          <h2 className="text-black font-bold" style={{ fontSize: '24px' }}>
             סגנון ניהול
-          </span>
-          <IconComponent className={`w-6 h-6 sm:w-8 sm:h-8 ${archetypeInfo.color}`} />
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6" dir="rtl">
-        <div className="space-y-3 sm:space-y-4">
-          <h3 className="text-black" style={{ fontSize: '20px', fontWeight: 'bold' }}>
+          </h2>
+          
+          {/* Archetype Name */}
+          <h3 className="text-black font-semibold" style={{ fontSize: '22px' }}>
             {archetypeInfo.name}
           </h3>
-          <p className="text-black leading-relaxed" style={{ fontSize: '16px' }}>
+          
+          {/* Description */}
+          <p className="text-black leading-relaxed" style={{ fontSize: '16px', lineHeight: '1.6' }}>
             {archetypeInfo.description}
           </p>
         </div>
