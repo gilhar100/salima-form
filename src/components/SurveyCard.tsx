@@ -37,34 +37,15 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
   const isArchetypeSection = currentQuestions.some(q => q.id >= 91 && q.id <= 105);
   
   const getInstructionText = () => {
-    if (currentStep === 0) {
-      // First page - show disclaimer
-      return (
-        <div className="space-y-2">
-          <div>ההיגדים מנוסחים בלשון זכר אך מיועדים לכלל המגדרים</div>
-          <div>
-            {isArchetypeSection 
-              ? (surveyType === 'manager' 
-                  ? "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג עד כמה אתה מסכים עם ההיגדים הבאים:"
-                  : "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:")
-              : (surveyType === 'manager' 
-                  ? "דרג עד כמה אתה מסכים עם ההיגדים הבאים:"
-                  : "דרג עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:")
-          }
-          </div>
-        </div>
-      );
-    }
-    
     if (isArchetypeSection) {
       return surveyType === 'manager' 
-        ? "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג עד כמה אתה מסכים עם ההיגדים הבאים:"
-        : "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
+        ? "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+        : "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
     }
     
     return surveyType === 'manager' 
-      ? `המשך לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`
-      : `המשך לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`;
+      ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
+      : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
   };
 
   // Calculate the starting display number for this step
@@ -75,7 +56,7 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
     <Card className="shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
-          {getInstructionText()}
+          {currentStep === 0 ? getInstructionText() : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
       </CardHeader>
       
