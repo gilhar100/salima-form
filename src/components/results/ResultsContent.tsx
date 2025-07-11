@@ -7,6 +7,7 @@ import ManagementStyleSection from "@/components/ManagementStyleSection";
 import { getSurveyWithInsights } from "@/lib/survey-service";
 import ResultsHeader from "@/components/results/ResultsHeader";
 import ResultsScoreDisplay from "@/components/results/ResultsScoreDisplay";
+import ResultsDominantArchetype from "@/components/results/ResultsDominantArchetype";
 import ResultsSummaryCards from "@/components/results/ResultsSummaryCards";
 import ResultsCharts from "@/components/results/ResultsCharts";
 import ResultsAnalysis from "@/components/results/ResultsAnalysis";
@@ -72,6 +73,8 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
           <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               <ResultsScoreDisplay slq={results.slq} />
+              
+              <ResultsDominantArchetype dominantArchetype={insights.dominant_archetype} />
               
               <ManagementStyleSection dominantArchetype={insights.dominant_archetype || null} />
               
