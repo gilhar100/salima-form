@@ -42,12 +42,15 @@ export interface SurveyResult {
   slq: number;
   userInfo: UserInfo;
   date: string;
-  group_number?: number; // Add group_number property
+  group_number?: number;
+  dominantArchetype?: string;
+  archetypeScores?: number[];
+  archetypeQuestionScores?: any;
 }
 
 // מידע על המשתמש - שאלון מנהלים
 export interface UserInfo {
-  groupNumber?: string; // Updated: Make groupNumber attribute available
+  groupNumber?: string;
   name: string;
   email: string;
   organization?: string;
@@ -65,7 +68,7 @@ export interface ColleagueEvaluatorInfo {
   managerName: string;
   managerPosition?: string;
   managerDepartment?: string;
-  groupId?: string; // Adding group ID field
+  groupId?: string;
 }
 
 // מבנה התוצאה עבור שאלון עמיתים
