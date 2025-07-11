@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -178,6 +177,7 @@ const Results = () => {
                 isLoadingInsights={isLoadingInsights}
                 insightsAvailable={insightsAvailable}
                 onRefreshInsights={handleRefreshInsights}
+                surveyId={surveyId}
               />
               
               <div className="text-center text-green-600 font-medium print:hidden text-base sm:text-lg">
