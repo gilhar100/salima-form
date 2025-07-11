@@ -162,12 +162,12 @@ const Results = () => {
             <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               <ResultsScoreDisplay slq={results.slq} />
               
-              <ManagementStyleSection dominantArchetype={insights.dominant_archetype || null} />
-              
               <ResultsSummaryCards 
                 highestDimension={highestDimension}
                 lowestDimension={lowestDimension}
               />
+              
+              <ManagementStyleSection dominantArchetype={insights.dominant_archetype || null} />
               
               <ResultsCharts result={results} />
               

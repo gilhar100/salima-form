@@ -1,299 +1,119 @@
+
 import { supabase } from "@/integrations/supabase/client";
-import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
+import { SurveyResult, Answer } from "./types";
 
-// Helper function to convert raw answers array to object - now handles questions 1-105
-const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
-  const rawAnswersObject: Record<string, number | null> = {};
-  // עכשיו נטפל בשאלות 1-105 (כולל שאלות האבטיפוסים)
-  for (let i = 1; i <= 105; i++) {
-    const answer = rawAnswers.find(a => a.questionId === i);
-    rawAnswersObject[`q${i}`] = answer ? answer.value : null;
-  }
-  return rawAnswersObject;
-};
-
-// New function to save archetype answers to archetype_logic table  
-export const saveArchetypeAnswersToDatabase = async (
-  archetypeAnswers: Answer[],
-  userInfo: UserInfo
-) => {
-  try {
-    console.log('שמירת תשובות ארכיטיפ במסד הנתונים:', archetypeAnswers);
-    
-    // For each archetype answer, we could save it to a separate responses table
-    // or update the existing archetype_logic entries with user responses
-    // For now, we'll log the archetype responses - this could be extended
-    // to save to a new table like "archetype_responses" if needed
-    
-    console.log('Archetype answers received for user:', userInfo.name);
-    console.log('Archetype answers data:', archetypeAnswers);
-    
-    // TODO: If you want to store individual user responses to archetype questions,
-    // create a new table "archetype_responses" and save the data there
-    
-    return { success: true, message: 'Archetype answers processed' };
-  } catch (error) {
-    console.error('שגיאה בשמירת תשובות ארכיטיפ:', error);
-    throw error;
-  }
-};
-
-export const saveSurveyToDatabase = async (
+export const saveSurveyResults = async (
   results: SurveyResult,
-  rawAnswers: Answer[],
-  consentForResearch: boolean = false,
-  isAnonymous: boolean = true
+  answers: Answer[],
+  userInfo: any,
+  surveyType: string = 'manager'
 ) => {
-  try {
-    console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
+  console.log('Saving survey results:', { results, answers, userInfo, surveyType });
+  
+  // Prepare the data for insertion
+  const surveyData = {
+    user_name: userInfo.name || null,
+    user_email: userInfo.email || null,
+    position: userInfo.position || null,
+    department: userInfo.department || null,
+    organization: userInfo.organization || null,
+    consent_for_research: userInfo.consentForResearch || false,
+    is_anonymous: userInfo.isAnonymous !== false, // Default to true if not specified
+    survey_type: surveyType,
     
-    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
-    const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 90; i++) {
-      const answer = rawAnswers.find(a => a.questionId === i);
-      rawAnswersObject[`q${i}`] = answer ? answer.value : null;
-    }
+    // Dimension scores
+    dimension_s: results.dimensions.S.score,
+    dimension_l: results.dimensions.L.score,
+    dimension_i: results.dimensions.I.score,
+    dimension_m: results.dimensions.M.score,
+    dimension_a: results.dimensions.A.score,
+    dimension_a2: results.dimensions.A2.score,
     
-    // Convert Answer[] to number[] for database compatibility
-    const answersArray = rawAnswers.map(answer => answer.value);
+    // Strategy score (same as S dimension for backward compatibility)
+    strategy: results.dimensions.S.score,
     
-    const surveyResponse = {
-      // Basic info
-      user_name: results.userInfo.name,
-      user_email: results.userInfo.email,
-      organization: results.userInfo.organization || null,
-      department: results.userInfo.department || null,
-      position: results.userInfo.position || null,
-      group_number: results.group_number || null,
-      
-      // Scores - mapping dimension_s to strategy for database compatibility
-      slq_score: results.slq,
-      strategy: results.dimensions.S.score,
-      dimension_l: results.dimensions.L.score,
-      dimension_i: results.dimensions.I.score,
-      dimension_m: results.dimensions.M.score,
-      dimension_a: results.dimensions.A.score,
-      dimension_a2: results.dimensions.A2.score,
-      dimension_s: results.dimensions.S.score,
-      
-      // Consent and anonymity
-      consent_for_research: consentForResearch,
-      is_anonymous: isAnonymous,
-      survey_type: 'manager',
-      
-      // Raw answers as individual columns and array
-      ...rawAnswersObject,
-      answers: answersArray
-    };
+    // Overall SLQ score
+    slq_score: results.slq,
+    
+    // Archetype data
+    dominant_archetype: results.dominantArchetype || null,
+    archetype_1_score: results.archetypeScores?.[0] || null,
+    archetype_2_score: results.archetypeScores?.[1] || null,
+    archetype_3_score: results.archetypeScores?.[2] || null,
+    archetype_question_scores: results.archetypeQuestionScores || null,
+    
+    // Store answers array
+    answers: answers.map(a => a.value),
+  };
 
-    const { data, error } = await supabase
-      .from('survey_responses')
-      .insert(surveyResponse)
-      .select('id')
-      .single();
+  // Add individual question answers
+  answers.forEach((answer, index) => {
+    const questionKey = `q${answer.questionId}`;
+    (surveyData as any)[questionKey] = answer.value;
+    
+    // Also add the numeric column format used by some queries
+    (surveyData as any)[answer.questionId.toString()] = answer.value;
+  });
 
-    if (error) {
-      console.error('שגיאה בשמירת תוצאות השאלון:', error);
-      throw error;
-    }
+  console.log('Prepared survey data for database:', surveyData);
 
-    console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
+  // Insert the survey data
+  const { data, error } = await supabase
+    .from('survey_responses')
+    .insert(surveyData)
+    .select('id')
+    .single();
 
-    // Call the edge function to generate insights with the exact payload structure requested
-    try {
-      console.log('Calling SALIMA insights Edge Function for record ID:', data.id);
-      
-      // Build the exact payload structure as requested
-      const payload = {
-        record: {
-          id: data.id,
-          ...rawAnswersObject
-        }
-      };
-      
-      console.log('Sending payload to Edge Function:', payload);
-      
-      // Make direct POST request to the Edge Function URL
-      const response = await fetch('https://lhmrghebdtcbhmgtbqfe.supabase.co/functions/v1/generate_salima_insights', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobXJnaGViZHRjYmhtZ3RicWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxNzU2MTksImV4cCI6MjA2Mzc1MTYxOX0.zipgFg0ZVfyJj6m_Ys7TUwVFj62Myhprm_pOSGizwWU`,
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response from insights function:', errorText);
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-
-      const insightData = await response.json();
-      console.log('SALIMA insights generated successfully:', insightData);
-      
-    } catch (insightError) {
-      console.error('Failed to call SALIMA insights function:', insightError);
-      // Don't throw here - we don't want to break the survey submission if insights fail
-    }
-
-    return data;
-  } catch (error) {
-    console.error('שגיאה בשמירת נתוני השאלון:', error);
+  if (error) {
+    console.error('Error saving survey:', error);
     throw error;
   }
+
+  console.log('Survey saved with ID:', data.id);
+  return data.id;
 };
 
-export const saveColleagueSurveyToDatabase = async (
-  submission: ColleagueSubmissionResult,
-  rawAnswers: Answer[],
-  consentForResearch: boolean = false,
-  isAnonymous: boolean = true
-) => {
-  try {
-    console.log('שמירת הערכת עמית במסד הנתונים:', submission);
-    
-    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
-    const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 90; i++) {
-      const answer = rawAnswers.find(a => a.questionId === i);
-      rawAnswersObject[`q${i}`] = answer ? answer.value : null;
-    }
-
-    // Convert Answer[] to number[] for database compatibility
-    const answersArray = rawAnswers.map(answer => answer.value);
-
-    const colleagueResponse = {
-      // Manager info
-      manager_name: submission.evaluatorInfo.managerName,
-      manager_position: submission.evaluatorInfo.managerPosition || null,
-      manager_department: submission.evaluatorInfo.managerDepartment || null,
-      
-      // Evaluator info
-      evaluator_name: submission.evaluatorInfo.evaluatorName || null,
-      evaluator_email: submission.evaluatorInfo.evaluatorEmail || null,
-      evaluator_position: submission.evaluatorInfo.evaluatorPosition || null,
-      evaluator_department: submission.evaluatorInfo.evaluatorDepartment || null,
-      organization: submission.evaluatorInfo.organization || null,
-      
-      // Group ID - convert string to integer
-      group_id: submission.evaluatorInfo.groupId ? parseInt(submission.evaluatorInfo.groupId) : null,
-      
-      // Scores
-      slq_score: submission.slq,
-      dimension_s: submission.dimensions.S,
-      dimension_l: submission.dimensions.L,
-      dimension_i: submission.dimensions.I,
-      dimension_m: submission.dimensions.M,
-      dimension_a: submission.dimensions.A,
-      dimension_a2: submission.dimensions.A2,
-      
-      // Consent and anonymity
-      consent_for_research: consentForResearch,
-      is_anonymous: isAnonymous,
-      
-      // Raw answers as individual columns and array
-      ...rawAnswersObject,
-      answers: answersArray
-    };
-
-    const { data, error } = await supabase
-      .from('colleague_survey_responses')
-      .insert(colleagueResponse)
-      .select('id')
-      .single();
-
-    if (error) {
-      console.error('שגיאה בשמירת הערכת עמית:', error);
-      throw error;
-    }
-
-    console.log('הערכת עמית נשמרה בהצלחה עם ID:', data.id);
-    return data;
-  } catch (error) {
-    console.error('שגיאה בשמירת הערכת עמית:', error);
-    throw error;
-  }
-};
-
-// Function to get survey results with insights from database
 export const getSurveyWithInsights = async (surveyId: string) => {
-  try {
-    const { data, error } = await supabase
-      .from('survey_responses')
-      .select('*')
-      .eq('id', surveyId)
-      .single();
+  console.log('Fetching survey insights for ID:', surveyId);
+  
+  const { data, error } = await supabase
+    .from('survey_responses')
+    .select(`
+      id,
+      insight_strategy,
+      insight_adaptive,  
+      insight_learning,
+      insight_inspiration,
+      insight_meaning,
+      insight_authentic,
+      dominant_archetype
+    `)
+    .eq('id', surveyId)
+    .single();
 
-    if (error) {
-      console.error('Error fetching survey insights:', error);
-      throw error;
-    }
-
-    return data;
-  } catch (error) {
-    console.error('Error getting survey with insights:', error);
+  if (error) {
+    console.error('Error fetching survey insights:', error);
     throw error;
   }
+
+  console.log('Fetched survey insights:', data);
+  return data;
 };
 
-export const getSurveyStatistics = async () => {
-  try {
-    const { data, error } = await supabase
-      .from('survey_responses')
-      .select('id, slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, created_at, consent_for_research, is_anonymous, user_email, user_name, organization, department, position, strategy, survey_type')
-      .eq('consent_for_research', true);
+export const getColleagueSurveyResults = async (surveyId: string) => {
+  console.log('Fetching colleague survey results for ID:', surveyId);
+  
+  const { data, error } = await supabase
+    .from('colleague_survey_responses')
+    .select('*')
+    .eq('id', surveyId)
+    .single();
 
-    if (error) {
-      console.error('שגיאה בטעינת סטטיסטיקות:', error);
-      throw error;
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error('שגיאה בטעינת סטטיסטיקות:', error);
+  if (error) {
+    console.error('Error fetching colleague survey:', error);
     throw error;
   }
-};
 
-export const getManagerComparisonData = async (managerName: string, managerEmail?: string) => {
-  try {
-    // Get manager's self-assessments
-    let managerQuery = supabase
-      .from('survey_responses')
-      .select('slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, user_name, created_at')
-      .eq('user_name', managerName);
-
-    if (managerEmail) {
-      managerQuery = managerQuery.eq('user_email', managerEmail);
-    }
-
-    const { data: managerData, error: managerError } = await managerQuery;
-
-    if (managerError) {
-      console.error('שגיאה בטעינת נתוני מנהל:', managerError);
-      throw managerError;
-    }
-
-    // Get colleague assessments
-    let colleagueQuery = supabase
-      .from('colleague_survey_responses')
-      .select('slq_score, dimension_s, dimension_l, dimension_i, dimension_m, dimension_a, dimension_a2, manager_name, evaluator_name, created_at')
-      .eq('manager_name', managerName);
-
-    const { data: colleagueData, error: colleagueError } = await colleagueQuery;
-
-    if (colleagueError) {
-      console.error('שגיאה בטעינת נתוני עמיתים:', colleagueError);
-      throw colleagueError;
-    }
-
-    return {
-      managerData: managerData || [],
-      colleagueData: colleagueData || []
-    };
-  } catch (error) {
-    console.error('שגיאה בטעינת נתוני השוואה:', error);
-    throw error;
-  }
+  console.log('Fetched colleague survey results:', data);
+  return data;
 };

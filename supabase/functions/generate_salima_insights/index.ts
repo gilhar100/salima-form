@@ -280,22 +280,35 @@ serve(async (req) => {
     // Generate user seed for consistent results
     const userSeed = record.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
-    // Generate paragraphs for each dimension
-    const paragraphs: Record<string, string> = {};
+    // Generate paragraphs for each dimension with correct keys that match the database columns
+    const insights: Record<string, string> = {};
 
-    paragraphs['אסטרטגיה'] = synthesizeStrategyParagraph(dimensionInsights['S'], userSeed);
-    paragraphs['אדפטיביות'] = synthesizeAdaptiveParagraph(dimensionInsights['A'], userSeed + 1);
-    paragraphs['לומד'] = synthesizeLearningParagraph(dimensionInsights['L'], userSeed + 2);
-    paragraphs['השראה'] = synthesizeInspirationParagraph(dimensionInsights['I'], userSeed + 3);
-    paragraphs['משמעות'] = synthesizeMeaningParagraph(dimensionInsights['M'], userSeed + 4);
-    paragraphs['אותנטיות'] = synthesizeAuthentcityParagraph(dimensionInsights['A2'], userSeed + 5);
+    insights['insight_strategy'] = synthesizeStrategyParagraph(dimensionInsights['S'], userSeed);
+    insights['insight_adaptive'] = synthesizeAdaptiveParagraph(dimensionInsights['A'], userSeed + 1);
+    insights['insight_learning'] = synthesizeLearningParagraph(dimensionInsights['L'], userSeed + 2);
+    insights['insight_inspiration'] = synthesizeInspirationParagraph(dimensionInsights['I'], userSeed + 3);
+    insights['insight_meaning'] = synthesizeMeaningParagraph(dimensionInsights['M'], userSeed + 4);
+    insights['insight_authentic'] = synthesizeAuthentcityParagraph(dimensionInsights['A2'], userSeed + 5);
 
     console.log('Generated paragraphs for all dimensions');
+
+    // Update the survey record with the generated insights
+    const { error: updateError } = await supabase
+      .from('survey_responses')
+      .update(insights)
+      .eq('id', record.id);
+
+    if (updateError) {
+      console.error('Error updating survey record:', updateError);
+      throw new Error(`Failed to update survey record: ${updateError.message}`);
+    }
+
+    console.log('Successfully updated survey record with insights');
 
     return new Response(
       JSON.stringify({
         success: true,
-        insights: paragraphs,
+        insights,
         record_id: record.id
       }),
       {
