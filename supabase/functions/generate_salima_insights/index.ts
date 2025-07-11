@@ -292,10 +292,61 @@ serve(async (req) => {
 
     console.log('Generated paragraphs for all dimensions');
 
+    // Determine dominant archetype based on highest scoring dimension
+    const dimensionScores = {
+      S: record.dimension_s || 0,
+      A: record.dimension_a || 0,
+      L: record.dimension_l || 0,
+      I: record.dimension_i || 0,
+      M: record.dimension_m || 0,
+      A2: record.dimension_a2 || 0
+    };
+
+    // Find the dimension with the highest score
+    const highestDimension = Object.entries(dimensionScores).reduce((max, [key, score]) => 
+      score > max.score ? { dimension: key, score } : max,
+      { dimension: 'S', score: 0 }
+    );
+
+    // Map dimensions to archetype names
+    const archetypeMap: Record<string, string> = {
+      'S': 'מנהל ההזדמנות',
+      'A': 'מנהל ההזדמנות', 
+      'L': 'המנהל הסקרן',
+      'I': 'המנהל הסקרן',
+      'M': 'המנהל המעצים',
+      'A2': 'המנהל המעצים'
+    };
+
+    const dominantArchetype = archetypeMap[highestDimension.dimension] || 'מנהל ההזדמנות';
+    console.log(`Determined dominant archetype: ${dominantArchetype} based on highest dimension: ${highestDimension.dimension} (score: ${highestDimension.score})`);
+
+    // Update the record with insights and dominant archetype
+    const { error: updateError } = await supabase
+      .from('survey_responses')
+      .update({
+        insight_strategy: paragraphs['אסטרטגיה'],
+        insight_adaptive: paragraphs['אדפטיביות'], 
+        insight_learning: paragraphs['לומד'],
+        insight_inspiration: paragraphs['השראה'],
+        insight_meaning: paragraphs['משמעות'],
+        insight_authentic: paragraphs['אותנטיות'],
+        dominant_archetype: dominantArchetype
+      })
+      .eq('id', record.id);
+
+    if (updateError) {
+      console.error('Failed to update survey record:', updateError);
+      throw new Error(`Failed to update record: ${updateError.message}`);
+    }
+
+    console.log('Successfully updated survey record with insights and dominant archetype');
+
     return new Response(
       JSON.stringify({
         success: true,
         insights: paragraphs,
+        dominant_archetype: dominantArchetype,
         record_id: record.id
       }),
       {

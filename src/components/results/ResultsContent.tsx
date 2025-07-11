@@ -94,8 +94,6 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
                 onRefreshInsights={onRefreshInsights}
                 surveyId={surveyId}
               />
-
-              <ResultsGptInsights gptResults={gptResults} />
               
               <div className="text-center text-green-600 font-medium print:hidden text-base sm:text-lg">
                 ✓ הנתונים נשמרו בהצלחה במערכת
