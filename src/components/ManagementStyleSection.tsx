@@ -7,6 +7,9 @@ interface ManagementStyleSectionProps {
 }
 
 const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominantArchetype }) => {
+  // Add debug logging
+  console.log('ManagementStyleSection - dominantArchetype received:', dominantArchetype);
+
   const getArchetypeInfo = (archetype: string | null) => {
     switch (archetype) {
       case "מנהל ההזדמנות":
@@ -34,13 +37,47 @@ const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominan
           bgColor: "bg-orange-50"
         };
       default:
+        console.log('ManagementStyleSection - No matching archetype found for:', archetype);
         return null;
     }
   };
 
   const archetypeInfo = getArchetypeInfo(dominantArchetype);
 
+  // Show a placeholder if no archetype info is available
   if (!archetypeInfo) {
+    if (dominantArchetype) {
+      console.log('ManagementStyleSection - Unknown archetype:', dominantArchetype);
+      // Show the section with the raw archetype name if we have one but don't recognize it
+      return (
+        <Card className="mb-4 sm:mb-6 bg-gray-50 border-2 border-gray-200 shadow-lg rounded-xl" dir="rtl">
+          <CardContent className="px-4 sm:px-6 py-6 sm:py-8">
+            <div className="space-y-4 sm:space-y-6">
+              <h2 className="text-black font-bold text-right" style={{ fontSize: '24px' }}>
+                סגנון ניהולי דומיננטי
+              </h2>
+              
+              <div className="flex items-center justify-end gap-3">
+                <h3 className="text-black font-bold text-right" style={{ fontSize: '22px' }}>
+                  {dominantArchetype}
+                </h3>
+                <Crown className="w-6 h-6 text-gray-600" />
+              </div>
+              
+              <p className="text-black leading-relaxed text-right" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+                מידע נוסף על סגנון הניהול שלך יהיה זמין בקרוב.
+              </p>
+              
+              <p className="text-gray-700 leading-relaxed text-right" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+                חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+    
+    console.log('ManagementStyleSection - No dominant archetype data, component will not render');
     return null;
   }
 

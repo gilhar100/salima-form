@@ -122,6 +122,8 @@ export const useResultsData = () => {
         dominant_archetype: data.dominant_archetype
       };
 
+      console.log('Setting insights state with:', fetchedInsights);
+      console.log('Dominant archetype from database:', data.dominant_archetype);
       setInsights(fetchedInsights);
 
       // Check if any insights are available
