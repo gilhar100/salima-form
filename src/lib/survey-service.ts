@@ -98,45 +98,6 @@ export const saveSurveyToDatabase = async (
     }
 
     console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
-
-    // Call the edge function to generate insights with the exact payload structure requested
-    try {
-      console.log('Calling SALIMA insights Edge Function for record ID:', data.id);
-      
-      // Build the exact payload structure as requested
-      const payload = {
-        record: {
-          id: data.id,
-          ...rawAnswersObject
-        }
-      };
-      
-      console.log('Sending payload to Edge Function:', payload);
-      
-      // Make direct POST request to the Edge Function URL
-      const response = await fetch('https://lhmrghebdtcbhmgtbqfe.supabase.co/functions/v1/generate_salima_insights', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxobXJnaGViZHRjYmhtZ3RicWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxNzU2MTksImV4cCI6MjA2Mzc1MTYxOX0.zipgFg0ZVfyJj6m_Ys7TUwVFj62Myhprm_pOSGizwWU`,
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response from insights function:', errorText);
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-
-      const insightData = await response.json();
-      console.log('SALIMA insights generated successfully:', insightData);
-      
-    } catch (insightError) {
-      console.error('Failed to call SALIMA insights function:', insightError);
-      // Don't throw here - we don't want to break the survey submission if insights fail
-    }
-
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת נתוני השאלון:', error);

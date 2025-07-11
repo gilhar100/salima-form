@@ -6,6 +6,7 @@ import { calculateSurveyResults } from "@/lib/calculations";
 import { saveSurveyToDatabase, saveColleagueSurveyToDatabase, saveArchetypeAnswersToDatabase } from "@/lib/survey-service";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useSurveyLogic = (surveyType: SurveyType) => {
   const navigate = useNavigate();
@@ -121,29 +122,44 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
             console.log('Survey ID saved to localStorage:', savedRecord.id);
           }
           
-          // Generate SALIMA insights
+          // Call the Supabase Edge Function to generate insights and populate dominant_archetype
           if (savedRecord && savedRecord.id) {
             try {
-              console.log('Generating SALIMA insights...');
-              const insightsResponse = await fetch('https://salima-managers.functions.supabase.co/generate_salima_insights', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  record: savedRecord
-                })
-              });
+              console.log('Calling generate_salima_insights Edge Function for record ID:', savedRecord.id);
               
-              if (insightsResponse.ok) {
-                const gptResults = await insightsResponse.json();
-                console.log('GPT insights generated:', gptResults);
-                localStorage.setItem('gptResults', JSON.stringify(gptResults));
+              // Fetch the complete record from the database to send to the Edge Function
+              const { data: fullRecord, error: fetchError } = await supabase
+                .from('survey_responses')
+                .select('*')
+                .eq('id', savedRecord.id)
+                .single();
+              
+              if (fetchError) {
+                console.error('Error fetching full record:', fetchError);
               } else {
-                console.error('Failed to generate insights:', insightsResponse.status);
+                console.log('Full record fetched:', fullRecord);
+                
+                // Call the Edge Function with the full record
+                const { data: insightsData, error: insightsError } = await supabase.functions.invoke('generate_salima_insights', {
+                  body: {
+                    record: fullRecord
+                  }
+                });
+                
+                if (insightsError) {
+                  console.error('Error calling generate_salima_insights:', insightsError);
+                } else {
+                  console.log('SALIMA insights generated successfully:', insightsData);
+                  
+                  // Store the insights data in localStorage for immediate use
+                  if (insightsData && insightsData.insights) {
+                    localStorage.setItem('gptResults', JSON.stringify(insightsData));
+                    console.log('GPT insights stored in localStorage');
+                  }
+                }
               }
             } catch (insightsError) {
-              console.error('Error generating insights:', insightsError);
+              console.error('Error in insights generation process:', insightsError);
             }
           }
           
