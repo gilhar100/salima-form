@@ -122,12 +122,12 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
             console.log('Survey ID saved to localStorage:', savedRecord.id);
           }
           
-          // Call the Supabase Edge Function to generate insights and populate dominant_archetype
+          // Call the generate_salima_insights Edge Function with the full record
           if (savedRecord && savedRecord.id) {
             try {
-              console.log('Calling generate_salima_insights Edge Function for record ID:', savedRecord.id);
+              console.log('Fetching full record from database for insights generation...');
               
-              // Fetch the complete record from the database to send to the Edge Function
+              // Fetch the complete record from the database
               const { data: fullRecord, error: fetchError } = await supabase
                 .from('survey_responses')
                 .select('*')
@@ -136,30 +136,39 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
               
               if (fetchError) {
                 console.error('Error fetching full record:', fetchError);
-              } else {
-                console.log('Full record fetched:', fullRecord);
-                
-                // Call the Edge Function with the full record
-                const { data: insightsData, error: insightsError } = await supabase.functions.invoke('generate_salima_insights', {
-                  body: {
-                    record: fullRecord
-                  }
-                });
-                
-                if (insightsError) {
-                  console.error('Error calling generate_salima_insights:', insightsError);
-                } else {
-                  console.log('SALIMA insights generated successfully:', insightsData);
-                  
-                  // Store the insights data in localStorage for immediate use
-                  if (insightsData && insightsData.insights) {
-                    localStorage.setItem('gptResults', JSON.stringify(insightsData));
-                    console.log('GPT insights stored in localStorage');
-                  }
-                }
+                throw fetchError;
               }
+              
+              console.log('Full record fetched successfully:', fullRecord);
+              
+              // Call the Edge Function with the full record
+              console.log('Calling generate_salima_insights Edge Function...');
+              const { data: insightsData, error: insightsError } = await supabase.functions.invoke('generate_salima_insights', {
+                body: {
+                  record: fullRecord
+                }
+              });
+              
+              if (insightsError) {
+                console.error('Error calling generate_salima_insights:', insightsError);
+                throw insightsError;
+              }
+              
+              console.log('SALIMA insights generated successfully:', insightsData);
+              
+              // Store the insights data in localStorage for immediate use
+              if (insightsData && insightsData.insights) {
+                localStorage.setItem('gptResults', JSON.stringify(insightsData));
+                console.log('GPT insights stored in localStorage');
+              }
+              
             } catch (insightsError) {
               console.error('Error in insights generation process:', insightsError);
+              // Don't block the user flow if insights generation fails
+              toast({
+                title: "השאלון נשמר בהצלחה",
+                description: "יכול להיות שהתובנות יופיעו במעט עיכוב",
+              });
             }
           }
           
