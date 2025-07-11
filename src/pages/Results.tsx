@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -24,12 +25,24 @@ interface DatabaseInsights {
   dominant_archetype?: string;
 }
 
+interface GPTResults {
+  insights: {
+    אסטרטגיה: string;
+    אדפטיביות: string;
+    לומד: string;
+    השראה: string;
+    משמעות: string;
+    אותנטיות: string;
+  };
+}
+
 const Results = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [results, setResults] = useState<SurveyResult | null>(null);
   const [answers, setAnswers] = useState<{ questionId: number; value: number; }[]>([]);
   const [insights, setInsights] = useState<DatabaseInsights>({});
+  const [gptResults, setGptResults] = useState<GPTResults | null>(null);
   const [surveyId, setSurveyId] = useState<string | null>(null);
   const [isLoadingInsights, setIsLoadingInsights] = useState(false);
   const [insightsAvailable, setInsightsAvailable] = useState(false);
@@ -39,11 +52,13 @@ const Results = () => {
     const savedResults = localStorage.getItem('salimaResults');
     const savedAnswers = localStorage.getItem('salimaAnswers');
     const savedSurveyId = localStorage.getItem('salimaSurveyId');
+    const savedGptResults = localStorage.getItem('gptResults');
 
     console.log('Loading results from localStorage:');
     console.log('- Results:', savedResults ? 'Found' : 'Not found');
     console.log('- Answers:', savedAnswers ? 'Found' : 'Not found');
     console.log('- Survey ID:', savedSurveyId);
+    console.log('- GPT Results:', savedGptResults ? 'Found' : 'Not found');
 
     if (savedResults) {
       try {
@@ -63,6 +78,12 @@ const Results = () => {
           fetchInsightsWithDelay(savedSurveyId);
         } else {
           console.log('No survey ID found, insights will not be loaded');
+        }
+
+        if (savedGptResults) {
+          const parsedGptResults = JSON.parse(savedGptResults);
+          setGptResults(parsedGptResults);
+          console.log('Loaded GPT results:', parsedGptResults);
         }
 
         toast({
@@ -179,6 +200,32 @@ const Results = () => {
                 onRefreshInsights={handleRefreshInsights}
                 surveyId={surveyId}
               />
+
+              {/* GPT Generated Insights */}
+              {gptResults && gptResults.insights && (
+                <div className="mt-6 sm:mt-8">
+                  <h2 className="font-bold text-salima-800 text-lg sm:text-xl mb-4">
+                    תובנות מותאמות אישית
+                  </h2>
+                  <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+                    {Object.entries(gptResults.insights).map(([key, content]) => (
+                      <div 
+                        key={key} 
+                        className="bg-white rounded-lg border shadow-sm p-4 sm:p-6"
+                        dir="rtl"
+                      >
+                        <h3 className="font-bold text-salima-800 text-base sm:text-lg mb-3 flex items-center gap-2">
+                          <span className="text-blue-600">📘</span>
+                          {key}
+                        </h3>
+                        <div className="text-sm sm:text-base leading-relaxed text-gray-700 whitespace-pre-line">
+                          {content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
               <div className="text-center text-green-600 font-medium print:hidden text-base sm:text-lg">
                 ✓ הנתונים נשמרו בהצלחה במערכת

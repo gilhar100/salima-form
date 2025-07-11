@@ -121,6 +121,32 @@ export const useSurveyLogic = (surveyType: SurveyType) => {
             console.log('Survey ID saved to localStorage:', savedRecord.id);
           }
           
+          // Generate SALIMA insights
+          if (savedRecord && savedRecord.id) {
+            try {
+              console.log('Generating SALIMA insights...');
+              const insightsResponse = await fetch('https://salima-managers.functions.supabase.co/generate_salima_insights', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  record: savedRecord
+                })
+              });
+              
+              if (insightsResponse.ok) {
+                const gptResults = await insightsResponse.json();
+                console.log('GPT insights generated:', gptResults);
+                localStorage.setItem('gptResults', JSON.stringify(gptResults));
+              } else {
+                console.error('Failed to generate insights:', insightsResponse.status);
+              }
+            } catch (insightsError) {
+              console.error('Error generating insights:', insightsError);
+            }
+          }
+          
           toast({
             title: "השאלון הושלם בהצלחה!",
             description: "הנתונים נשמרו במסד הנתונים. מעבר לדף התוצאות...",
