@@ -1,3 +1,4 @@
+
 import { Answer, UserInfo, SurveyResult, Question, DimensionResult } from "./types";
 
 // Create the dimension mapping that calculations expects
@@ -111,6 +112,21 @@ const dimensionMapping: Record<number, { dimension: string; isReversed: boolean 
   105: { dimension: "L", isReversed: false }
 };
 
+// Dimension information for display
+export const dimensionInfo = {
+  S: { title: "אסטרטגיה", description: "חשיבה אסטרטגית ותכנון ארוך טווח" },
+  L: { title: "למידה", description: "למידה מתמדת והתפתחות אישית" },
+  I: { title: "השראה", description: "יכולת להשפיע ולהשריש" },
+  M: { title: "משמעות", description: "יצירת משמעות ומטרה" },
+  A: { title: "אדפטיביות", description: "גמישות והסתגלות לשינויים" },
+  A2: { title: "אותנטיות", description: "אמינות ויושרה אישית" }
+};
+
+// Helper function to get adjusted value based on reverse scoring
+export const getAdjustedValue = (value: number, isReversed: boolean): number => {
+  return isReversed ? 6 - value : value;
+};
+
 interface CalculateSurveyResultProps {
   answers: Answer[];
   questions: Question[];
@@ -146,9 +162,23 @@ export const calculateSurveyResult = ({ answers, questions, userInfo }: Calculat
   for (const dimension in dimensionScores) {
     const { sum, count } = dimensionScores[dimension];
     const average = count > 0 ? sum / count : 0;
+    const dimensionKey = dimension as keyof typeof dimensionInfo;
+    const info = dimensionInfo[dimensionKey] || { title: dimension, description: "" };
+
+    // Get question IDs for this dimension
+    const questionIds = answers
+      .filter(answer => {
+        const question = questions.find(q => q.id === answer.questionId);
+        return question?.dimension === dimension;
+      })
+      .map(answer => answer.questionId);
 
     dimensions[dimension] = {
+      dimension: dimensionKey,
       score: parseFloat(average.toFixed(2)),
+      questions: questionIds,
+      title: info.title,
+      description: info.description
     };
   }
 
@@ -157,11 +187,33 @@ export const calculateSurveyResult = ({ answers, questions, userInfo }: Calculat
     Object.keys(dimensions).length;
 
   return {
-    surveyType: userInfo.surveyType,
-    email: userInfo.email,
-    name: userInfo.name,
-    createdAt: new Date(),
+    dimensions: {
+      S: dimensions.S,
+      L: dimensions.L,
+      I: dimensions.I,
+      M: dimensions.M,
+      A: dimensions.A,
+      A2: dimensions.A2,
+    },
     slq: parseFloat(slq.toFixed(2)),
-    dimensions: dimensions,
+    userInfo: userInfo,
+    date: new Date().toLocaleDateString('he-IL'),
   };
+};
+
+// Export for backward compatibility
+export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo) => {
+  // This is a simplified version that doesn't require questions parameter
+  // We'll create a minimal questions array from the dimensionMapping
+  const questions: Question[] = answers.map(answer => {
+    const mapping = dimensionMapping[answer.questionId];
+    return {
+      id: answer.questionId,
+      text: `Question ${answer.questionId}`,
+      dimension: mapping?.dimension as any || 'S',
+      isReversed: mapping?.isReversed || false
+    };
+  });
+
+  return calculateSurveyResult({ answers, questions, userInfo });
 };
