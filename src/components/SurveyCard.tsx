@@ -33,16 +33,7 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
 }) => {
   const isMobile = useIsMobile();
 
-  // Check if we're showing archetype questions (questions 91-105)
-  const isArchetypeSection = currentQuestions.some(q => q.id >= 91 && q.id <= 105);
-  
   const getInstructionText = () => {
-    if (isArchetypeSection) {
-      return surveyType === 'manager' 
-        ? "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
-        : "השאלות הבאות עוסקות בארכיטיפים של מנהיגות. דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
-    }
-    
     return surveyType === 'manager' 
       ? "דרג/י עד כמה את/ה מסכים/ה עם ההיגדים הבאים:"
       : "דרג/י עד כמה ההיגדים הבאים נכונים לגבי המנהל שאתה מעריך:";
@@ -58,6 +49,29 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
         <CardTitle className="leading-tight text-black" style={{ fontSize: '18px' }}>
           {currentStep === 0 ? getInstructionText() : `המשך/י לדרג את ההיגדים (${currentStep + 1}/${totalSteps}):`}
         </CardTitle>
+        
+        {/* Gender Disclaimer - only show on first step */}
+        {currentStep === 0 && (
+          <div className="text-center text-gray-500 mt-2" style={{ fontSize: '14px' }}>
+            השאלון מנוסח בלשון זכר אך מיועד לכלל המגדרים
+          </div>
+        )}
+        
+        {/* Rating Scale Legend */}
+        <div className="text-center text-black mt-3 border-t pt-3" style={{ fontSize: '14px', lineHeight: '1.5' }}>
+          <div className="font-medium mb-1">דרג כל היגד מ־1 עד 5:</div>
+          <div className="flex flex-wrap justify-center gap-1 text-xs">
+            <span>1 – לא נכון אף פעם</span>
+            <span>|</span>
+            <span>2 – נכון לעיתים רחוקות</span>
+            <span>|</span>
+            <span>3 – די נכון</span>
+            <span>|</span>
+            <span>4 – נכון לעיתים קרובות</span>
+            <span>|</span>
+            <span>5 – תמיד נכון</span>
+          </div>
+        </div>
       </CardHeader>
       
       <CardContent className="px-3 sm:px-6">

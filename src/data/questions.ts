@@ -1,8 +1,7 @@
-
 import { Question } from "@/lib/types";
 
 export const questions: Question[] = [
-  // Strategy Questions (S)
+  // Strategy Questions (S) - Questions 1-90 with exact Hebrew text
   {
     id: 1,
     text: "אני פונה לבקש עזרה כשאני זקוק לה",
@@ -632,6 +631,113 @@ export const questions: Question[] = [
     dimension: "I",
     isReversed: false,
     colleagueText: "המנהל שלי שם דגש על תקווה ואפשרות במצבי חוסר ודאות"
+  },
+
+  // Archetype Questions 91-105 in masculine Hebrew as they appear in Supabase
+  {
+    id: 91,
+    text: "אני מסוגל להשפיע על אחרים בלי להיות פוגעני",
+    dimension: "M",
+    isReversed: false,
+    colleagueText: "המנהל שלי מסוגל להשפיע על אחרים בלי להיות פוגעני"
+  },
+  {
+    id: 92,
+    text: "אני יודע למצוא פתרונות יצירתיים לבעיות מורכבות",
+    dimension: "I",
+    isReversed: false,
+    colleagueText: "המנהל שלי יודע למצוא פתרונות יצירתיים לבעיות מורכבות"
+  },
+  {
+    id: 93,
+    text: "אני משדר רוגע גם במצבים מלחיצים",
+    dimension: "I",
+    isReversed: false,
+    colleagueText: "המנהל שלי משדר רוגע גם במצבים מלחיצים"
+  },
+  {
+    id: 94,
+    text: "אני בעל יכולת להכיל ולהבין נקודות מבט שונות",
+    dimension: "L",
+    isReversed: false,
+    colleagueText: "המנהל שלי בעל יכולת להכיל ולהבין נקודות מבט שונות"
+  },
+  {
+    id: 95,
+    text: "אני נחוש בדעתי אבל גמיש בדרכי הפעולה",
+    dimension: "A",
+    isReversed: false,
+    colleagueText: "המנהל שלי נחוש בדעתו אבל גמיש בדרכי הפעולה"
+  },
+  {
+    id: 96,
+    text: "אני יודע לעורר מוטיבציה בקרב הצוות שלי",
+    dimension: "I",
+    isReversed: false,
+    colleagueText: "המנהל שלי יודע לעורר מוטיבציה בקרב הצוות שלו"
+  },
+  {
+    id: 97,
+    text: "אני מקבל החלטות מבוססות על נתונים ואינטואיציה כאחד",
+    dimension: "S",
+    isReversed: false,
+    colleagueText: "המנהל שלי מקבל החלטות מבוססות על נתונים ואינטואיציה כאחד"
+  },
+  {
+    id: 98,
+    text: "אני מעודד חדשנות ולקיחת סיכונים מחושבים",
+    dimension: "I",
+    isReversed: false,
+    colleagueText: "המנהל שלי מעודד חדשנות ולקיחת סיכונים מחושבים"
+  },
+  {
+    id: 99,
+    text: "אני בונה קשרים של אמון עם בני הצוות שלי",
+    dimension: "A2",
+    isReversed: false,
+    colleagueText: "המנהל שלי בונה קשרים של אמון עם בני הצוות שלו"
+  },
+  {
+    id: 100,
+    text: "אני יודע להתמודד עם לחץ ומתח בצורה יעילה",
+    dimension: "A",
+    isReversed: false,
+    colleagueText: "המנהל שלי יודע להתמודד עם לחץ ומתח בצורה יעילה"
+  },
+  {
+    id: 101,
+    text: "אני מסוגל להוביל שינויים ארגוניים באופן יעיל",
+    dimension: "S",
+    isReversed: false,
+    colleagueText: "המנהל שלי מסוגל להוביל שינויים ארגוניים באופן יעיל"
+  },
+  {
+    id: 102,
+    text: "אני מקפיד על התפתחות מקצועית ואישית של העובדים",
+    dimension: "M",
+    isReversed: false,
+    colleagueText: "המנהל שלי מקפיד על התפתחות מקצועית ואישית של העובדים"
+  },
+  {
+    id: 103,
+    text: "אני יודע לתת משוב בונה ומועיל",
+    dimension: "A2",
+    isReversed: false,
+    colleagueText: "המנהל שלי יודע לתת משוב בונה ומועיל"
+  },
+  {
+    id: 104,
+    text: "אני מעורב בפיתוח אסטרטגיות ארוכות טווח",
+    dimension: "S",
+    isReversed: false,
+    colleagueText: "המנהל שלי מעורב בפיתוח אסטרטגיות ארוכות טווח"
+  },
+  {
+    id: 105,
+    text: "אני יוזם ומקדם תרבות של למידה מתמדת",
+    dimension: "L",
+    isReversed: false,
+    colleagueText: "המנהל שלי יוזם ומקדם תרבות של למידה מתמדת"
   }
 ];
 

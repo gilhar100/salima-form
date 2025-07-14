@@ -24,11 +24,11 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
   const isMobile = useIsMobile();
 
   const options = [
-    { value: 1, label: "אף פעם", shortLabel: "1" },
-    { value: 2, label: "לעיתים רחוקות", shortLabel: "2" },
-    { value: 3, label: "לפעמים", shortLabel: "3" },
-    { value: 4, label: "לעיתים קרובות", shortLabel: "4" },
-    { value: 5, label: "בדרך כלל או תמיד", shortLabel: "5" }
+    { value: 1, label: "לא נכון אף פעם", shortLabel: "1" },
+    { value: 2, label: "נכון לעיתים רחוקות", shortLabel: "2" },
+    { value: 3, label: "די נכון", shortLabel: "3" },
+    { value: 4, label: "נכון לעיתים קרובות", shortLabel: "4" },
+    { value: 5, label: "תמיד נכון", shortLabel: "5" }
   ];
 
   // קבלת הטקסט המתאים לסוג השאלון
@@ -63,7 +63,14 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
                 style={{ fontSize: '16px' }}>
             {questionNumber}
           </span>
-          <p className="font-medium mr-2 leading-tight text-black" style={{ fontSize: '16px' }}>{questionText}</p>
+          <p className="font-medium mr-2 leading-tight text-black" 
+             style={{ 
+               fontSize: '16px', 
+               lineHeight: '1.5',
+               fontFamily: 'Assistant, system-ui, -apple-system, sans-serif'
+             }}>
+            {questionText}
+          </p>
         </div>
         
         <RadioGroup
@@ -88,7 +95,10 @@ const SurveyQuestion: React.FC<SurveyQuestionProps> = ({
                 </Label>
               </div>
               <span className={`${isMobile ? 'mr-3 flex-1' : 'mt-1'} text-black ${isMobile ? 'text-right' : 'text-center'}`}
-                    style={{ fontSize: '16px' }}>
+                    style={{ 
+                      fontSize: '16px',
+                      fontFamily: 'Assistant, system-ui, -apple-system, sans-serif'
+                    }}>
                 {option.label}
               </span>
             </div>

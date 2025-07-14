@@ -1,4 +1,3 @@
-
 import { Answer, UserInfo, SurveyResult, Question, DimensionResult } from "./types";
 
 // Create the dimension mapping that calculations expects
@@ -92,95 +91,77 @@ const dimensionMapping: Record<number, { dimension: string; isReversed: boolean 
   87: { dimension: "S", isReversed: false },
   88: { dimension: "L", isReversed: false },
   89: { dimension: "A2", isReversed: false },
-  90: { dimension: "I", isReversed: false }
-};
-
-// Add the missing getAdjustedValue function and export it
-export const getAdjustedValue = (score: number, isReversed: boolean): number => {
-  return isReversed ? 6 - score : score;
-};
-
-// Dimension titles and descriptions
-const dimensionInfo = {
-  S: { title: "אסטרטגיה", description: "חשיבה אסטרטגית וחזון ארוך טווח" },
-  L: { title: "למידה", description: "פתיחות ללמידה ולשיפור מתמיד" },
-  I: { title: "השראה", description: "יכולת להשיב ולעורר מוטיבציה" },
-  M: { title: "משמעות", description: "יצירת תחושת מטרה ומשמעות" },
-  A: { title: "הסתגלות", description: "גמישות ויכולת הסתגלות לשינויים" },
-  A2: { title: "אותנטיות", description: "מנהיגות אמיתית ושקופה" }
-};
-
-export const calculateSurveyResults = (answers: Answer[], userInfo: UserInfo): SurveyResult => {
-  console.log("Starting survey calculation with answers:", answers);
+  90: { dimension: "I", isReversed: false },
   
-  // רק שאלות 1-90 נכללות בחישוב SLQ (לא כולל שאלות האבטיפוסים 91-105)
-  const slqAnswers = answers.filter(answer => answer.questionId <= 90);
-  console.log("SLQ answers (1-90 only):", slqAnswers);
-  
-  // חישוב ציונים לממדים
-  const dimensionScores: Record<string, number[]> = {
-    S: [], L: [], I: [], M: [], A: [], A2: []
-  };
+  // Archetype questions 91-105
+  91: { dimension: "M", isReversed: false },
+  92: { dimension: "I", isReversed: false },
+  93: { dimension: "I", isReversed: false },
+  94: { dimension: "L", isReversed: false },
+  95: { dimension: "A", isReversed: false },
+  96: { dimension: "I", isReversed: false },
+  97: { dimension: "S", isReversed: false },
+  98: { dimension: "I", isReversed: false },
+  99: { dimension: "A2", isReversed: false },
+  100: { dimension: "A", isReversed: false },
+  101: { dimension: "S", isReversed: false },
+  102: { dimension: "M", isReversed: false },
+  103: { dimension: "A2", isReversed: false },
+  104: { dimension: "S", isReversed: false },
+  105: { dimension: "L", isReversed: false }
+};
 
-  slqAnswers.forEach(answer => {
-    const mapping = dimensionMapping[answer.questionId];
-    if (mapping && Object.keys(dimensionScores).includes(mapping.dimension)) {
-      let score = answer.value;
-      
-      // הפוך ציון עבור שאלות הפוכות (רק עבור שאלות SLQ)
-      if (mapping.isReversed) {
-        score = 6 - score;
-      }
-      
-      dimensionScores[mapping.dimension].push(score);
+interface CalculateSurveyResultProps {
+  answers: Answer[];
+  questions: Question[];
+  userInfo: UserInfo;
+}
+
+export const calculateSurveyResult = ({ answers, questions, userInfo }: CalculateSurveyResultProps): SurveyResult => {
+  const dimensionScores: Record<string, { sum: number; count: number }> = {};
+
+  answers.forEach((answer) => {
+    const questionId = answer.questionId;
+    const question = questions.find((q) => q.id === questionId);
+
+    if (!question) {
+      console.warn(`Question with ID ${questionId} not found.`);
+      return;
     }
+
+    const dimension = question.dimension;
+    const isReversed = question.isReversed;
+    const value = answer.value;
+
+    if (!dimensionScores[dimension]) {
+      dimensionScores[dimension] = { sum: 0, count: 0 };
+    }
+
+    dimensionScores[dimension].sum += isReversed ? 6 - value : value;
+    dimensionScores[dimension].count++;
   });
 
-  console.log("Dimension scores arrays:", dimensionScores);
+  const dimensions: Record<string, DimensionResult> = {};
 
-  // חישוב ממוצעים לכל ממד וליצור DimensionResult אובייקטים מלאים
-  const dimensions = Object.keys(dimensionScores).reduce((acc, dimensionKey) => {
-    const scores = dimensionScores[dimensionKey];
-    const average = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
-    const info = dimensionInfo[dimensionKey as keyof typeof dimensionInfo];
-    
-    // Get question IDs for this dimension
-    const questionIds = Object.entries(dimensionMapping)
-      .filter(([_, mapping]) => mapping.dimension === dimensionKey && parseInt(_) <= 90)
-      .map(([questionId, _]) => parseInt(questionId));
-    
-    acc[dimensionKey] = {
-      dimension: dimensionKey as any,
-      score: Math.round(average * 100) / 100,
-      questions: questionIds,
-      title: info.title,
-      description: info.description
+  for (const dimension in dimensionScores) {
+    const { sum, count } = dimensionScores[dimension];
+    const average = count > 0 ? sum / count : 0;
+
+    dimensions[dimension] = {
+      score: parseFloat(average.toFixed(2)),
     };
-    return acc;
-  }, {} as Record<string, DimensionResult>);
+  }
 
-  console.log("Calculated dimensions:", dimensions);
+  const slq =
+    Object.values(dimensions).reduce((acc, curr) => acc + curr.score, 0) /
+    Object.keys(dimensions).length;
 
-  // חישוב SLQ (ציון מנהיגות כולל) - רק מהשאלות הראשונות 1-90
-  const slq = Object.values(dimensions).reduce((sum, dim) => sum + dim.score, 0) / Object.keys(dimensions).length;
-  const roundedSlq = Math.round(slq * 100) / 100;
-
-  console.log("Calculated SLQ:", roundedSlq);
-
-  const result: SurveyResult = {
-    slq: roundedSlq,
-    dimensions: {
-      S: dimensions.S,
-      L: dimensions.L,
-      I: dimensions.I,
-      M: dimensions.M,
-      A: dimensions.A,
-      A2: dimensions.A2
-    },
-    userInfo,
-    date: new Date().toLocaleDateString('he-IL')
+  return {
+    surveyType: userInfo.surveyType,
+    email: userInfo.email,
+    name: userInfo.name,
+    createdAt: new Date(),
+    slq: parseFloat(slq.toFixed(2)),
+    dimensions: dimensions,
   };
-
-  console.log("Final survey result:", result);
-  return result;
 };
