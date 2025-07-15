@@ -59,7 +59,7 @@ const SurveyCard: React.FC<SurveyCardProps> = ({
         
         {/* Rating Scale Legend */}
         <div className="text-center text-black mt-3 border-t pt-3" style={{ fontSize: '14px', lineHeight: '1.5' }}>
-          <div className="font-medium mb-1">דרג כל היגד מ־1 עד 5:</div>
+          <div className="font-medium mb-1">כל היגד מ־1 עד 5:</div>
           <div className="flex flex-wrap justify-center gap-1 text-xs">
             <span>1 – לא נכון אף פעם</span>
             <span>|</span>
