@@ -68,7 +68,7 @@ const ManagerComparisonChart: React.FC<ManagerComparisonChartProps> = ({
     { dimension: 'L - מנהיגות', manager: managerAvg?.L || 0, colleagues: colleagueAvg?.L || 0 },
     { dimension: 'I - חדשנות', manager: managerAvg?.I || 0, colleagues: colleagueAvg?.I || 0 },
     { dimension: 'M - ניהול', manager: managerAvg?.M || 0, colleagues: colleagueAvg?.M || 0 },
-    { dimension: 'A - הסתגלות', manager: managerAvg?.A || 0, colleagues: colleagueAvg?.A || 0 },
+    { dimension: 'A - אדפטיביות', manager: managerAvg?.A || 0, colleagues: colleagueAvg?.A || 0 },
     { dimension: 'A2 - הסתגלות 2', manager: managerAvg?.A2 || 0, colleagues: colleagueAvg?.A2 || 0 },
   ];
 

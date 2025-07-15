@@ -200,10 +200,10 @@ export const questions: Question[] = [
   },
   {
     id: 29,
-    text: "אני מעודד מצוינות מתוך משמעות",
+    text: "אני תמיד שומר על מורל גבוה, גם במצבי משבר",
     dimension: "M",
     isReversed: false,
-    colleagueText: "המנהל שלי מעודד מצוינות מתוך משמעות"
+    colleagueText: "המנהל שלי תמיד שומר על מורל גבוה, גם במצבי משבר"
   },
   {
     id: 30,
@@ -760,7 +760,7 @@ export const dimensionInfo = {
     description: "חיבור לערכים ויצירת תחושת שליחות"
   },
   A: {
-    title: "הסתגלות",
+    title: "אדפטיביות",
     description: "גמישות ויכולת התמודדות עם שינויים"
   },
   A2: {
@@ -774,6 +774,6 @@ export const dimensionMapping = {
   L: "למידה", 
   I: "השראה",
   M: "משמעות",
-  A: "הסתגלות",
+  A: "אדפטיביות",
   A2: "אותנטיות"
 };
