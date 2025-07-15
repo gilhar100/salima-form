@@ -3,7 +3,6 @@ import { useState } from "react";
 import { SurveyResult } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import BellCurveVisualization from "@/components/BellCurveVisualization";
-import ManagementStyleSection from "@/components/ManagementStyleSection";
 import { getSurveyWithInsights } from "@/lib/survey-service";
 import ResultsHeader from "@/components/results/ResultsHeader";
 import ResultsScoreDisplay from "@/components/results/ResultsScoreDisplay";
@@ -75,8 +74,6 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
               <ResultsScoreDisplay slq={results.slq} />
               
               <ResultsDominantArchetype dominantArchetype={insights.dominant_archetype} />
-              
-              <ManagementStyleSection dominantArchetype={insights.dominant_archetype || null} />
               
               <ResultsSummaryCards 
                 highestDimension={highestDimension}
