@@ -76,8 +76,6 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
               
               <ResultsDominantArchetype dominantArchetype={insights.dominant_archetype} />
               
-              <ManagementStyleSection dominantArchetype={insights.dominant_archetype || null} />
-              
               <ResultsSummaryCards 
                 highestDimension={highestDimension}
                 lowestDimension={lowestDimension}
