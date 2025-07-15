@@ -90,36 +90,36 @@ const ResultsAnalysis: React.FC<ResultsAnalysisProps> = ({
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="font-bold text-salima-800 text-lg sm:text-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+        <h2 className="font-bold text-salima-800 text-base sm:text-lg lg:text-xl">
           ניתוח מפורט לכל ממד
         </h2>
         {!isLoadingInsights && !insightsAvailable && (
           <Button 
             onClick={onRefreshInsights} 
             variant="outline" 
-            className="flex items-center gap-2 print:hidden text-sm sm:text-base w-full sm:w-auto"
+            className="flex items-center gap-2 print:hidden text-xs sm:text-sm lg:text-base w-full sm:w-auto px-3 py-2"
           >
-            <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5" />
+            <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
             רענן תובנות
           </Button>
         )}
       </div>
       
       {isLoadingInsights && (
-        <div className="text-center text-black mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg print:hidden text-sm sm:text-base">
-          <Loader2 className="w-5 h-5 animate-spin inline-block mr-2" />
+        <div className="text-center text-black mb-3 sm:mb-4 p-3 sm:p-4 bg-blue-50 rounded-lg print:hidden text-xs sm:text-sm lg:text-base">
+          <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin inline-block mr-2" />
           התובנות נטענות כעת... אנא המתן מספר שניות
         </div>
       )}
       
       {!isLoadingInsights && !insightsAvailable && (
-        <div className="text-center text-orange-600 mb-4 p-3 sm:p-4 bg-orange-50 rounded-lg print:hidden text-sm sm:text-base">
+        <div className="text-center text-orange-600 mb-3 sm:mb-4 p-3 sm:p-4 bg-orange-50 rounded-lg print:hidden text-xs sm:text-sm lg:text-base">
           התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
         </div>
       )}
       
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 xl:grid-cols-2">
         {Object.values(result.dimensions).map(dimension => (
           <ResultsDetailCard 
             key={dimension.dimension} 

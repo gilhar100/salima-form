@@ -67,11 +67,11 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1">
-        <div className="container py-4 sm:py-6 max-w-full xl:max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="container py-2 sm:py-4 lg:py-6 max-w-full xl:max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
           <ResultsHeader />
           
-          <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
-            <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
+          <Card className="mb-3 sm:mb-4 lg:mb-6 bg-gradient-to-r from-salima-50 to-blue-50">
+            <CardContent className="space-y-3 sm:space-y-4 lg:space-y-6 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6">
               <ResultsScoreDisplay slq={results.slq} />
               
               <ResultsDominantArchetype dominantArchetype={insights.dominant_archetype} />
@@ -93,13 +93,13 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
                 surveyId={surveyId}
               />
               
-              <div className="text-center text-green-600 font-medium print:hidden text-base sm:text-lg">
+              <div className="text-center text-green-600 font-medium print:hidden text-sm sm:text-base lg:text-lg">
                 ✓ הנתונים נשמרו בהצלחה במערכת
               </div>
             </CardContent>
           </Card>
           
-          <div className="mb-6 sm:mb-8 chart-container">
+          <div className="mb-4 sm:mb-6 lg:mb-8 chart-container">
             <BellCurveVisualization userScore={results.slq} />
           </div>
           
@@ -107,7 +107,7 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
         </div>
       </div>
       
-      <div className="text-center text-black p-4 text-sm sm:text-base">
+      <div className="text-center text-black p-3 sm:p-4 text-xs sm:text-sm lg:text-base">
         ™ כל הזכויות שמורות לד״ר יוסי שרעבי
       </div>
     </div>

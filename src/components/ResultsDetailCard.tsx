@@ -95,29 +95,29 @@ const ResultsDetailCard = ({
   };
   
   return <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span className="text-salima-800">{dimension.title}</span>
-          <Badge variant="outline" className={`${getIntensityColor(dimension.score)} text-white border-none`}>
+      <CardHeader className="pb-3 sm:pb-4 lg:pb-6">
+        <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <span className="text-salima-800 text-sm sm:text-base lg:text-lg">{dimension.title}</span>
+          <Badge variant="outline" className={`${getIntensityColor(dimension.score)} text-white border-none text-xs sm:text-sm self-start sm:self-auto`}>
             {getIntensityText(dimension.score)}
           </Badge>
         </CardTitle>
         
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 sm:space-y-4 pt-0">
         {/* Color Intensity Bar */}
         <ColorIntensityBar score={dimension.score} color={getDimensionColor(dimension.dimension)} dimensionName={getDimensionTitle(dimension.dimension)} />
 
         <div>
-          {isLoadingInsight ? <div className="flex items-center justify-center p-4">
-              <Loader2 className="h-5 w-5 animate-spin mr-2" />
-              <span className="text-sm text-gray-600">טוען ניתוח...</span>
-            </div> : insight ? <div className="text-sm leading-relaxed text-gray-700 bg-gray-50 p-4 rounded-lg border-r-4 border-salima-400">
-              <div dir="rtl" className="text-sm leading-relaxed">
+          {isLoadingInsight ? <div className="flex items-center justify-center p-3 sm:p-4">
+              <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin mr-2" />
+              <span className="text-xs sm:text-sm text-gray-600">טוען ניתוח...</span>
+            </div> : insight ? <div className="text-xs sm:text-sm leading-relaxed text-gray-700 bg-gray-50 p-3 sm:p-4 rounded-lg border-r-4 border-salima-400">
+              <div dir="rtl" className="text-xs sm:text-sm leading-relaxed">
                 {renderFormattedText(insight)}
               </div>
-            </div> : <div className="text-sm leading-relaxed text-gray-500 bg-gray-50 p-4 rounded-lg border-r-4 border-gray-300 italic">
+            </div> : <div className="text-xs sm:text-sm leading-relaxed text-gray-500 bg-gray-50 p-3 sm:p-4 rounded-lg border-r-4 border-gray-300 italic">
               ניתוח מותאם אישית בהכנה...
             </div>}
         </div>

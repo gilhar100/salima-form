@@ -84,29 +84,29 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const IconComponent = archetypeInfo.icon;
 
   return (
-    <Card className={`mb-4 sm:mb-6 ${archetypeInfo.bgColor} border-2 border-gray-200 shadow-lg rounded-xl`} dir="rtl">
-      <CardContent className="px-4 sm:px-6 py-6 sm:py-8">
-        <div className="space-y-4 sm:space-y-6">
+    <Card className={`mb-3 sm:mb-4 lg:mb-6 ${archetypeInfo.bgColor} border-2 border-gray-200 shadow-lg rounded-xl`} dir="rtl">
+      <CardContent className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6">
           {/* Title */}
-          <h2 className="text-black font-bold text-right" style={{ fontSize: '24px' }}>
+          <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
             סגנון ניהולי דומיננטי
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}
-          <div className="flex items-center gap-3" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
-            <IconComponent className={`w-6 h-6 ${archetypeInfo.color}`} />
-            <h3 className="text-black font-bold text-right" style={{ fontSize: '22px' }}>
+          <div className="flex items-center gap-2 sm:gap-3" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
+            <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${archetypeInfo.color}`} />
+            <h3 className="text-black font-bold text-right text-base sm:text-lg lg:text-xl">
               {archetypeInfo.name}
             </h3>
           </div>
           
           {/* Description */}
-          <p className="text-black leading-relaxed text-right" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-black leading-relaxed text-right text-sm sm:text-base lg:text-lg" style={{ lineHeight: '1.6' }}>
             {archetypeInfo.description}
           </p>
           
           {/* Clarification Paragraph */}
-          <p className="text-gray-700 leading-relaxed text-right" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
             חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
           </p>
         </div>
