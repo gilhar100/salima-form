@@ -1,10 +1,8 @@
-
 import { SurveyResult, Dimension } from "@/lib/types";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { dimensionInfo } from "@/data/questions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 interface ResultsRadarProps {
   result: SurveyResult;
   hideScores?: boolean;
@@ -77,7 +75,6 @@ const getColorIntensity = (score: number, baseColors: any) => {
   if (normalizedScore >= 0.35) return baseColors.weak;
   return baseColors.weakest;
 };
-
 const ResultsRadar: React.FC<ResultsRadarProps> = ({
   result,
   hideScores = false
@@ -120,87 +117,52 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
     fullMark: 5,
     color: getColorIntensity(dimensions.A2.score, dimensionColors.A2)
   }];
-
-  return (
-    <Card className="w-full h-full">
+  return <Card className="w-full h-full">
       <CardHeader className="pb-4">
-        <CardTitle className="text-center text-lg sm:text-xl leading-tight font-bold">פרופיל מנהיגות SALIMA</CardTitle>
+        <CardTitle className="text-center text-lg sm:text-xl leading-tight">פרופיל מנהיגות SALIMA</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center px-3 sm:px-6">
-        {!hideScores && (
-          <div className="text-center mb-4">
+        {!hideScores && <div className="text-center mb-4">
             <p className="text-gray-600 mb-1 text-sm">ציון SLQ כללי</p>
             <p className="text-2xl sm:text-3xl font-bold text-salima-600">{slq}</p>
-          </div>
-        )}
+          </div>}
         
-        <div className={`w-full ${isMobile ? 'h-[400px]' : 'h-[450px]'}`}>
+        <div className={`w-full ${isMobile ? 'h-[280px]' : 'h-[350px]'}`}>
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart 
-              outerRadius={isMobile ? "70%" : "75%"} 
-              data={radarData} 
-              margin={{
-                top: 40,
-                right: 40,
-                bottom: 40,
-                left: 40
-              }}
-            >
+            <RadarChart outerRadius={isMobile ? "70%" : "80%"} data={radarData} margin={{
+            top: 10,
+            right: 10,
+            bottom: 10,
+            left: 10
+          }}>
               <PolarGrid />
-              <PolarAngleAxis 
-                dataKey="dimension" 
-                fontSize={isMobile ? 11 : 13}
-                tick={{ 
-                  fontSize: isMobile ? 11 : 13,
-                  fontWeight: 'bold',
-                  fill: '#000000'
-                }}
-              />
-              <Radar 
-                name="ציון" 
-                dataKey="value" 
-                stroke="#0369a1" 
-                fill="#0369a1" 
-                fillOpacity={0.5} 
-              />
-              {!hideScores && (
-                <Tooltip formatter={value => [`${value}`, 'ציון']} />
-              )}
+              <PolarAngleAxis dataKey="dimension" fontSize={isMobile ? 8 : 10} tick={{
+              fontSize: isMobile ? 8 : 10
+            }} />
+              <Radar name="ציון" dataKey="value" stroke="#0369a1" fill="#0369a1" fillOpacity={0.5} />
+              {!hideScores && <Tooltip formatter={value => [`${value}`, 'ציון']} />}
             </RadarChart>
           </ResponsiveContainer>
         </div>
         
-        {!hideScores && (
-          <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
+        {!hideScores && <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
             {Object.values(dimensions).map(dimension => {
-              const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-              const intensityColor = getColorIntensity(dimension.score, baseColors);
-              return (
-                <div 
-                  key={dimension.dimension} 
-                  className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" 
-                  style={{
-                    backgroundColor: baseColors.light,
-                    borderColor: intensityColor
-                  }}
-                >
+          const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+          const intensityColor = getColorIntensity(dimension.score, baseColors);
+          return <div key={dimension.dimension} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
+            backgroundColor: baseColors.light,
+            borderColor: intensityColor
+          }}>
                   <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
-                  <p 
-                    className="text-lg sm:text-2xl font-bold mt-1" 
-                    style={{
-                      color: intensityColor
-                    }}
-                  >
+                  <p className="text-lg sm:text-2xl font-bold mt-1" style={{
+              color: intensityColor
+            }}>
                     {dimension.score}
                   </p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                </div>;
+        })}
+          </div>}
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default ResultsRadar;
