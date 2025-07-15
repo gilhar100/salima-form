@@ -129,15 +129,16 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
         
         <div className={`w-full ${isMobile ? 'h-[280px]' : 'h-[350px]'}`}>
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart outerRadius={isMobile ? "70%" : "80%"} data={radarData} margin={{
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10
+            <RadarChart outerRadius={isMobile ? "65%" : "70%"} data={radarData} margin={{
+            top: 30,
+            right: 30,
+            bottom: 30,
+            left: 30
           }}>
               <PolarGrid />
-              <PolarAngleAxis dataKey="dimension" fontSize={isMobile ? 8 : 10} tick={{
-              fontSize: isMobile ? 8 : 10
+              <PolarAngleAxis dataKey="dimension" fontSize={isMobile ? 10 : 12} tick={{
+              fontSize: isMobile ? 10 : 12,
+              fontWeight: 'bold'
             }} />
               <Radar name="ציון" dataKey="value" stroke="#0369a1" fill="#0369a1" fillOpacity={0.5} />
               {!hideScores && <Tooltip formatter={value => [`${value}`, 'ציון']} />}

@@ -93,11 +93,11 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}
-          <div className="flex items-center justify-end gap-3" dir="rtl">
-            <h3 className="text-black font-bold" style={{ fontSize: '22px' }}>
+          <div className="flex items-center gap-3" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
+            <IconComponent className={`w-6 h-6 ${archetypeInfo.color}`} />
+            <h3 className="text-black font-bold text-right" style={{ fontSize: '22px' }}>
               {archetypeInfo.name}
             </h3>
-            <IconComponent className={`w-6 h-6 ${archetypeInfo.color}`} />
           </div>
           
           {/* Description */}
