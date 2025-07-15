@@ -53,8 +53,8 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
       console.log('ResultsDominantArchetype - Unknown archetype:', dominantArchetype);
       // Show the section with the raw archetype name if we have one but don't recognize it
       return (
-        <Card className="mb-4 sm:mb-6 bg-gray-50 border-2 border-gray-200 shadow-lg rounded-xl" dir="rtl">
-          <CardContent className="px-4 sm:px-6 py-6 sm:py-8">
+        <Card className="mb-4 sm:mb-6 bg-gray-50 border-2 border-gray-200 shadow-lg rounded-xl">
+          <CardContent className="px-4 sm:px-6 py-6 sm:py-8" dir="rtl">
             <div className="space-y-4 sm:space-y-6">
               <h2 className="text-black font-bold text-right" style={{ fontSize: '24px' }}>
                 סגנון ניהולי דומיננטי
@@ -87,8 +87,8 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const IconComponent = archetypeInfo.icon;
 
   return (
-    <Card className={`mb-4 sm:mb-6 ${archetypeInfo.bgColor} border-2 border-gray-200 shadow-lg rounded-xl`} dir="rtl">
-      <CardContent className="px-4 sm:px-6 py-6 sm:py-8">
+    <Card className={`mb-4 sm:mb-6 ${archetypeInfo.bgColor} border-2 border-gray-200 shadow-lg rounded-xl`}>
+      <CardContent className="px-4 sm:px-6 py-6 sm:py-8" dir="rtl">
         <div className="space-y-4 sm:space-y-6">
           {/* Title */}
           <h2 className="text-black font-bold text-right" style={{ fontSize: '24px' }}>
