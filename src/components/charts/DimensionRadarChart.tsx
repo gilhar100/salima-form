@@ -25,14 +25,13 @@ const DimensionRadarChart: React.FC<DimensionRadarChartProps> = ({ statistics, u
   const isMobile = useIsMobile();
 
   const createDimensionRadarData = () => {
-    // Ordered by archetype groups: S+A, L+I, A2+M
     const dimensions = [
       { key: 'S', title: 'אסטרטגיה' },
-      { key: 'A', title: 'אדפטיביות' },
       { key: 'L', title: 'למידה' }, 
       { key: 'I', title: 'השראה' },
-      { key: 'A2', title: 'אותנטיות' },
-      { key: 'M', title: 'משמעות' }
+      { key: 'M', title: 'משמעות' },
+      { key: 'A', title: 'אדפטיביות' },
+      { key: 'A2', title: 'אותנטיות' }
     ];
     
     return dimensions.map(dim => {

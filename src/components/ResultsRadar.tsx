@@ -3,86 +3,66 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tool
 import { dimensionInfo } from "@/data/questions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
-import EnhancedRadarChart from "@/components/charts/EnhancedRadarChart";
 interface ResultsRadarProps {
   result: SurveyResult;
   hideScores?: boolean;
 }
 
-// Updated SALIMA color palette with new assignments and intensity levels
+// Updated SALIMA color palette with intensity levels
 export const dimensionColors = {
-  S: { // Strategy - Red
+  S: {
     strongest: "#B30000",
-    strong: "#DC2626",
-    medium: "#EF4444",
-    weak: "#F87171",
-    weakest: "#FEE2E2",
-    light: "#FEF2F2",
-    primary: "#DC2626"
+    strong: "#FD0100",
+    medium: "#FF4D4D",
+    weak: "#FF9999",
+    weakest: "#FFE6E6",
+    light: "#FFF5F5",
+    primary: "#FD0100"
   },
-  A: { // Adaptive - Blue  
-    strongest: "#1E3A8A",
-    strong: "#1D4ED8",
-    medium: "#3B82F6",
-    weak: "#60A5FA",
-    weakest: "#DBEAFE",
-    light: "#EFF6FF",
-    primary: "#1D4ED8"
+  L: {
+    strongest: "#0000B3",
+    strong: "#333ED4",
+    medium: "#6666FF",
+    weak: "#9999FF",
+    weakest: "#E6E6FF",
+    light: "#F5F5FF",
+    primary: "#333ED4"
   },
-  L: { // Learning - Yellow
-    strongest: "#A16207",
-    strong: "#CA8A04",
-    medium: "#EAB308",
-    weak: "#FACC15",
-    weakest: "#FEF3C7",
-    light: "#FFFBEB",
-    primary: "#CA8A04"
+  I: {
+    strongest: "#CC4400",
+    strong: "#F76915",
+    medium: "#FF8533",
+    weak: "#FFAA66",
+    weakest: "#FFE6CC",
+    light: "#FFF8F0",
+    primary: "#F76915"
   },
-  I: { // Inspiration - Pink
-    strongest: "#BE185D",
-    strong: "#DB2777",
-    medium: "#EC4899",
-    weak: "#F472B6",
-    weakest: "#FCE7F3",
-    light: "#FDF2F8",
-    primary: "#DB2777"
+  M: {
+    strongest: "#8A3399",
+    strong: "#BF4ED6",
+    medium: "#CC66E0",
+    weak: "#DD99E6",
+    weakest: "#F5E6FF",
+    light: "#FCF7FF",
+    primary: "#BF4ED6"
   },
-  A2: { // Authentic - Turquoise
-    strongest: "#0F766E",
-    strong: "#0D9488",
-    medium: "#14B8A6",
-    weak: "#5EEAD4",
-    weakest: "#CCFBF1",
-    light: "#F0FDFA",
-    primary: "#0D9488"
+  A: {
+    strongest: "#1F6B1F",
+    strong: "#2FA236",
+    medium: "#5CB85C",
+    weak: "#90EE90",
+    weakest: "#E6FFE6",
+    light: "#F0FFF0",
+    primary: "#2FA236"
   },
-  M: { // Meaning - Brown
-    strongest: "#78350F",
-    strong: "#92400E",
-    medium: "#A16207",
-    weak: "#D97706",
-    weakest: "#FED7AA",
-    light: "#FFF7ED",
-    primary: "#92400E"
-  }
-};
-
-// Archetype group borders
-export const archetypeGroups = {
-  opportunity: { // Strategy + Adaptive - Purple
-    dimensions: ['S', 'A'],
-    borderColor: "#7C3AED",
-    name: "מנהל ההזדמנות"
-  },
-  curious: { // Learning + Inspiration - Orange  
-    dimensions: ['L', 'I'],
-    borderColor: "#EA580C",
-    name: "המנהל הסקרן"
-  },
-  empowering: { // Authentic + Meaning - Green
-    dimensions: ['A2', 'M'], 
-    borderColor: "#059669",
-    name: "המנהל המעצים"
+  A2: {
+    strongest: "#B8B800",
+    strong: "#EEDE04",
+    medium: "#F0E833",
+    weak: "#F5F566",
+    weakest: "#FFFACD",
+    light: "#FEFEF0",
+    primary: "#EEDE04"
   }
 };
 
@@ -105,54 +85,38 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
     slq
   } = result;
 
-  // הכנת הנתונים לתצוגה בגרף - ממוין לפי קבוצות ארכיטיפ
-  const radarData = [
-    // מנהל ההזדמנות: Strategy + Adaptive
-    {
-      dimension: dimensionInfo.S.title,
-      value: dimensions.S.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.S.score, dimensionColors.S),
-      dimKey: 'S'
-    },
-    {
-      dimension: dimensionInfo.A.title,
-      value: dimensions.A.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.A.score, dimensionColors.A),
-      dimKey: 'A'
-    },
-    // המנהל הסקרן: Learning + Inspiration
-    {
-      dimension: dimensionInfo.L.title,
-      value: dimensions.L.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.L.score, dimensionColors.L),
-      dimKey: 'L'
-    },
-    {
-      dimension: dimensionInfo.I.title,
-      value: dimensions.I.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.I.score, dimensionColors.I),
-      dimKey: 'I'
-    },
-    // המנהל המעצים: Authentic + Meaning
-    {
-      dimension: dimensionInfo.A2.title,
-      value: dimensions.A2.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.A2.score, dimensionColors.A2),
-      dimKey: 'A2'
-    },
-    {
-      dimension: dimensionInfo.M.title,
-      value: dimensions.M.score,
-      fullMark: 5,
-      color: getColorIntensity(dimensions.M.score, dimensionColors.M),
-      dimKey: 'M'
-    }
-  ];
+  // הכנת הנתונים לתצוגה בגרף
+  const radarData = [{
+    dimension: dimensionInfo.S.title,
+    value: dimensions.S.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.S.score, dimensionColors.S)
+  }, {
+    dimension: dimensionInfo.L.title,
+    value: dimensions.L.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.L.score, dimensionColors.L)
+  }, {
+    dimension: dimensionInfo.I.title,
+    value: dimensions.I.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.I.score, dimensionColors.I)
+  }, {
+    dimension: dimensionInfo.M.title,
+    value: dimensions.M.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.M.score, dimensionColors.M)
+  }, {
+    dimension: dimensionInfo.A.title,
+    value: dimensions.A.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.A.score, dimensionColors.A)
+  }, {
+    dimension: dimensionInfo.A2.title,
+    value: dimensions.A2.score,
+    fullMark: 5,
+    color: getColorIntensity(dimensions.A2.score, dimensionColors.A2)
+  }];
   return <Card className="w-full h-full">
       <CardHeader className="pb-4">
         <CardTitle className="text-center text-lg sm:text-xl leading-tight">פרופיל מנהיגות SALIMA</CardTitle>
@@ -163,67 +127,42 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
             <p className="text-2xl sm:text-3xl font-bold text-salima-600">{slq}</p>
           </div>}
         
-        <div className={`w-full ${isMobile ? 'h-[320px]' : 'h-[400px]'}`}>
-          <EnhancedRadarChart
-            data={radarData}
-            outerRadius={isMobile ? "60%" : "65%"}
-            margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-            fontSize={isMobile ? 10 : 12}
-            showArchetypeBorders={true}
-          >
-            <Radar 
-              name="ציון" 
-              dataKey="value" 
-              stroke="#374151" 
-              fill="url(#multiColor)" 
-              fillOpacity={0.6}
-              strokeWidth={2}
-            />
-            {!hideScores && <Tooltip formatter={value => [`${value}`, 'ציון']} />}
-          </EnhancedRadarChart>
+        <div className={`w-full ${isMobile ? 'h-[280px]' : 'h-[350px]'}`}>
+          <ResponsiveContainer width="100%" height="100%">
+            <RadarChart outerRadius={isMobile ? "65%" : "70%"} data={radarData} margin={{
+            top: 30,
+            right: 30,
+            bottom: 30,
+            left: 30
+          }}>
+              <PolarGrid />
+              <PolarAngleAxis dataKey="dimension" fontSize={isMobile ? 10 : 12} tick={{
+              fontSize: isMobile ? 10 : 12,
+              fontWeight: 'bold'
+            }} />
+              <Radar name="ציון" dataKey="value" stroke="#0369a1" fill="#0369a1" fillOpacity={0.5} />
+              {!hideScores && <Tooltip formatter={value => [`${value}`, 'ציון']} />}
+            </RadarChart>
+          </ResponsiveContainer>
         </div>
         
-        {!hideScores && (
-          <>
-            {/* Archetype group legend */}
-            <div className="grid gap-2 mt-4 text-xs text-center">
-              {Object.entries(archetypeGroups).map(([key, group]) => (
-                <div key={key} className="flex items-center justify-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded border-2" 
-                    style={{ borderColor: group.borderColor }}
-                  />
-                  <span className="font-medium">{group.name}</span>
-                </div>
-              ))}
-            </div>
-            
-            {/* Dimension scores - ordered by archetype groups */}
-            <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
-              {['S', 'A', 'L', 'I', 'A2', 'M'].map(dimKey => {
-                const dimension = dimensions[dimKey as keyof typeof dimensions];
-                const baseColors = dimensionColors[dimKey as keyof typeof dimensionColors];
-                const intensityColor = getColorIntensity(dimension.score, baseColors);
-                
-                return (
-                  <div 
-                    key={dimKey} 
-                    className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" 
-                    style={{
-                      backgroundColor: baseColors.light,
-                      borderColor: intensityColor
-                    }}
-                  >
-                    <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
-                    <p className="text-lg sm:text-2xl font-bold mt-1" style={{ color: intensityColor }}>
-                      {dimension.score}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
+        {!hideScores && <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
+            {Object.values(dimensions).map(dimension => {
+          const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+          const intensityColor = getColorIntensity(dimension.score, baseColors);
+          return <div key={dimension.dimension} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
+            backgroundColor: baseColors.light,
+            borderColor: intensityColor
+          }}>
+                  <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
+                  <p className="text-lg sm:text-2xl font-bold mt-1" style={{
+              color: intensityColor
+            }}>
+                    {dimension.score}
+                  </p>
+                </div>;
+        })}
+          </div>}
       </CardContent>
     </Card>;
 };
