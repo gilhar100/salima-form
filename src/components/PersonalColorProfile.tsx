@@ -16,50 +16,45 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
   const [selectedDimension, setSelectedDimension] = useState<string | null>(null);
   const { dimensions } = result;
 
-  // Updated SALIMA color palette
+  // Updated color palette based on the requirements
   const dimensionColors = {
     'S': {
-      strongest: '#B30000',
-      strong: '#FD0100',
-      medium: '#FF4D4D',
-      weak: '#FF9999',
-      weakest: '#FFE6E6'
-    },
-    'L': {
-      strongest: '#0000B3',
-      strong: '#333ED4',
-      medium: '#6666FF',
-      weak: '#9999FF',
-      weakest: '#E6E6FF'
-    },
-    'I': {
-      strongest: '#CC4400',
-      strong: '#F76915',
-      medium: '#FF8533',
-      weak: '#FFAA66',
-      weakest: '#FFE6CC'
-    },
-    'M': {
-      strongest: '#8A3399',
-      strong: '#BF4ED6',
-      medium: '#CC66E0',
-      weak: '#DD99E6',
-      weakest: '#F5E6FF'
+      primary: '#E53E3E', // Red
+      light: '#FED7D7',
+      border: '#E53E3E'
     },
     'A': {
-      strongest: '#1F6B1F',
-      strong: '#2FA236',
-      medium: '#5CB85C',
-      weak: '#90EE90',
-      weakest: '#E6FFE6'
+      primary: '#3182CE', // Blue  
+      light: '#BEE3F8',
+      border: '#3182CE'
+    },
+    'L': {
+      primary: '#D69E2E', // Yellow
+      light: '#FAF089',
+      border: '#D69E2E'
+    },
+    'I': {
+      primary: '#D53F8C', // Pink
+      light: '#FBB6CE',
+      border: '#D53F8C'
     },
     'A2': {
-      strongest: '#B8B800',
-      strong: '#EEDE04',
-      medium: '#F0E833',
-      weak: '#F5F566',
-      weakest: '#FFFACD'
+      primary: '#00B5D8', // Turquoise
+      light: '#9DECF9',
+      border: '#00B5D8'
+    },
+    'M': {
+      primary: '#8B4513', // Brown
+      light: '#D2B48C',
+      border: '#8B4513'
     }
+  };
+
+  // Archetype group colors for borders
+  const archetypeColors = {
+    opportunity: '#805AD5', // Purple for Strategy + Adaptive
+    curious: '#FF8C00',     // Orange for Learning + Inspiration  
+    empowering: '#38A169'   // Green for Authentic + Meaning
   };
 
   // Dimension descriptions in Hebrew
@@ -71,16 +66,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     'M': 'קשר עמוק לערכים פנימיים, מחויבות לתרומה שמעבר לעצמי ולתחושת שליחות. ממד המשמעות מייצג מנהיגות קשובה שפועלת בהלימה למטרות ערכיות.',
     'A2': 'שקיפות, יושרה ויכולת להביא את עצמך באופן כן ומדויק גם במצבי לחץ. ממד זה עוסק בכנות, אמפתיה, ובחיבור בין העולם הפנימי שלך להתנהלותך המקצועית.'
   };
-
-  // פונקציה לקבלת עוצמת צבע בהתאם לציון
-  function getIntensityColor(score: number, baseColors: any) {
-    const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
-    if (normalizedScore >= 0.9) return baseColors.strongest;
-    if (normalizedScore >= 0.75) return baseColors.strong;
-    if (normalizedScore >= 0.6) return baseColors.medium;
-    if (normalizedScore >= 0.4) return baseColors.weak;
-    return baseColors.weakest;
-  }
 
   // פונקציה לסקיילה לא ליניארית
   function getExtremeNonLinearSize(score: number): number {
@@ -98,43 +83,50 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     return 3;
   }
 
-  // הכנת הנתונים לתצוגה בגלגל הצבעים
+  // הכנת הנתונים בסדר הנדרש - עם adjacency rules
+  // Strategy(S) + Adaptive(A), Learning(L) + Inspiration(I), Authentic(A2) + Meaning(M)
   const profileData = [{
     name: 'אסטרטגיה',
     dimension: 'S',
     value: getExtremeNonLinearSize(dimensions.S.score),
-    color: getIntensityColor(dimensions.S.score, dimensionColors.S),
-    originalScore: dimensions.S.score
+    color: dimensionColors.S.primary,
+    originalScore: dimensions.S.score,
+    archetypeGroup: 'opportunity'
+  }, {
+    name: 'אדפטיביות', 
+    dimension: 'A',
+    value: getExtremeNonLinearSize(dimensions.A.score),
+    color: dimensionColors.A.primary,
+    originalScore: dimensions.A.score,
+    archetypeGroup: 'opportunity'
   }, {
     name: 'למידה',
     dimension: 'L',
     value: getExtremeNonLinearSize(dimensions.L.score),
-    color: getIntensityColor(dimensions.L.score, dimensionColors.L),
-    originalScore: dimensions.L.score
+    color: dimensionColors.L.primary,
+    originalScore: dimensions.L.score,
+    archetypeGroup: 'curious'
   }, {
     name: 'השראה',
     dimension: 'I',
     value: getExtremeNonLinearSize(dimensions.I.score),
-    color: getIntensityColor(dimensions.I.score, dimensionColors.I),
-    originalScore: dimensions.I.score
-  }, {
-    name: 'משמעות',
-    dimension: 'M',
-    value: getExtremeNonLinearSize(dimensions.M.score),
-    color: getIntensityColor(dimensions.M.score, dimensionColors.M),
-    originalScore: dimensions.M.score
-  }, {
-    name: 'אדפטיביות',
-    dimension: 'A',
-    value: getExtremeNonLinearSize(dimensions.A.score),
-    color: getIntensityColor(dimensions.A.score, dimensionColors.A),
-    originalScore: dimensions.A.score
+    color: dimensionColors.I.primary,
+    originalScore: dimensions.I.score,
+    archetypeGroup: 'curious'
   }, {
     name: 'אותנטיות',
     dimension: 'A2',
     value: getExtremeNonLinearSize(dimensions.A2.score),
-    color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
-    originalScore: dimensions.A2.score
+    color: dimensionColors.A2.primary,
+    originalScore: dimensions.A2.score,
+    archetypeGroup: 'empowering'
+  }, {
+    name: 'משמעות',
+    dimension: 'M',
+    value: getExtremeNonLinearSize(dimensions.M.score),
+    color: dimensionColors.M.primary,
+    originalScore: dimensions.M.score,
+    archetypeGroup: 'empowering'
   }];
 
   const handlePieClick = (data: any) => {
@@ -149,6 +141,62 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     }
   };
 
+  // Custom render function for archetype group borders
+  const renderArchetypeBorders = () => {
+    const cx = isMobile ? 120 : 150;
+    const cy = isMobile ? 120 : 150;
+    const outerRadius = isMobile ? 84 : 112.5;
+    const borderWidth = 3;
+    const borderOffset = 8;
+
+    return (
+      <svg 
+        style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          pointerEvents: 'none',
+          zIndex: 10
+        }}
+      >
+        {/* Strategy + Adaptive border (Purple) */}
+        <path
+          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(-Math.PI/2)} ${cy + (outerRadius + borderOffset) * Math.sin(-Math.PI/2)}
+              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
+              ${cx + (outerRadius + borderOffset) * Math.cos(-Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(-Math.PI/6)}`}
+          fill="none"
+          stroke={archetypeColors.opportunity}
+          strokeWidth={borderWidth}
+          strokeLinecap="round"
+        />
+        
+        {/* Learning + Inspiration border (Orange) */}
+        <path
+          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(Math.PI/6)}
+              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
+              ${cx + (outerRadius + borderOffset) * Math.cos(Math.PI/2)} ${cy + (outerRadius + borderOffset) * Math.sin(Math.PI/2)}`}
+          fill="none"
+          stroke={archetypeColors.curious}
+          strokeWidth={borderWidth}
+          strokeLinecap="round"
+        />
+        
+        {/* Authentic + Meaning border (Green) */}
+        <path
+          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(5*Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(5*Math.PI/6)}
+              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
+              ${cx + (outerRadius + borderOffset) * Math.cos(7*Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(7*Math.PI/6)}`}
+          fill="none"
+          stroke={archetypeColors.empowering}
+          strokeWidth={borderWidth}
+          strokeLinecap="round"
+        />
+      </svg>
+    );
+  };
+
   return (
     <Card className="w-full">
       <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
@@ -158,7 +206,8 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
         <p className="text-center text-black text-sm sm:text-base">הפרופיל הצבעוני הייחודי שלך במנהיגות</p>
       </CardHeader>
       <CardContent className="flex flex-col items-center px-4 sm:px-6" onClick={handleClickOutside}>
-        <div className="w-full h-64 sm:h-80 lg:h-96">
+        <div className="w-full h-64 sm:h-80 lg:h-96 relative">
+          {renderArchetypeBorders()}
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie 
