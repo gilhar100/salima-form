@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -145,9 +144,9 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
   const renderArchetypeBorders = () => {
     const cx = isMobile ? 120 : 150;
     const cy = isMobile ? 120 : 150;
-    const outerRadius = isMobile ? 84 : 112.5;
-    const borderWidth = 4;
-    const borderOffset = 6;
+    const outerRadius = isMobile ? 84 : 112.5; // Match pie chart outer radius
+    const borderWidth = 5;
+    const borderOffset = 2; // Small offset to position just outside the pie
 
     // Calculate total value for percentage calculations
     const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
