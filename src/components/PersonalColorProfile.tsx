@@ -146,8 +146,40 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     const cx = isMobile ? 120 : 150;
     const cy = isMobile ? 120 : 150;
     const outerRadius = isMobile ? 84 : 112.5;
-    const borderWidth = 3;
-    const borderOffset = 8;
+    const borderWidth = 4;
+    const borderOffset = 6;
+
+    // Calculate total value for percentage calculations
+    const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
+    
+    // Calculate angles for each segment
+    let currentAngle = -Math.PI / 2; // Start from top (12 o'clock)
+    const segments = profileData.map(item => {
+      const percentage = item.value / totalValue;
+      const sweepAngle = percentage * 2 * Math.PI;
+      const startAngle = currentAngle;
+      const endAngle = currentAngle + sweepAngle;
+      currentAngle = endAngle;
+      
+      return {
+        ...item,
+        startAngle,
+        endAngle,
+        sweepAngle
+      };
+    });
+
+    // Function to create arc path
+    const createArcPath = (startAngle: number, endAngle: number, radius: number) => {
+      const x1 = cx + radius * Math.cos(startAngle);
+      const y1 = cy + radius * Math.sin(startAngle);
+      const x2 = cx + radius * Math.cos(endAngle);
+      const y2 = cy + radius * Math.sin(endAngle);
+      
+      const largeArcFlag = endAngle - startAngle > Math.PI ? 1 : 0;
+      
+      return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
+    };
 
     return (
       <svg 
@@ -161,33 +193,39 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
           zIndex: 10
         }}
       >
-        {/* Strategy + Adaptive border (Purple) */}
+        {/* Strategy + Adaptive border (Purple) - indices 0,1 */}
         <path
-          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(-Math.PI/2)} ${cy + (outerRadius + borderOffset) * Math.sin(-Math.PI/2)}
-              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
-              ${cx + (outerRadius + borderOffset) * Math.cos(-Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(-Math.PI/6)}`}
+          d={createArcPath(
+            segments[0].startAngle, 
+            segments[1].endAngle, 
+            outerRadius + borderOffset
+          )}
           fill="none"
           stroke={archetypeColors.opportunity}
           strokeWidth={borderWidth}
           strokeLinecap="round"
         />
         
-        {/* Learning + Inspiration border (Orange) */}
+        {/* Learning + Inspiration border (Orange) - indices 2,3 */}
         <path
-          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(Math.PI/6)}
-              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
-              ${cx + (outerRadius + borderOffset) * Math.cos(Math.PI/2)} ${cy + (outerRadius + borderOffset) * Math.sin(Math.PI/2)}`}
+          d={createArcPath(
+            segments[2].startAngle, 
+            segments[3].endAngle, 
+            outerRadius + borderOffset
+          )}
           fill="none"
           stroke={archetypeColors.curious}
           strokeWidth={borderWidth}
           strokeLinecap="round"
         />
         
-        {/* Authentic + Meaning border (Green) */}
+        {/* Authentic + Meaning border (Green) - indices 4,5 */}
         <path
-          d={`M ${cx + (outerRadius + borderOffset) * Math.cos(5*Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(5*Math.PI/6)}
-              A ${outerRadius + borderOffset} ${outerRadius + borderOffset} 0 0 1 
-              ${cx + (outerRadius + borderOffset) * Math.cos(7*Math.PI/6)} ${cy + (outerRadius + borderOffset) * Math.sin(7*Math.PI/6)}`}
+          d={createArcPath(
+            segments[4].startAngle, 
+            segments[5].endAngle, 
+            outerRadius + borderOffset
+          )}
           fill="none"
           stroke={archetypeColors.empowering}
           strokeWidth={borderWidth}
@@ -220,6 +258,8 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
                 dataKey="value"
                 onClick={handlePieClick}
                 style={{ cursor: 'pointer' }}
+                startAngle={90}
+                endAngle={450}
               >
                 {profileData.map((entry, index) => (
                   <Cell 
