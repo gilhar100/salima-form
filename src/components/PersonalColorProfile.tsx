@@ -105,15 +105,29 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     );
   };
 
-  // Calculate angles for each archetype pair (each segment is 60 degrees)
+  // Calculate angles for each archetype pair accounting for padding
   const segmentAngle = 360 / 6; // 60 degrees per segment
+  const paddingAngle = 2; // matches paddingAngle in PieChart
+  
   const archetypeBorders = [
-    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1 (0-120 degrees)
-    { startAngle: 0, endAngle: 2 * segmentAngle, color: '#9C27B0' },
-    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3 (120-240 degrees)
-    { startAngle: 2 * segmentAngle, endAngle: 4 * segmentAngle, color: '#FF9800' },
-    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5 (240-360 degrees)
-    { startAngle: 4 * segmentAngle, endAngle: 6 * segmentAngle, color: '#4CAF50' }
+    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1
+    { 
+      startAngle: paddingAngle / 2, 
+      endAngle: (2 * segmentAngle) - (paddingAngle / 2), 
+      color: '#9C27B0' 
+    },
+    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3
+    { 
+      startAngle: (2 * segmentAngle) + (paddingAngle / 2), 
+      endAngle: (4 * segmentAngle) - (paddingAngle / 2), 
+      color: '#FF9800' 
+    },
+    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5
+    { 
+      startAngle: (4 * segmentAngle) + (paddingAngle / 2), 
+      endAngle: (6 * segmentAngle) - (paddingAngle / 2), 
+      color: '#4CAF50' 
+    }
   ];
 
   return (
