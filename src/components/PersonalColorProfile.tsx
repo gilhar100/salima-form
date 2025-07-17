@@ -88,26 +88,38 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     { dimensions: ['M', 'A2'], color: '#4CAF50', name: 'המנהל המעצים' }
   ];
 
-  // Calculate borders for each archetype group - since pairs are now adjacent
-  const archetypeBorders = archetypeGroups.map((group, groupIndex) => {
-    // Each group spans 2 consecutive dimensions
-    const startIndex = groupIndex * 2;
-    const endIndex = startIndex + 1;
-    
-    if (startIndex >= segmentAngles.length || endIndex >= segmentAngles.length) {
-      return null;
-    }
-    
-    const startAngle = segmentAngles[startIndex].startAngle;
-    const endAngle = segmentAngles[endIndex].endAngle;
-    
-    return {
-      startAngle,
-      endAngle,
-      color: group.color,
-      name: group.name
-    };
-  }).filter(Boolean);
+  // Calculate borders for each archetype group - each border spans exactly 2 consecutive dimensions
+  const archetypeBorders = [];
+  
+  // Strategy + Adaptive (positions 0,1)
+  if (segmentAngles[0] && segmentAngles[1]) {
+    archetypeBorders.push({
+      startAngle: segmentAngles[0].startAngle,
+      endAngle: segmentAngles[1].endAngle,
+      color: '#9C27B0',
+      name: 'מנהל ההזדמנות'
+    });
+  }
+  
+  // Learning + Inspiration (positions 2,3) 
+  if (segmentAngles[2] && segmentAngles[3]) {
+    archetypeBorders.push({
+      startAngle: segmentAngles[2].startAngle,
+      endAngle: segmentAngles[3].endAngle,
+      color: '#FF9800',
+      name: 'המנהל הסקרן'
+    });
+  }
+  
+  // Meaning + Authentic (positions 4,5)
+  if (segmentAngles[4] && segmentAngles[5]) {
+    archetypeBorders.push({
+      startAngle: segmentAngles[4].startAngle,
+      endAngle: segmentAngles[5].endAngle,
+      color: '#4CAF50',
+      name: 'המנהל המעצים'
+    });
+  }
 
   const createArchetypeBorder = (startAngle: number, endAngle: number, radius: number, color: string) => {
     const centerX = 50;
