@@ -104,15 +104,42 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     );
   };
 
-  // Calculate angles for each archetype pair (each segment is 60 degrees)
-  const segmentAngle = 360 / 6; // 60 degrees per segment
+  // Calculate dynamic angles based on actual segment proportions
+  const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
+  let cumulativeAngle = 0;
+  
+  // Calculate the actual angles for each segment
+  const segmentAngles = profileData.map(item => {
+    const startAngle = cumulativeAngle;
+    const segmentSize = (item.value / totalValue) * 360;
+    cumulativeAngle += segmentSize;
+    return {
+      dimension: item.dimension,
+      startAngle,
+      endAngle: cumulativeAngle
+    };
+  });
+
+  // Create archetype borders based on actual segment positions
   const archetypeBorders = [
-    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1 (0-120 degrees)
-    { startAngle: 0, endAngle: 2 * segmentAngle, color: '#9C27B0' },
-    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3 (120-240 degrees)
-    { startAngle: 2 * segmentAngle, endAngle: 4 * segmentAngle, color: '#FF9800' },
-    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5 (240-360 degrees)
-    { startAngle: 4 * segmentAngle, endAngle: 6 * segmentAngle, color: '#4CAF50' }
+    // מנהל ההזדמנות: Strategy (S) and Adaptive (A)
+    {
+      startAngle: segmentAngles.find(s => s.dimension === 'S')?.startAngle || 0,
+      endAngle: segmentAngles.find(s => s.dimension === 'A')?.endAngle || 0,
+      color: '#9C27B0'
+    },
+    // המנהל הסקרן: Learning (L) and Inspiration (I)
+    {
+      startAngle: segmentAngles.find(s => s.dimension === 'L')?.startAngle || 0,
+      endAngle: segmentAngles.find(s => s.dimension === 'I')?.endAngle || 0,
+      color: '#FF9800'
+    },
+    // המנהל המעצים: Authentic (A2) and Meaning (M)
+    {
+      startAngle: segmentAngles.find(s => s.dimension === 'A2')?.startAngle || 0,
+      endAngle: segmentAngles.find(s => s.dimension === 'M')?.endAngle || 0,
+      color: '#4CAF50'
+    }
   ];
 
   return (
