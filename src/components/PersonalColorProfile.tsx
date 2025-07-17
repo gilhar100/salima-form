@@ -93,12 +93,21 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     
     if (!firstDim || !secondDim) return null;
     
-    // Get all angles involved
-    const angles = [firstDim.startAngle, firstDim.endAngle, secondDim.startAngle, secondDim.endAngle];
+    // Find the positions of these dimensions in the ordered array
+    const firstIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[0] as typeof DIMENSION_ORDER[number]);
+    const secondIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[1] as typeof DIMENSION_ORDER[number]);
     
-    // Find the actual start and end based on the span of both segments
-    const startAngle = Math.min(...angles);
-    const endAngle = Math.max(...angles);
+    // Determine start and end angles based on dimension order
+    let startAngle, endAngle;
+    if (firstIndex < secondIndex) {
+      // Normal order: first dimension comes before second
+      startAngle = firstDim.startAngle;
+      endAngle = secondDim.endAngle;
+    } else {
+      // Reversed order: second dimension comes before first
+      startAngle = secondDim.startAngle;
+      endAngle = firstDim.endAngle;
+    }
     
     return {
       startAngle,
