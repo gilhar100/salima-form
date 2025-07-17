@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SurveyResult } from "@/lib/types";
-import { dimensionColors } from "./ResultsRadar";
+import { dimensionColors } from "./diverging-chart/constants";
 import { getColorIntensity } from "@/lib/analysis/color-intensity";
 import { dimensionInfo } from "@/data/questions";
 

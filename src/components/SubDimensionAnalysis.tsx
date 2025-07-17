@@ -1,7 +1,7 @@
 
 import { DimensionResult } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { dimensionColors } from "./ResultsRadar";
+import { dimensionColors } from "./diverging-chart/constants";
 import { questions, dimensionMapping } from "@/data/questions";
 import { getAdjustedValue } from "@/lib/calculations";
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
