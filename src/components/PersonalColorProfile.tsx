@@ -88,20 +88,20 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     { dimensions: ['A2', 'M'], color: '#4CAF50', name: 'המנהל המעצים' } // Green
   ];
 
-  // Calculate archetype borders - now simpler since pairs are adjacent
-  const archetypeBorders = archetypeMapping.map(archetype => {
-    const firstDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[0]);
-    const secondDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[1]);
+  // Calculate archetype borders properly 
+  const archetypeBorders = archetypeMapping.map((archetype, index) => {
+    // For each archetype pair, find their consecutive positions in our ordered array
+    const startIndex = index * 2; // S,A at 0,1; L,I at 2,3; A2,M at 4,5
+    const endIndex = startIndex + 1;
+    
+    const firstDim = segmentAngles[startIndex];
+    const secondDim = segmentAngles[endIndex];
     
     if (!firstDim || !secondDim) return null;
     
-    // Since we've ordered them to be adjacent, we can simply span from first start to second end
-    const startAngle = firstDim.startAngle;
-    const endAngle = secondDim.endAngle;
-    
     return {
-      startAngle,
-      endAngle,
+      startAngle: firstDim.startAngle,
+      endAngle: secondDim.endAngle,
       color: archetype.color,
       name: archetype.name
     };
