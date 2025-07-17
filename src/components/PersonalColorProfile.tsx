@@ -39,8 +39,8 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return 3;
   }
 
-  // Reorder dimensions to group archetypes together for clearer borders
-  const archetypeOrder = ['S', 'A', 'L', 'I', 'A2', 'M'] as const;
+  // Reorder dimensions so archetype pairs are adjacent for proper borders
+  const archetypeOrder = ['S', 'A', 'L', 'I', 'M', 'A2'] as const;
 
   const profileData = archetypeOrder.map(dimKey => {
     const dimension = dimensions[dimKey];
@@ -85,7 +85,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const archetypeGroups = [
     { dimensions: ['S', 'A'], color: '#9C27B0', name: 'מנהל ההזדמנות' },
     { dimensions: ['L', 'I'], color: '#FF9800', name: 'המנהל הסקרן' },
-    { dimensions: ['A2', 'M'], color: '#4CAF50', name: 'המנהל המעצים' }
+    { dimensions: ['M', 'A2'], color: '#4CAF50', name: 'המנהל המעצים' }
   ];
 
   // Calculate borders for each archetype group
