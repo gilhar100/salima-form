@@ -2,13 +2,8 @@
 import { dimensionColors } from './constants';
 
 export const getIntensityColor = (score: number, baseColors: any) => {
-  const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
-  
-  if (normalizedScore >= 0.9) return baseColors.strongest;
-  if (normalizedScore >= 0.75) return baseColors.strong;
-  if (normalizedScore >= 0.6) return baseColors.medium;
-  if (normalizedScore >= 0.4) return baseColors.weak;
-  return baseColors.weakest;
+  // Always return the fixed strong color, ignoring score
+  return baseColors.strong;
 };
 
 export const getBarWidth = (score: number, personalAverage: number, maxDifference: number) => {

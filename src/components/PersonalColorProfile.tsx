@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -27,17 +26,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     'A2': 'שקיפות, יושרה ויכולת להביא את עצמך באופן כן ומדויק גם במצבי לחץ. ממד זה עוסק בכנות, אמפתיה, ובחיבור בין העולם הפנימי שלך להתנהלותך המקצועית.'
   };
 
-  // פונקציה לקבלת עוצמת צבע בהתאם לציון
-  function getIntensityColor(score: number, baseColors: any) {
-    const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
-    if (normalizedScore >= 0.9) return baseColors.strongest;
-    if (normalizedScore >= 0.75) return baseColors.strong;
-    if (normalizedScore >= 0.6) return baseColors.medium;
-    if (normalizedScore >= 0.4) return baseColors.weak;
-    return baseColors.weakest;
-  }
-
-  // פונקציה לסקיילה לא ליניארית
+  // פונקציה לסקיילה לא ליניארית - keep the size calculation but use fixed colors
   function getExtremeNonLinearSize(score: number): number {
     const normalizedScore = Math.max(0, Math.min(5, score));
     if (normalizedScore >= 4.8) return 100;
@@ -58,37 +47,37 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     name: 'אסטרטגיה',
     dimension: 'S',
     value: getExtremeNonLinearSize(dimensions.S.score),
-    color: getIntensityColor(dimensions.S.score, dimensionColors.S),
+    color: dimensionColors.S.strong, // Fixed color
     originalScore: dimensions.S.score
   }, {
     name: 'אדפטיביות',
     dimension: 'A',
     value: getExtremeNonLinearSize(dimensions.A.score),
-    color: getIntensityColor(dimensions.A.score, dimensionColors.A),
+    color: dimensionColors.A.strong, // Fixed color
     originalScore: dimensions.A.score
   }, {
     name: 'למידה',
     dimension: 'L',
     value: getExtremeNonLinearSize(dimensions.L.score),
-    color: getIntensityColor(dimensions.L.score, dimensionColors.L),
+    color: dimensionColors.L.strong, // Fixed color
     originalScore: dimensions.L.score
   }, {
     name: 'השראה',
     dimension: 'I',
     value: getExtremeNonLinearSize(dimensions.I.score),
-    color: getIntensityColor(dimensions.I.score, dimensionColors.I),
+    color: dimensionColors.I.strong, // Fixed color
     originalScore: dimensions.I.score
   }, {
     name: 'אותנטיות',
     dimension: 'A2',
     value: getExtremeNonLinearSize(dimensions.A2.score),
-    color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
+    color: dimensionColors.A2.strong, // Fixed color
     originalScore: dimensions.A2.score
   }, {
     name: 'משמעות',
     dimension: 'M',
     value: getExtremeNonLinearSize(dimensions.M.score),
-    color: getIntensityColor(dimensions.M.score, dimensionColors.M),
+    color: dimensionColors.M.strong, // Fixed color
     originalScore: dimensions.M.score
   }];
 
@@ -187,7 +176,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
         </div>
         
         <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-sm sm:text-base px-2">
-          גודל הפרק ועוצמת הצבע משקפים את חוזק הממד בפרופיל המנהיגות שלך
+          גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
           <br />
           <span className="text-xs text-gray-600 mt-1 block">לחץ על פרק או על שם הממד למידע נוסף</span>
         </div>

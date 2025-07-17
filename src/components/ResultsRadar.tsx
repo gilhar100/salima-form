@@ -11,16 +11,6 @@ interface ResultsRadarProps {
   hideScores?: boolean;
 }
 
-// פונקציה לקבלת עוצמת צבע בהתאם לציון
-const getColorIntensity = (score: number, baseColors: any) => {
-  const normalizedScore = Math.max(0, Math.min(5, score)) / 5;
-  if (normalizedScore >= 0.9) return baseColors.strongest;
-  if (normalizedScore >= 0.75) return baseColors.strong;
-  if (normalizedScore >= 0.55) return baseColors.medium;
-  if (normalizedScore >= 0.35) return baseColors.weak;
-  return baseColors.weakest;
-};
-
 const ResultsRadar: React.FC<ResultsRadarProps> = ({
   result,
   hideScores = false
@@ -31,37 +21,37 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
     slq
   } = result;
 
-  // הכנת הנתונים לתצוגה בגרף
+  // הכנת הנתונים לתצוגה בגרף - using fixed colors
   const radarData = [{
     dimension: dimensionInfo.S.title,
     value: dimensions.S.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.S.score, dimensionColors.S)
+    color: dimensionColors.S.strong // Fixed color
   }, {
     dimension: dimensionInfo.L.title,
     value: dimensions.L.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.L.score, dimensionColors.L)
+    color: dimensionColors.L.strong // Fixed color
   }, {
     dimension: dimensionInfo.I.title,
     value: dimensions.I.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.I.score, dimensionColors.I)
+    color: dimensionColors.I.strong // Fixed color
   }, {
     dimension: dimensionInfo.M.title,
     value: dimensions.M.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.M.score, dimensionColors.M)
+    color: dimensionColors.M.strong // Fixed color
   }, {
     dimension: dimensionInfo.A.title,
     value: dimensions.A.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.A.score, dimensionColors.A)
+    color: dimensionColors.A.strong // Fixed color
   }, {
     dimension: dimensionInfo.A2.title,
     value: dimensions.A2.score,
     fullMark: 5,
-    color: getColorIntensity(dimensions.A2.score, dimensionColors.A2)
+    color: dimensionColors.A2.strong // Fixed color
   }];
 
   return <Card className="w-full h-full">
@@ -96,14 +86,14 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
         {!hideScores && <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
             {Object.values(dimensions).map(dimension => {
           const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-          const intensityColor = getColorIntensity(dimension.score, baseColors);
+          const fixedColor = baseColors.strong; // Use fixed color
           return <div key={dimension.dimension} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
-            backgroundColor: baseColors.weakest,
-            borderColor: intensityColor
+            backgroundColor: baseColors.light,
+            borderColor: fixedColor
           }}>
                   <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
                   <p className="text-lg sm:text-2xl font-bold mt-1" style={{
-              color: intensityColor
+              color: fixedColor
             }}>
                     {dimension.score}
                   </p>

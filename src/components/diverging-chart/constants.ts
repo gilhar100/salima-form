@@ -1,58 +1,58 @@
 
 export const dimensionColors = {
   'S': {
-    strongest: '#DC2626',
-    strong: '#EF4444',
-    medium: '#F87171',
-    weak: '#FCA5A5',
-    weakest: '#FEE2E2',
-    primary: '#DC2626',
-    light: '#FEE2E2'
+    strongest: '#D32F2F',
+    strong: '#D32F2F',
+    medium: '#D32F2F',
+    weak: '#D32F2F',
+    weakest: '#D32F2F',
+    primary: '#D32F2F',
+    light: '#FFEBEE'
   },
   'A': {
-    strongest: '#1D4ED8',
-    strong: '#3B82F6',
-    medium: '#60A5FA',
-    weak: '#93C5FD',
-    weakest: '#DBEAFE',
-    primary: '#1D4ED8',
-    light: '#DBEAFE'
+    strongest: '#1976D2',
+    strong: '#1976D2',
+    medium: '#1976D2',
+    weak: '#1976D2',
+    weakest: '#1976D2',
+    primary: '#1976D2',
+    light: '#E3F2FD'
   },
   'L': {
-    strongest: '#CA8A04',
-    strong: '#EAB308',
-    medium: '#FACC15',
-    weak: '#FDE047',
-    weakest: '#FEFCE8',
-    primary: '#CA8A04',
-    light: '#FEFCE8'
+    strongest: '#FBC02D',
+    strong: '#FBC02D',
+    medium: '#FBC02D',
+    weak: '#FBC02D',
+    weakest: '#FBC02D',
+    primary: '#FBC02D',
+    light: '#FFFDE7'
   },
   'I': {
-    strongest: '#BE185D',
-    strong: '#EC4899',
-    medium: '#F472B6',
-    weak: '#F9A8D4',
-    weakest: '#FCE7F3',
-    primary: '#BE185D',
-    light: '#FCE7F3'
+    strongest: '#EC407A',
+    strong: '#EC407A',
+    medium: '#EC407A',
+    weak: '#EC407A',
+    weakest: '#EC407A',
+    primary: '#EC407A',
+    light: '#FCE4EC'
   },
   'M': {
-    strongest: '#92400E',
-    strong: '#D97706',
-    medium: '#F59E0B',
-    weak: '#FBBF24',
-    weakest: '#FEF3C7',
-    primary: '#92400E',
-    light: '#FEF3C7'
+    strongest: '#8D6E63',
+    strong: '#8D6E63',
+    medium: '#8D6E63',
+    weak: '#8D6E63',
+    weakest: '#8D6E63',
+    primary: '#8D6E63',
+    light: '#EFEBE9'
   },
   'A2': {
-    strongest: '#0F766E',
-    strong: '#14B8A6',
-    medium: '#2DD4BF',
-    weak: '#7DD3FC',
-    weakest: '#E6FFFA',
-    primary: '#0F766E',
-    light: '#E6FFFA'
+    strongest: '#26C6DA',
+    strong: '#26C6DA',
+    medium: '#26C6DA',
+    weak: '#26C6DA',
+    weakest: '#26C6DA',
+    primary: '#26C6DA',
+    light: '#E0F7FA'
   }
 };
 
