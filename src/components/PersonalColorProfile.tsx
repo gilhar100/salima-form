@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -63,6 +64,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     if (e.target === e.currentTarget) setSelectedDimension(null);
   };
 
+  // Calculate cumulative angles for each segment
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
   const segmentAngles = profileData.map(item => {
@@ -76,11 +78,31 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
-  const dimensionToArchetypeColor: Record<string, string> = {
-    'S': '#9C27B0', 'A': '#9C27B0',
-    'L': '#FF9800', 'I': '#FF9800',
-    'A2': '#4CAF50', 'M': '#4CAF50'
-  };
+  // Define archetype mappings with their colors
+  const archetypeMapping = [
+    { dimensions: ['S', 'A'], color: '#9C27B0', name: 'מנהל ההזדמנות' }, // Purple
+    { dimensions: ['L', 'I'], color: '#FF9800', name: 'המנהל הסקרן' }, // Orange  
+    { dimensions: ['A2', 'M'], color: '#4CAF50', name: 'המנהל המעצים' } // Green
+  ];
+
+  // Calculate archetype borders dynamically
+  const archetypeBorders = archetypeMapping.map(archetype => {
+    const firstDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[0]);
+    const secondDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[1]);
+    
+    if (!firstDim || !secondDim) return null;
+    
+    // Find the overall start and end angles for this archetype
+    const startAngle = Math.min(firstDim.startAngle, secondDim.startAngle);
+    const endAngle = Math.max(firstDim.endAngle, secondDim.endAngle);
+    
+    return {
+      startAngle,
+      endAngle,
+      color: archetype.color,
+      name: archetype.name
+    };
+  }).filter(Boolean);
 
   const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
     const centerX = 50;
@@ -92,6 +114,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     const x2 = centerX + outerRadius * Math.cos(endRad);
     const y2 = centerY + outerRadius * Math.sin(endRad);
     const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+    
     return (
       <path
         key={`border-${startAngle}-${endAngle}`}
@@ -103,12 +126,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
       />
     );
   };
-
-  const archetypeBorders = segmentAngles.map((segment) => ({
-    startAngle: segment.startAngle,
-    endAngle: segment.endAngle,
-    color: dimensionToArchetypeColor[segment.dimension],
-  }));
 
   return (
     <Card className="w-full">
