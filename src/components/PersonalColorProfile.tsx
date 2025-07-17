@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -95,6 +96,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     
     return (
       <path
+        key={`border-${startAngle}-${endAngle}`}
         d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
         fill="none"
         stroke={strokeColor}
@@ -108,7 +110,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
   
-  // Calculate the actual angles for each segment
+  // Calculate the actual angles for each segment based on their proportional values
   const segmentAngles = profileData.map(item => {
     const startAngle = cumulativeAngle;
     const segmentSize = (item.value / totalValue) * 360;
@@ -197,7 +199,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
               createArchetypeBorder(
                 border.startAngle, 
                 border.endAngle, 
-                isMobile ? 35 : 37.5, // Slightly larger than pie outerRadius
+                isMobile ? 37 : 39, // Slightly larger than pie outerRadius to be visible outside
                 border.color
               )
             )}
