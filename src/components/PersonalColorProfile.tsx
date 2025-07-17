@@ -39,7 +39,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return 3;
   }
 
-  const profileData = DIMENSION_ORDER.map(dimKey => {
+  // Reorder dimensions to group archetypes together for clearer borders
+  const archetypeOrder = ['S', 'A', 'L', 'I', 'A2', 'M'] as const;
+
+  const profileData = archetypeOrder.map(dimKey => {
     const dimension = dimensions[dimKey];
     const hebrewNames = {
       'S': 'אסטרטגיה', 'A': 'אדפטיביות', 'L': 'למידה',
@@ -78,46 +81,23 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
-  // Define archetype mappings with their colors
+  // Define archetype mappings with their colors - now they're adjacent in our order
   const archetypeMapping = [
     { dimensions: ['S', 'A'], color: '#9C27B0', name: 'מנהל ההזדמנות' }, // Purple
     { dimensions: ['L', 'I'], color: '#FF9800', name: 'המנהל הסקרן' }, // Orange  
     { dimensions: ['A2', 'M'], color: '#4CAF50', name: 'המנהל המעצים' } // Green
   ];
 
-  // Calculate archetype borders dynamically
+  // Calculate archetype borders - now simpler since pairs are adjacent
   const archetypeBorders = archetypeMapping.map(archetype => {
     const firstDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[0]);
     const secondDim = segmentAngles.find(seg => seg.dimension === archetype.dimensions[1]);
     
     if (!firstDim || !secondDim) return null;
     
-    // Find the positions of these dimensions in the ordered array
-    const firstIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[0] as typeof DIMENSION_ORDER[number]);
-    const secondIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[1] as typeof DIMENSION_ORDER[number]);
-    
-    // Check if the dimensions are adjacent
-    const areAdjacent = Math.abs(firstIndex - secondIndex) === 1 || 
-                       (firstIndex === 0 && secondIndex === DIMENSION_ORDER.length - 1) ||
-                       (firstIndex === DIMENSION_ORDER.length - 1 && secondIndex === 0);
-    
-    let startAngle, endAngle;
-    
-    if (areAdjacent) {
-      // For adjacent dimensions, use the continuous span
-      if (firstIndex < secondIndex || (firstIndex === DIMENSION_ORDER.length - 1 && secondIndex === 0)) {
-        startAngle = firstDim.startAngle;
-        endAngle = secondDim.endAngle;
-      } else {
-        startAngle = secondDim.startAngle;
-        endAngle = firstDim.endAngle;
-      }
-    } else {
-      // For non-adjacent dimensions, create two separate borders
-      // This shouldn't happen with our current archetype mapping, but adding for safety
-      startAngle = Math.min(firstDim.startAngle, secondDim.startAngle);
-      endAngle = Math.max(firstDim.endAngle, secondDim.endAngle);
-    }
+    // Since we've ordered them to be adjacent, we can simply span from first start to second end
+    const startAngle = firstDim.startAngle;
+    const endAngle = secondDim.endAngle;
     
     return {
       startAngle,
@@ -144,7 +124,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
         fill="none"
         stroke={strokeColor}
-        strokeWidth="3"
+        strokeWidth="4"
         strokeLinecap="round"
       />
     );
@@ -166,7 +146,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 cy="50%"
                 outerRadius={isMobile ? "70%" : "75%"}
                 innerRadius={isMobile ? "25%" : "30%"}
-                paddingAngle={2}
+                paddingAngle={1}
                 dataKey="value"
                 onClick={handlePieClick}
                 style={{ cursor: 'pointer' }}
@@ -194,7 +174,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           </ResponsiveContainer>
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
             {archetypeBorders.map((border, index) =>
-              createArchetypeBorder(border.startAngle, border.endAngle, isMobile ? 37 : 39, border.color)
+              createArchetypeBorder(border.startAngle, border.endAngle, isMobile ? 38 : 40, border.color)
             )}
           </svg>
         </div>
