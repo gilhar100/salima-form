@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -75,6 +76,46 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     }
   };
 
+  // Function to calculate arc path for archetype borders
+  const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
+    const centerX = 50; // percentage
+    const centerY = 50; // percentage
+    
+    // Convert angles to radians
+    const startRad = (startAngle - 90) * (Math.PI / 180);
+    const endRad = (endAngle - 90) * (Math.PI / 180);
+    
+    // Calculate coordinates
+    const x1 = centerX + outerRadius * Math.cos(startRad);
+    const y1 = centerY + outerRadius * Math.sin(startRad);
+    const x2 = centerX + outerRadius * Math.cos(endRad);
+    const y2 = centerY + outerRadius * Math.sin(endRad);
+    
+    // Large arc flag for arcs > 180 degrees
+    const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+    
+    return (
+      <path
+        d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
+        fill="none"
+        stroke={strokeColor}
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+    );
+  };
+
+  // Calculate angles for each archetype pair (each segment is 60 degrees)
+  const segmentAngle = 360 / 6; // 60 degrees per segment
+  const archetypeBorders = [
+    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1
+    { startAngle: 0, endAngle: 2 * segmentAngle, color: '#9C27B0' },
+    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3  
+    { startAngle: 2 * segmentAngle, endAngle: 4 * segmentAngle, color: '#FF9800' },
+    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5
+    { startAngle: 4 * segmentAngle, endAngle: 6 * segmentAngle, color: '#4CAF50' }
+  ];
+
   return (
     <Card className="w-full">
       <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
@@ -84,7 +125,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
         <p className="text-center text-black text-sm sm:text-base">הפרופיל הצבעוני הייחודי שלך במנהיגות</p>
       </CardHeader>
       <CardContent className="flex flex-col items-center px-4 sm:px-6" onClick={handleClickOutside}>
-        <div className="w-full h-64 sm:h-80 lg:h-96">
+        <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie 
@@ -119,6 +160,22 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
               />
             </PieChart>
           </ResponsiveContainer>
+          
+          {/* Archetype borders overlay */}
+          <svg 
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            {archetypeBorders.map((border, index) => 
+              createArchetypeBorder(
+                border.startAngle, 
+                border.endAngle, 
+                isMobile ? 35 : 37.5, // Slightly larger than pie outerRadius
+                border.color
+              )
+            )}
+          </svg>
         </div>
         
         {/* Tooltip/Description Box */}
