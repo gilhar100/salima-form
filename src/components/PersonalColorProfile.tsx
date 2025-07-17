@@ -81,76 +81,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
-  // Define archetype groups and create borders
-  const archetypeGroups = [
-    { dimensions: ['S', 'A'], color: '#9C27B0', name: 'מנהל ההזדמנות' },
-    { dimensions: ['L', 'I'], color: '#FF9800', name: 'המנהל הסקרן' },
-    { dimensions: ['M', 'A2'], color: '#4CAF50', name: 'המנהל המעצים' }
-  ];
-
-  // Calculate borders for each archetype group - each border spans exactly 2 consecutive dimensions
-  const archetypeBorders = [];
-  
-  // Strategy + Adaptive (positions 0,1)
-  if (segmentAngles[0] && segmentAngles[1]) {
-    archetypeBorders.push({
-      startAngle: segmentAngles[0].startAngle,
-      endAngle: segmentAngles[1].endAngle,
-      color: '#9C27B0',
-      name: 'מנהל ההזדמנות'
-    });
-  }
-  
-  // Learning + Inspiration (positions 2,3) 
-  if (segmentAngles[2] && segmentAngles[3]) {
-    archetypeBorders.push({
-      startAngle: segmentAngles[2].startAngle,
-      endAngle: segmentAngles[3].endAngle,
-      color: '#FF9800',
-      name: 'המנהל הסקרן'
-    });
-  }
-  
-  // Meaning + Authentic (positions 4,5)
-  if (segmentAngles[4] && segmentAngles[5]) {
-    archetypeBorders.push({
-      startAngle: segmentAngles[4].startAngle,
-      endAngle: segmentAngles[5].endAngle,
-      color: '#4CAF50',
-      name: 'המנהל המעצים'
-    });
-  }
-
-  const createArchetypeBorder = (startAngle: number, endAngle: number, radius: number, color: string) => {
-    const centerX = 50;
-    const centerY = 50;
-    
-    // Convert angles to radians (subtract 90 to start from top)
-    const startRad = ((startAngle - 90) * Math.PI) / 180;
-    const endRad = ((endAngle - 90) * Math.PI) / 180;
-    
-    // Calculate start and end points
-    const x1 = centerX + radius * Math.cos(startRad);
-    const y1 = centerY + radius * Math.sin(startRad);
-    const x2 = centerX + radius * Math.cos(endRad);
-    const y2 = centerY + radius * Math.sin(endRad);
-    
-    // Determine if we need a large arc
-    const angleDiff = endAngle - startAngle;
-    const largeArcFlag = angleDiff > 180 ? 1 : 0;
-    
-    return (
-      <path
-        key={`border-${startAngle}-${endAngle}`}
-        d={`M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
-        fill="none"
-        stroke={color}
-        strokeWidth="3"
-        strokeLinecap="round"
-        opacity="0.8"
-      />
-    );
-  };
 
   return (
     <Card className="w-full">
@@ -194,17 +124,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
               />
             </PieChart>
           </ResponsiveContainer>
-          
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            {archetypeBorders.map((border, index) =>
-              createArchetypeBorder(
-                border.startAngle, 
-                border.endAngle, 
-                isMobile ? 38 : 40, 
-                border.color
-              )
-            )}
-          </svg>
         </div>
 
         {selectedDimension && (
