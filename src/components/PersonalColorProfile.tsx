@@ -1,5 +1,5 @@
-// ✅ Full fixed version combining dynamic borders + interactive elements
-// All sections (chart, arcs, tooltips, clickable boxes) are intact
+// ✅ Full fixed version with dynamic archetype borders aligned to the pie chart
+// Fixes misalignment by rotating arcs + accounts for paddingAngle
 
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
@@ -83,8 +83,8 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
     const centerX = 50;
     const centerY = 50;
-    const startRad = (startAngle - 90) * (Math.PI / 180);
-    const endRad = (endAngle - 90) * (Math.PI / 180);
+    const startRad = (startAngle + 90) * (Math.PI / 180);
+    const endRad = (endAngle + 90) * (Math.PI / 180);
     const x1 = centerX + outerRadius * Math.cos(startRad);
     const y1 = centerY + outerRadius * Math.sin(startRad);
     const x2 = centerX + outerRadius * Math.cos(endRad);
