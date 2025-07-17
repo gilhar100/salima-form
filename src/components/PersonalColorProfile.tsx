@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -92,9 +93,12 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     
     if (!firstDim || !secondDim) return null;
     
-    // Find the overall start and end angles for this archetype
-    const startAngle = Math.min(firstDim.startAngle, secondDim.startAngle);
-    const endAngle = Math.max(firstDim.endAngle, secondDim.endAngle);
+    // Get all angles involved
+    const angles = [firstDim.startAngle, firstDim.endAngle, secondDim.startAngle, secondDim.endAngle];
+    
+    // Find the actual start and end based on the span of both segments
+    const startAngle = Math.min(...angles);
+    const endAngle = Math.max(...angles);
     
     return {
       startAngle,
@@ -216,3 +220,4 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
 };
 
 export default PersonalColorProfile;
+
