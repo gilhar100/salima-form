@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -108,12 +109,12 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
   // Calculate angles for each archetype pair (each segment is 60 degrees)
   const segmentAngle = 360 / 6; // 60 degrees per segment
   const archetypeBorders = [
-    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1
-    { startAngle: 0, endAngle: 2 * segmentAngle, color: '#9C27B0' },
-    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3  
-    { startAngle: 2 * segmentAngle, endAngle: 4 * segmentAngle, color: '#FF9800' },
-    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5
-    { startAngle: 4 * segmentAngle, endAngle: 6 * segmentAngle, color: '#4CAF50' }
+    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1 (0-120 degrees)
+    { startAngle: 0, endAngle: 120, color: '#9C27B0' },
+    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3 (120-240 degrees)
+    { startAngle: 120, endAngle: 240, color: '#FF9800' },
+    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5 (240-360 degrees)
+    { startAngle: 240, endAngle: 360, color: '#4CAF50' }
   ];
 
   return (
@@ -225,3 +226,4 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
 };
 
 export default PersonalColorProfile;
+
