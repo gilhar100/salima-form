@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
@@ -97,16 +96,27 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     const firstIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[0] as typeof DIMENSION_ORDER[number]);
     const secondIndex = DIMENSION_ORDER.indexOf(archetype.dimensions[1] as typeof DIMENSION_ORDER[number]);
     
-    // Determine start and end angles based on dimension order
+    // Check if the dimensions are adjacent
+    const areAdjacent = Math.abs(firstIndex - secondIndex) === 1 || 
+                       (firstIndex === 0 && secondIndex === DIMENSION_ORDER.length - 1) ||
+                       (firstIndex === DIMENSION_ORDER.length - 1 && secondIndex === 0);
+    
     let startAngle, endAngle;
-    if (firstIndex < secondIndex) {
-      // Normal order: first dimension comes before second
-      startAngle = firstDim.startAngle;
-      endAngle = secondDim.endAngle;
+    
+    if (areAdjacent) {
+      // For adjacent dimensions, use the continuous span
+      if (firstIndex < secondIndex || (firstIndex === DIMENSION_ORDER.length - 1 && secondIndex === 0)) {
+        startAngle = firstDim.startAngle;
+        endAngle = secondDim.endAngle;
+      } else {
+        startAngle = secondDim.startAngle;
+        endAngle = firstDim.endAngle;
+      }
     } else {
-      // Reversed order: second dimension comes before first
-      startAngle = secondDim.startAngle;
-      endAngle = firstDim.endAngle;
+      // For non-adjacent dimensions, create two separate borders
+      // This shouldn't happen with our current archetype mapping, but adding for safety
+      startAngle = Math.min(firstDim.startAngle, secondDim.startAngle);
+      endAngle = Math.max(firstDim.endAngle, secondDim.endAngle);
     }
     
     return {
@@ -229,4 +239,3 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
 };
 
 export default PersonalColorProfile;
-
