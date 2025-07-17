@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SurveyResult } from '@/lib/types';
 import { dimensionColors } from './diverging-chart/constants';
@@ -24,7 +25,7 @@ const MedianComparisonChart: React.FC<MedianComparisonChartProps> = ({ result })
 
   function getParameterColor(dimension: string) {
     const colors = dimensionColors[dimension as keyof typeof dimensionColors];
-    return colors?.primary || '#4F46E5';
+    return colors?.strong || '#4F46E5';
   }
 
   // Separate dimensions above and below median

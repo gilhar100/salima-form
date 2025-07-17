@@ -132,8 +132,8 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
 
   return (
     <Card className="mt-4">
-      <CardHeader className="pb-3" style={{ backgroundColor: colors.light }}>
-        <CardTitle className="text-lg flex items-center gap-2" style={{ color: colors.primary }}>
+      <CardHeader className="pb-3" style={{ backgroundColor: colors.weakest }}>
+        <CardTitle className="text-lg flex items-center gap-2" style={{ color: colors.strong }}>
           ניתוח מפורט - {dimension.title}
           <div style={{ color: iconColor }}>
             {icon}
@@ -158,7 +158,7 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
 
           {/* פירוט תתי-התחומים */}
           <div className="grid gap-3">
-            <h4 className="font-semibold text-sm" style={{ color: colors.primary }}>
+            <h4 className="font-semibold text-sm" style={{ color: colors.strong }}>
               פירוט תתי-התחומים:
             </h4>
             
@@ -184,10 +184,10 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
                 <div 
                   key={subDim.name} 
                   className="flex items-center justify-between p-3 border rounded-lg"
-                  style={{ backgroundColor: colors.light, borderColor: colors.medium }}
+                  style={{ backgroundColor: colors.weakest, borderColor: colors.medium }}
                 >
                   <div className="flex-1">
-                    <h5 className="font-medium text-sm" style={{ color: colors.primary }}>
+                    <h5 className="font-medium text-sm" style={{ color: colors.strong }}>
                       {subDim.name}
                     </h5>
                     <p className="text-xs text-gray-600">
@@ -213,12 +213,12 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
           {/* סיכום מספרי */}
           <div 
             className="p-3 rounded-lg text-center"
-            style={{ backgroundColor: colors.light }}
+            style={{ backgroundColor: colors.weakest }}
           >
             <div className="grid grid-cols-3 gap-3 text-xs">
               <div>
                 <p className="text-gray-600">החזק ביותר</p>
-                <p className="font-semibold" style={{ color: colors.primary }}>
+                <p className="font-semibold" style={{ color: colors.strong }}>
                   {highest.name}
                 </p>
               </div>
@@ -230,7 +230,7 @@ const SubDimensionAnalysis: React.FC<SubDimensionAnalysisProps> = ({ dimension, 
               </div>
               <div>
                 <p className="text-gray-600">לפיתוח</p>
-                <p className="font-semibold" style={{ color: colors.primary }}>
+                <p className="font-semibold" style={{ color: colors.strong }}>
                   {lowest.name}
                 </p>
               </div>
