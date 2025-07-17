@@ -1,103 +1,75 @@
-// [...] (keep the rest of the component code above unchanged)
 
-<CardContent className="flex flex-col items-center px-4 sm:px-6" onClick={handleClickOutside}>
-  <div className="w-full h-64 sm:h-80 lg:h-96 relative">
-    <ResponsiveContainer width="100%" height="100%">
-      <PieChart>
-        <Pie 
-          data={profileData} 
-          cx="50%" 
-          cy="50%" 
-          outerRadius={isMobile ? "70%" : "75%"} 
-          innerRadius={isMobile ? "25%" : "30%"} 
-          startAngle={90} 
-          endAngle={-270} 
-          paddingAngle={2} 
-          dataKey="value"
-          onClick={handlePieClick}
-          style={{ cursor: 'pointer' }}
-        >
-          {profileData.map((entry, index) => (
-            <Cell 
-              key={`cell-${index}`} 
-              fill={entry.color}
-              stroke={selectedDimension === entry.dimension ? '#333' : 'none'}
-              strokeWidth={selectedDimension === entry.dimension ? 3 : 0}
-            />
-          ))}
-        </Pie>
-        <Tooltip 
-          formatter={(value, name) => [name, '']} 
-          labelFormatter={() => ''} 
-          contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            fontSize: isMobile ? '14px' : '16px'
-          }} 
-        />
-      </PieChart>
-    </ResponsiveContainer>
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SurveyResult } from "@/lib/types";
 
-    <svg
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="xMidYMid meet"
-    >
-      {archetypeBorders.map((border, index) =>
-        createArchetypeBorder(
-          border.startAngle,
-          border.endAngle,
-          isMobile ? 35 : 37.5,
-          border.color
-        )
-      )}
-    </svg>
-  </div>
+interface SurveyResponse {
+  id: string;
+  slq_score: number;
+  dimension_s: number;
+  dimension_l: number;
+  dimension_i: number;
+  dimension_m: number;
+  dimension_a: number;
+  dimension_a2: number;
+  created_at: string;
+}
 
-  {/* Tooltip/Description Box */}
-  {selectedDimension && (
-    <div className="mt-4 p-4 bg-white border-2 rounded-lg shadow-lg max-w-2xl w-full"
-         style={{ borderColor: profileData.find(d => d.dimension === selectedDimension)?.color }}>
-      <h3 className="font-bold text-lg mb-3 text-center text-black">
-        {profileData.find(d => d.dimension === selectedDimension)?.name}
-      </h3>
-      <p className="text-sm sm:text-base leading-relaxed text-black text-right" dir="rtl">
-        {dimensionDescriptions[selectedDimension as keyof typeof dimensionDescriptions]}
-      </p>
+interface DimensionComparisonCardsProps {
+  statistics: SurveyResponse[];
+  userResults: SurveyResult;
+}
+
+const DimensionComparisonCards: React.FC<DimensionComparisonCardsProps> = ({ statistics, userResults }) => {
+  const createDimensionComparison = () => {
+    const dimensions = ['S', 'L', 'I', 'M', 'A', 'A2'];
+    
+    return dimensions.map(dim => {
+      const dimKey = `dimension_${dim.toLowerCase()}` as keyof SurveyResponse;
+      const scores = statistics.map(s => s[dimKey] as number).filter(s => typeof s === 'number');
+      const avg = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+      
+      const userDimScore = userResults.dimensions[dim as keyof typeof userResults.dimensions].score;
+      
+      return {
+        dimension: userResults.dimensions[dim as keyof typeof userResults.dimensions].title,
+        average: Number(avg.toFixed(2)),
+        userScore: userDimScore,
+        difference: Number((userDimScore - avg).toFixed(2))
+      };
+    });
+  };
+
+  const dimensionData = createDimensionComparison();
+
+  return (
+    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      {dimensionData.map((dim, index) => (
+        <Card key={index} className="shadow-sm">
+          <CardHeader className="pb-2 px-4">
+            <CardTitle className="text-base sm:text-lg leading-tight">{dim.dimension}</CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 pb-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-xs sm:text-sm text-gray-600">הציון שלך:</span>
+                <span className="font-bold text-salima-600 text-sm sm:text-base">{dim.userScore}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs sm:text-sm text-gray-600">ממוצע כללי:</span>
+                <span className="font-medium text-sm sm:text-base">{dim.average}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs sm:text-sm text-gray-600">הפרש:</span>
+                <span className={`font-medium text-sm sm:text-base ${dim.difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {dim.difference > 0 ? '+' : ''}{dim.difference}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
-  )}
+  );
+};
 
-  {/* Color Key / Interactive Boxes */}
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mt-5 sm:mt-6 w-full max-w-2xl">
-    {profileData.map((dimension, index) => (
-      <div
-        key={index}
-        className="flex items-center gap-2 p-3 sm:p-4 rounded-lg border-2 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-        style={{
-          backgroundColor: 'white',
-          borderColor: dimension.color
-        }}
-        onClick={() => handlePieClick(dimension)}
-      >
-        <div
-          className="w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0"
-          style={{ backgroundColor: dimension.color }}
-        />
-        <div className="flex-1 min-w-0">
-          <p className="text-black font-medium truncate text-xs sm:text-sm">
-            {dimension.name}
-          </p>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-sm sm:text-base px-2">
-    גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
-    <br />
-    <span className="text-xs text-gray-600 mt-1 block">
-      לחץ על פרק או על שם הממד למידע נוסף
-    </span>
-  </div>
-</CardContent>
+export default DimensionComparisonCards;
