@@ -1,5 +1,5 @@
-// ✅ Full fixed version combining dynamic borders + interactive elements
-// All sections (chart, arcs, tooltips, clickable boxes) are intact
+// ✅ Final fix: dynamic archetype borders based on actual adjacent segments
+// Guarantees arcs align with changing slice sizes
 
 import React, { useState } from 'react';
 import { SurveyResult } from "@/lib/types";
@@ -102,22 +102,11 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     );
   };
 
+  // Use known fixed positions in DIMENSION_ORDER: [S, A, L, I, A2, M]
   const archetypeBorders = [
-    {
-      startAngle: segmentAngles.find(s => s.dimension === 'S')?.startAngle || 0,
-      endAngle: segmentAngles.find(s => s.dimension === 'A')?.endAngle || 0,
-      color: '#9C27B0'
-    },
-    {
-      startAngle: segmentAngles.find(s => s.dimension === 'L')?.startAngle || 0,
-      endAngle: segmentAngles.find(s => s.dimension === 'I')?.endAngle || 0,
-      color: '#FF9800'
-    },
-    {
-      startAngle: segmentAngles.find(s => s.dimension === 'A2')?.startAngle || 0,
-      endAngle: segmentAngles.find(s => s.dimension === 'M')?.endAngle || 0,
-      color: '#4CAF50'
-    }
+    { startAngle: segmentAngles[0].startAngle, endAngle: segmentAngles[1].endAngle, color: '#9C27B0' },
+    { startAngle: segmentAngles[2].startAngle, endAngle: segmentAngles[3].endAngle, color: '#FF9800' },
+    { startAngle: segmentAngles[4].startAngle, endAngle: segmentAngles[5].endAngle, color: '#4CAF50' }
   ];
 
   return (
