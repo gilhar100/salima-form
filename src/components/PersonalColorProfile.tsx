@@ -75,31 +75,32 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     }
   };
 
-  // Function to calculate arc path for archetype borders
+  // Function to calculate arc path for archetype borders - only covers exact pair of segments
   const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
     const centerX = 50; // percentage
     const centerY = 50; // percentage
     
-    // Convert angles to radians
+    // Convert angles to radians (subtract 90 to align with pie chart start position)
     const startRad = (startAngle - 90) * (Math.PI / 180);
     const endRad = (endAngle - 90) * (Math.PI / 180);
     
-    // Calculate coordinates
+    // Calculate start and end coordinates on the outer border
     const x1 = centerX + outerRadius * Math.cos(startRad);
     const y1 = centerY + outerRadius * Math.sin(startRad);
     const x2 = centerX + outerRadius * Math.cos(endRad);
     const y2 = centerY + outerRadius * Math.sin(endRad);
     
-    // Large arc flag for arcs > 180 degrees
-    const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+    // For 120-degree arcs (exactly 2 segments), never use large arc flag
+    const largeArcFlag = 0;
     
     return (
       <path
         d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
         fill="none"
         stroke={strokeColor}
-        strokeWidth="3"
+        strokeWidth="4"
         strokeLinecap="round"
+        opacity="0.8"
       />
     );
   };
