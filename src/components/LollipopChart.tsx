@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SurveyResult } from '@/lib/types';
-import { dimensionColors, dimensionNames } from './diverging-chart/constants';
+import { dimensionColors, dimensionNames, DIMENSION_ORDER } from './diverging-chart/constants';
 
 interface LollipopChartProps {
   result: SurveyResult;
@@ -20,7 +20,8 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
     'A2': dimensionColors.A2.strong
   };
 
-  const dimensions = Object.values(result.dimensions);
+  // Use fixed archetype order
+  const dimensions = DIMENSION_ORDER.map(key => result.dimensions[key]);
   
   // Calculate the height of each stick based on score (0-5 scale)
   const getStickHeight = (score: number) => {

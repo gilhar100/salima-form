@@ -4,7 +4,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tool
 import { dimensionInfo } from "@/data/questions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { dimensionColors } from "./diverging-chart/constants";
+import { dimensionColors, DIMENSION_ORDER } from "./diverging-chart/constants";
 
 interface ResultsRadarProps {
   result: SurveyResult;
@@ -21,38 +21,13 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
     slq
   } = result;
 
-  // הכנת הנתונים לתצוגה בגרף - using fixed colors
-  const radarData = [{
-    dimension: dimensionInfo.S.title,
-    value: dimensions.S.score,
+  // הכנת הנתונים לתצוגה בגרף - using fixed archetype order
+  const radarData = DIMENSION_ORDER.map(dimKey => ({
+    dimension: dimensionInfo[dimKey].title,
+    value: dimensions[dimKey].score,
     fullMark: 5,
-    color: dimensionColors.S.strong // Fixed color
-  }, {
-    dimension: dimensionInfo.L.title,
-    value: dimensions.L.score,
-    fullMark: 5,
-    color: dimensionColors.L.strong // Fixed color
-  }, {
-    dimension: dimensionInfo.I.title,
-    value: dimensions.I.score,
-    fullMark: 5,
-    color: dimensionColors.I.strong // Fixed color
-  }, {
-    dimension: dimensionInfo.M.title,
-    value: dimensions.M.score,
-    fullMark: 5,
-    color: dimensionColors.M.strong // Fixed color
-  }, {
-    dimension: dimensionInfo.A.title,
-    value: dimensions.A.score,
-    fullMark: 5,
-    color: dimensionColors.A.strong // Fixed color
-  }, {
-    dimension: dimensionInfo.A2.title,
-    value: dimensions.A2.score,
-    fullMark: 5,
-    color: dimensionColors.A2.strong // Fixed color
-  }];
+    color: dimensionColors[dimKey].strong
+  }));
 
   return <Card className="w-full h-full">
       <CardHeader className="pb-4">
@@ -84,10 +59,11 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
         </div>
         
         {!hideScores && <div className={`grid gap-2 mt-4 ${isMobile ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} w-full`}>
-            {Object.values(dimensions).map(dimension => {
-          const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
-          const fixedColor = baseColors.strong; // Use fixed color
-          return <div key={dimension.dimension} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
+            {DIMENSION_ORDER.map(dimKey => {
+          const dimension = dimensions[dimKey];
+          const baseColors = dimensionColors[dimKey];
+          const fixedColor = baseColors.strong;
+          return <div key={dimKey} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
             backgroundColor: baseColors.light,
             borderColor: fixedColor
           }}>

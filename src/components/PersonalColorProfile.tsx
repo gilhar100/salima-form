@@ -3,7 +3,7 @@ import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { dimensionColors } from './diverging-chart/constants';
+import { dimensionColors, DIMENSION_ORDER } from './diverging-chart/constants';
 
 interface PersonalColorProfileProps {
   result: SurveyResult;
@@ -42,44 +42,26 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     return 3;
   }
 
-  // הכנת הנתונים לתצוגה בגלגל הצבעים - ordered for proper adjacency
-  const profileData = [{
-    name: 'אסטרטגיה',
-    dimension: 'S',
-    value: getExtremeNonLinearSize(dimensions.S.score),
-    color: dimensionColors.S.strong, // Fixed color
-    originalScore: dimensions.S.score
-  }, {
-    name: 'אדפטיביות',
-    dimension: 'A',
-    value: getExtremeNonLinearSize(dimensions.A.score),
-    color: dimensionColors.A.strong, // Fixed color
-    originalScore: dimensions.A.score
-  }, {
-    name: 'למידה',
-    dimension: 'L',
-    value: getExtremeNonLinearSize(dimensions.L.score),
-    color: dimensionColors.L.strong, // Fixed color
-    originalScore: dimensions.L.score
-  }, {
-    name: 'השראה',
-    dimension: 'I',
-    value: getExtremeNonLinearSize(dimensions.I.score),
-    color: dimensionColors.I.strong, // Fixed color
-    originalScore: dimensions.I.score
-  }, {
-    name: 'אותנטיות',
-    dimension: 'A2',
-    value: getExtremeNonLinearSize(dimensions.A2.score),
-    color: dimensionColors.A2.strong, // Fixed color
-    originalScore: dimensions.A2.score
-  }, {
-    name: 'משמעות',
-    dimension: 'M',
-    value: getExtremeNonLinearSize(dimensions.M.score),
-    color: dimensionColors.M.strong, // Fixed color
-    originalScore: dimensions.M.score
-  }];
+  // הכנת הנתונים לתצוגה בגלגל הצבעים - using fixed archetype order
+  const profileData = DIMENSION_ORDER.map(dimKey => {
+    const dimension = dimensions[dimKey];
+    const hebrewNames = {
+      'S': 'אסטרטגיה',
+      'A': 'אדפטיביות', 
+      'L': 'למידה',
+      'I': 'השראה',
+      'A2': 'אותנטיות',
+      'M': 'משמעות'
+    };
+    
+    return {
+      name: hebrewNames[dimKey],
+      dimension: dimKey,
+      value: getExtremeNonLinearSize(dimension.score),
+      color: dimensionColors[dimKey].strong,
+      originalScore: dimension.score
+    };
+  });
 
   const handlePieClick = (data: any) => {
     if (data && data.dimension) {

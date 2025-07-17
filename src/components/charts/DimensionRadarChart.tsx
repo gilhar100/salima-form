@@ -1,8 +1,9 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { SurveyResult } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { dimensionNames } from "../diverging-chart/constants";
+import { dimensionNames, DIMENSION_ORDER } from "../diverging-chart/constants";
 
 interface SurveyResponse {
   id: string;
@@ -25,24 +26,17 @@ const DimensionRadarChart: React.FC<DimensionRadarChartProps> = ({ statistics, u
   const isMobile = useIsMobile();
 
   const createDimensionRadarData = () => {
-    const dimensions = [
-      { key: 'S', title: dimensionNames.S },
-      { key: 'L', title: dimensionNames.L }, 
-      { key: 'I', title: dimensionNames.I },
-      { key: 'M', title: dimensionNames.M },
-      { key: 'A', title: dimensionNames.A },
-      { key: 'A2', title: dimensionNames.A2 }
-    ];
-    
-    return dimensions.map(dim => {
-      const dimKey = `dimension_${dim.key.toLowerCase()}` as keyof SurveyResponse;
-      const scores = statistics.map(s => s[dimKey] as number).filter(s => typeof s === 'number');
+    // Use fixed archetype order
+    return DIMENSION_ORDER.map(dimKey => {
+      const dimKeyLower = dimKey.toLowerCase();
+      const dimDbKey = dimKeyLower === 'a2' ? 'dimension_a2' : `dimension_${dimKeyLower}`;
+      const scores = statistics.map(s => s[dimDbKey as keyof SurveyResponse] as number).filter(s => typeof s === 'number');
       const avg = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
       
-      const userDimScore = userResults.dimensions[dim.key as keyof typeof userResults.dimensions].score;
+      const userDimScore = userResults.dimensions[dimKey as keyof typeof userResults.dimensions].score;
       
       return {
-        dimension: dim.title,
+        dimension: dimensionNames[dimKey],
         average: Number(avg.toFixed(2)),
         userScore: userDimScore,
         fullMark: 5

@@ -1,7 +1,8 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { dimensionNames } from "./diverging-chart/constants";
+import { dimensionNames, DIMENSION_ORDER } from "./diverging-chart/constants";
 
 interface ManagerData {
   slq_score: number;
@@ -62,15 +63,12 @@ const ManagerComparisonChart: React.FC<ManagerComparisonChartProps> = ({
     SLQ: colleagueData.reduce((sum, d) => sum + d.slq_score, 0) / colleagueData.length,
   } : null;
 
-  // הכנת נתונים לגרף
-  const chartData = [
-    { dimension: `S - ${dimensionNames.S}`, manager: managerAvg?.S || 0, colleagues: colleagueAvg?.S || 0 },
-    { dimension: `L - ${dimensionNames.L}`, manager: managerAvg?.L || 0, colleagues: colleagueAvg?.L || 0 },
-    { dimension: `I - ${dimensionNames.I}`, manager: managerAvg?.I || 0, colleagues: colleagueAvg?.I || 0 },
-    { dimension: `M - ${dimensionNames.M}`, manager: managerAvg?.M || 0, colleagues: colleagueAvg?.M || 0 },
-    { dimension: `A - ${dimensionNames.A}`, manager: managerAvg?.A || 0, colleagues: colleagueAvg?.A || 0 },
-    { dimension: `A2 - ${dimensionNames.A2}`, manager: managerAvg?.A2 || 0, colleagues: colleagueAvg?.A2 || 0 },
-  ];
+  // הכנת נתונים לגרף - using fixed archetype order
+  const chartData = DIMENSION_ORDER.map(dimKey => ({
+    dimension: `${dimKey} - ${dimensionNames[dimKey]}`,
+    manager: managerAvg?.[dimKey] || 0,
+    colleagues: colleagueAvg?.[dimKey] || 0
+  }));
 
   return (
     <Card>

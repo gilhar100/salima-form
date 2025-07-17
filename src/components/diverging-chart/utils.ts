@@ -1,5 +1,5 @@
 
-import { dimensionColors } from './constants';
+import { dimensionColors, DIMENSION_ORDER } from './constants';
 
 export const getIntensityColor = (score: number, baseColors: any) => {
   // Always return the fixed strong color, ignoring score
@@ -12,12 +12,13 @@ export const getBarWidth = (score: number, personalAverage: number, maxDifferenc
 };
 
 export const sortDimensions = (dimensions: any[], personalAverage: number) => {
-  const aboveAverage = dimensions.filter(d => d.score > personalAverage);
-  const belowAverage = dimensions.filter(d => d.score < personalAverage);
+  // Use fixed archetype order instead of sorting by score
+  const orderedDimensions = DIMENSION_ORDER.map(dimKey => 
+    dimensions.find(d => d.dimension === dimKey)
+  ).filter(Boolean);
   
-  // Sort by difference from average for better visual hierarchy
-  aboveAverage.sort((a, b) => (b.score - personalAverage) - (a.score - personalAverage));
-  belowAverage.sort((a, b) => (personalAverage - a.score) - (personalAverage - b.score));
+  const aboveAverage = orderedDimensions.filter(d => d.score > personalAverage);
+  const belowAverage = orderedDimensions.filter(d => d.score < personalAverage);
   
   return { aboveAverage, belowAverage };
 };

@@ -36,15 +36,6 @@ export const dimensionColors = {
     primary: '#EC407A',
     light: '#FCE4EC'
   },
-  'M': {
-    strongest: '#8D6E63',
-    strong: '#8D6E63',
-    medium: '#8D6E63',
-    weak: '#8D6E63',
-    weakest: '#8D6E63',
-    primary: '#8D6E63',
-    light: '#EFEBE9'
-  },
   'A2': {
     strongest: '#26C6DA',
     strong: '#26C6DA',
@@ -53,6 +44,15 @@ export const dimensionColors = {
     weakest: '#26C6DA',
     primary: '#26C6DA',
     light: '#E0F7FA'
+  },
+  'M': {
+    strongest: '#8D6E63',
+    strong: '#8D6E63',
+    medium: '#8D6E63',
+    weak: '#8D6E63',
+    weakest: '#8D6E63',
+    primary: '#8D6E63',
+    light: '#EFEBE9'
   }
 };
 
@@ -61,6 +61,9 @@ export const dimensionNames = {
   'A': 'אדפטיביות',
   'L': 'למידה',
   'I': 'השראה',
-  'M': 'משמעות',
-  'A2': 'אותנטיות'
+  'A2': 'אותנטיות',
+  'M': 'משמעות'
 };
+
+// Fixed archetype-aligned order for consistent display across all visualizations
+export const DIMENSION_ORDER = ['S', 'A', 'L', 'I', 'A2', 'M'] as const;
