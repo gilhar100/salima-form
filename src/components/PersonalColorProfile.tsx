@@ -88,19 +88,18 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     { dimensions: ['M', 'A2'], color: '#4CAF50', name: 'המנהל המעצים' }
   ];
 
-  // Calculate borders for each archetype group
-  const archetypeBorders = archetypeGroups.map(group => {
-    // Find indices of the two dimensions in our ordered array
-    const indices = group.dimensions.map(dim => 
-      segmentAngles.findIndex(seg => seg.dimension === dim)
-    ).filter(idx => idx !== -1);
+  // Calculate borders for each archetype group - since pairs are now adjacent
+  const archetypeBorders = archetypeGroups.map((group, groupIndex) => {
+    // Each group spans 2 consecutive dimensions
+    const startIndex = groupIndex * 2;
+    const endIndex = startIndex + 1;
     
-    if (indices.length !== 2) return null;
+    if (startIndex >= segmentAngles.length || endIndex >= segmentAngles.length) {
+      return null;
+    }
     
-    // Get the start angle of the first dimension and end angle of the second
-    const [firstIdx, secondIdx] = indices.sort((a, b) => a - b);
-    const startAngle = segmentAngles[firstIdx].startAngle;
-    const endAngle = segmentAngles[secondIdx].endAngle;
+    const startAngle = segmentAngles[startIndex].startAngle;
+    const endAngle = segmentAngles[endIndex].endAngle;
     
     return {
       startAngle,
