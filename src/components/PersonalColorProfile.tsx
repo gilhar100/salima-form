@@ -9,14 +9,11 @@ interface PersonalColorProfileProps {
   result: SurveyResult;
 }
 
-const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
-  result
-}) => {
+const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) => {
   const isMobile = useIsMobile();
   const [selectedDimension, setSelectedDimension] = useState<string | null>(null);
   const { dimensions } = result;
 
-  // Dimension descriptions in Hebrew
   const dimensionDescriptions = {
     'S': 'היכולת לראות את התמונה הגדולה, לזהות הזדמנויות במצבים משתנים, ולפעול מתוך חזון ברור ולא רק מתוך תגובה למציאות הנוכחית. מנהלים עם ממד אסטרטגי גבוה מתמקדים באפקטיביות לטווח ארוך.',
     'A': 'גמישות מחשבתית והתנהגותית, היכולת להסתגל במהירות לשינויים, להתמודד עם אי-ודאות ולפעול ביצירתיות גם במצבי קצה. ממד זה קשור לחוסן ולקבלת שינוי כהזדמנות.',
@@ -26,7 +23,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     'A2': 'שקיפות, יושרה ויכולת להביא את עצמך באופן כן ומדויק גם במצבי לחץ. ממד זה עוסק בכנות, אמפתיה, ובחיבור בין העולם הפנימי שלך להתנהלותך המקצועית.'
   };
 
-  // פונקציה לסקיילה לא ליניארית - keep the size calculation but use fixed colors
   function getExtremeNonLinearSize(score: number): number {
     const normalizedScore = Math.max(0, Math.min(5, score));
     if (normalizedScore >= 4.8) return 100;
@@ -42,18 +38,17 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     return 3;
   }
 
-  // הכנת הנתונים לתצוגה בגלגל הצבעים - using fixed archetype order
-  const profileData = DIMENSION_ORDER.map(dimKey => {
+  const hebrewNames = {
+    'S': 'אסטרטגיה',
+    'A': 'אדפטיביות',
+    'L': 'למידה',
+    'I': 'השראה',
+    'A2': 'אותנטיות',
+    'M': 'משמעות'
+  };
+
+  const profileData = DIMENSION_ORDER.map((dimKey) => {
     const dimension = dimensions[dimKey];
-    const hebrewNames = {
-      'S': 'אסטרטגיה',
-      'A': 'אדפטיביות', 
-      'L': 'למידה',
-      'I': 'השראה',
-      'A2': 'אותנטיות',
-      'M': 'משמעות'
-    };
-    
     return {
       name: hebrewNames[dimKey],
       dimension: dimKey,
@@ -75,27 +70,31 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     }
   };
 
-  // Function to calculate arc path for archetype borders - only covers exact pair of segments
+  const getSegmentAngles = (startIndex: number, segmentCount: number) => {
+    const baseAngle = 360 / profileData.length;
+    const startAngle = baseAngle * startIndex + 1;
+    const endAngle = baseAngle * (startIndex + segmentCount) - 1;
+    return { startAngle, endAngle };
+  };
+
+  const archetypeBorders = [
+    { ...getSegmentAngles(0, 2), color: '#9C27B0' },
+    { ...getSegmentAngles(2, 2), color: '#FF9800' },
+    { ...getSegmentAngles(4, 2), color: '#4CAF50' }
+  ];
+
   const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
-    const centerX = 50; // percentage
-    const centerY = 50; // percentage
-    
-    // Convert angles to radians (subtract 90 to align with pie chart start position)
+    const centerX = 50;
+    const centerY = 50;
     const startRad = (startAngle - 90) * (Math.PI / 180);
     const endRad = (endAngle - 90) * (Math.PI / 180);
-    
-    // Calculate start and end coordinates on the outer border
     const x1 = centerX + outerRadius * Math.cos(startRad);
     const y1 = centerY + outerRadius * Math.sin(startRad);
     const x2 = centerX + outerRadius * Math.cos(endRad);
     const y2 = centerY + outerRadius * Math.sin(endRad);
-    
-    // For 120-degree arcs (exactly 2 segments), never use large arc flag
-    const largeArcFlag = 0;
-    
     return (
       <path
-        d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${x2} ${y2}`}
+        d={`M ${x1} ${y1} A ${outerRadius} ${outerRadius} 0 0 1 ${x2} ${y2}`}
         fill="none"
         stroke={strokeColor}
         strokeWidth="4"
@@ -104,31 +103,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
       />
     );
   };
-
-  // Calculate angles for each archetype pair accounting for padding
-  const segmentAngle = 360 / 6; // 60 degrees per segment
-  const paddingAngle = 2; // matches paddingAngle in PieChart
-  
-  const archetypeBorders = [
-    // מנהל ההזדמנות: Strategy (S) and Adaptive (A) - positions 0,1
-    { 
-      startAngle: paddingAngle / 2, 
-      endAngle: (2 * segmentAngle) - (paddingAngle / 2), 
-      color: '#9C27B0' 
-    },
-    // המנהל הסקרן: Learning (L) and Inspiration (I) - positions 2,3
-    { 
-      startAngle: (2 * segmentAngle) + (paddingAngle / 2), 
-      endAngle: (4 * segmentAngle) - (paddingAngle / 2), 
-      color: '#FF9800' 
-    },
-    // המנהל המעצים: Authentic (A2) and Meaning (M) - positions 4,5
-    { 
-      startAngle: (4 * segmentAngle) + (paddingAngle / 2), 
-      endAngle: (6 * segmentAngle) - (paddingAngle / 2), 
-      color: '#4CAF50' 
-    }
-  ];
 
   return (
     <Card className="w-full">
@@ -163,7 +137,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value, name, props) => [name, '']} 
+                formatter={(value, name) => [name, '']} 
                 labelFormatter={() => ''} 
                 contentStyle={{
                   backgroundColor: 'white',
@@ -174,8 +148,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
               />
             </PieChart>
           </ResponsiveContainer>
-          
-          {/* Archetype borders overlay */}
+
           <svg 
             className="absolute inset-0 w-full h-full pointer-events-none"
             viewBox="0 0 100 100"
@@ -185,53 +158,11 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
               createArchetypeBorder(
                 border.startAngle, 
                 border.endAngle, 
-                isMobile ? 35 : 37.5, // Slightly larger than pie outerRadius
+                isMobile ? 35 : 37.5,
                 border.color
               )
             )}
           </svg>
-        </div>
-        
-        {/* Tooltip/Description Box */}
-        {selectedDimension && (
-          <div className="mt-4 p-4 bg-white border-2 rounded-lg shadow-lg max-w-2xl w-full" 
-               style={{ borderColor: profileData.find(d => d.dimension === selectedDimension)?.color }}>
-            <h3 className="font-bold text-lg mb-3 text-center text-black">
-              {profileData.find(d => d.dimension === selectedDimension)?.name}
-            </h3>
-            <p className="text-sm sm:text-base leading-relaxed text-black text-right" dir="rtl">
-              {dimensionDescriptions[selectedDimension as keyof typeof dimensionDescriptions]}
-            </p>
-          </div>
-        )}
-        
-        {/* מקרא צבעים עם נראות משופרת */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mt-3 sm:mt-4 w-full max-w-2xl">
-          {profileData.map((dimension, index) => (
-            <div 
-              key={index} 
-              className="flex items-center gap-2 p-2 sm:p-3 rounded-lg border-2 shadow-sm cursor-pointer hover:shadow-md transition-shadow" 
-              style={{
-                backgroundColor: 'white',
-                borderColor: dimension.color
-              }}
-              onClick={() => handlePieClick(dimension)}
-            >
-              <div className="w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0" 
-                   style={{ backgroundColor: dimension.color }} />
-              <div className="flex-1 min-w-0">
-                <p className="text-black font-medium truncate text-xs sm:text-sm">
-                  {dimension.name}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-        
-        <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-sm sm:text-base px-2">
-          גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
-          <br />
-          <span className="text-xs text-gray-600 mt-1 block">לחץ על פרק או על שם הממד למידע נוסף</span>
         </div>
       </CardContent>
     </Card>
