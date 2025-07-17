@@ -42,13 +42,12 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     const dimension = dimensions[dimKey];
     const hebrewNames = {
       'S': 'אסטרטגיה',
-      'A': 'אדפטיביות', 
+      'A': 'אדפטיביות',
       'L': 'למידה',
       'I': 'השראה',
       'A2': 'אותנטיות',
       'M': 'משמעות'
     };
-
     return {
       name: hebrewNames[dimKey],
       dimension: dimKey,
@@ -70,6 +69,15 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     }
   };
 
+  const archetypeColorMap: Record<string, string> = {
+    S: '#9C27B0',
+    A: '#9C27B0',
+    L: '#FF9800',
+    I: '#FF9800',
+    A2: '#4CAF50',
+    M: '#4CAF50'
+  };
+
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
   const segmentAngles = profileData.map(item => {
@@ -83,6 +91,12 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
+  const archetypeBorders = segmentAngles.map(({ dimension, startAngle, endAngle }) => ({
+    startAngle,
+    endAngle,
+    color: archetypeColorMap[dimension]
+  }));
+
   const createArchetypeBorder = (startAngle: number, endAngle: number, outerRadius: number, strokeColor: string) => {
     const centerX = 50;
     const centerY = 50;
@@ -93,6 +107,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     const x2 = centerX + outerRadius * Math.cos(endRad);
     const y2 = centerY + outerRadius * Math.sin(endRad);
     const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+
     return (
       <path
         key={`border-${startAngle}-${endAngle}`}
@@ -104,26 +119,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
       />
     );
   };
-
-  const getAngleByDimension = (dim: string) => segmentAngles.find(d => d.dimension === dim);
-
-  const archetypeBorders = [
-    {
-      startAngle: getAngleByDimension('S')?.startAngle || 0,
-      endAngle: getAngleByDimension('A')?.endAngle || 0,
-      color: '#9C27B0'
-    },
-    {
-      startAngle: getAngleByDimension('L')?.startAngle || 0,
-      endAngle: getAngleByDimension('I')?.endAngle || 0,
-      color: '#FF9800'
-    },
-    {
-      startAngle: getAngleByDimension('A2')?.startAngle || 0,
-      endAngle: getAngleByDimension('M')?.endAngle || 0,
-      color: '#4CAF50'
-    }
-  ];
 
   return (
     <Card className="w-full">
@@ -158,7 +153,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value, name, props) => [name, '']} 
+                formatter={(value, name) => [name, '']} 
                 labelFormatter={() => ''} 
                 contentStyle={{
                   backgroundColor: 'white',
@@ -178,7 +173,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
               createArchetypeBorder(
                 border.startAngle, 
                 border.endAngle, 
-                isMobile ? 37 : 39,
+                isMobile ? 37 : 39, 
                 border.color
               )
             )}
