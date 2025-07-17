@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { SurveyResult } from '@/lib/types';
+import { dimensionColors, dimensionNames } from './diverging-chart/constants';
 
 interface LollipopChartProps {
   result: SurveyResult;
@@ -9,24 +10,14 @@ interface LollipopChartProps {
 const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
   const personalAverage = result.slq;
 
-  // Updated SALIMA color palette
-  const dimensionColors = {
-    'S': '#FD0100', // אסטרטגיה - red
-    'A': '#2FA236', // אדפטיביות - green
-    'L': '#333ED4', // למידה - blue
-    'I': '#F76915', // השראה - orange
-    'M': '#BF4ED6', // משמעות - purple
-    'A2': '#EEDE04' // אותנטיות - yellow
-  };
-
-  // Dimension names in Hebrew - Fixed names
-  const dimensionNames = {
-    'S': 'אסטרטגיה',
-    'A': 'אדפטיביות',
-    'L': 'למידה',
-    'I': 'השראה',
-    'M': 'משמעות',
-    'A2': 'אותנטיות'
+  // Primary colors for each dimension
+  const primaryColors = {
+    'S': dimensionColors.S.strong,
+    'A': dimensionColors.A.strong,
+    'L': dimensionColors.L.strong,
+    'I': dimensionColors.I.strong,
+    'M': dimensionColors.M.strong,
+    'A2': dimensionColors.A2.strong
   };
 
   const dimensions = Object.values(result.dimensions);
@@ -54,7 +45,7 @@ const LollipopChart: React.FC<LollipopChartProps> = ({ result }) => {
       {/* Vertical lollipop chart */}
       <div className="flex items-end justify-center gap-8 mb-6" style={{ height: '220px' }}>
         {dimensions.map((dimension) => {
-          const color = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
+          const color = primaryColors[dimension.dimension as keyof typeof primaryColors];
           const hebrewName = dimensionNames[dimension.dimension as keyof typeof dimensionNames];
           const stickHeight = getStickHeight(dimension.score);
           

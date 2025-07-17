@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { SurveyResult } from "@/lib/types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { dimensionNames } from "../diverging-chart/constants";
 
 interface SurveyResponse {
   id: string;
@@ -26,12 +26,12 @@ const DimensionRadarChart: React.FC<DimensionRadarChartProps> = ({ statistics, u
 
   const createDimensionRadarData = () => {
     const dimensions = [
-      { key: 'S', title: 'אסטרטגיה' },
-      { key: 'L', title: 'למידה' }, 
-      { key: 'I', title: 'השראה' },
-      { key: 'M', title: 'משמעות' },
-      { key: 'A', title: 'אדפטיביות' },
-      { key: 'A2', title: 'אותנטיות' }
+      { key: 'S', title: dimensionNames.S },
+      { key: 'L', title: dimensionNames.L }, 
+      { key: 'I', title: dimensionNames.I },
+      { key: 'M', title: dimensionNames.M },
+      { key: 'A', title: dimensionNames.A },
+      { key: 'A2', title: dimensionNames.A2 }
     ];
     
     return dimensions.map(dim => {

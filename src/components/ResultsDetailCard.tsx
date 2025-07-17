@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { DimensionResult } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import ColorIntensityBar from "./ColorIntensityBar";
+import { dimensionColors } from "./diverging-chart/constants";
 
 interface ResultsDetailCardProps {
   dimension: DimensionResult;
@@ -47,20 +48,6 @@ const ResultsDetailCard = ({
   insight,
   isLoadingInsight
 }: ResultsDetailCardProps) => {
-  // Updated SALIMA color palette
-  const dimensionColors = {
-    'S': '#FD0100',
-    // אסטרטגיה - red
-    'A': '#2FA236',
-    // אדפטיביות - green
-    'L': '#333ED4',
-    // למידה - blue
-    'I': '#F76915',
-    // השראה - orange
-    'M': '#BF4ED6',
-    // משמעות - purple
-    'A2': '#EEDE04' // אותנטיות - yellow
-  };
   
   const getIntensityColor = (score: number) => {
     if (score >= 4.5) return "bg-green-500";
@@ -91,7 +78,8 @@ const ResultsDetailCard = ({
   };
   
   const getDimensionColor = (dimension: string) => {
-    return dimensionColors[dimension as keyof typeof dimensionColors] || '#FD0100';
+    const colors = dimensionColors[dimension as keyof typeof dimensionColors];
+    return colors ? colors.strong : '#DC2626';
   };
   
   return <Card className="h-full">

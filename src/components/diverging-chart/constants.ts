@@ -1,46 +1,46 @@
 
 export const dimensionColors = {
   'S': {
-    strongest: '#B30000',
-    strong: '#FD0100',
-    medium: '#FF4D4D',
-    weak: '#FF9999',
-    weakest: '#FFE6E6'
-  },
-  'L': {
-    strongest: '#0000B3',
-    strong: '#333ED4',
-    medium: '#6666FF',
-    weak: '#9999FF',
-    weakest: '#E6E6FF'
-  },
-  'I': {
-    strongest: '#CC4400',
-    strong: '#F76915',
-    medium: '#FF8533',
-    weak: '#FFAA66',
-    weakest: '#FFE6CC'
-  },
-  'M': {
-    strongest: '#8A3399',
-    strong: '#BF4ED6',
-    medium: '#CC66E0',
-    weak: '#DD99E6',
-    weakest: '#F5E6FF'
+    strongest: '#DC2626',
+    strong: '#EF4444',
+    medium: '#F87171',
+    weak: '#FCA5A5',
+    weakest: '#FEE2E2'
   },
   'A': {
-    strongest: '#1F6B1F',
-    strong: '#2FA236',
-    medium: '#5CB85C',
-    weak: '#90EE90',
-    weakest: '#E6FFE6'
+    strongest: '#1D4ED8',
+    strong: '#3B82F6',
+    medium: '#60A5FA',
+    weak: '#93C5FD',
+    weakest: '#DBEAFE'
+  },
+  'L': {
+    strongest: '#CA8A04',
+    strong: '#EAB308',
+    medium: '#FACC15',
+    weak: '#FDE047',
+    weakest: '#FEFCE8'
+  },
+  'I': {
+    strongest: '#BE185D',
+    strong: '#EC4899',
+    medium: '#F472B6',
+    weak: '#F9A8D4',
+    weakest: '#FCE7F3'
+  },
+  'M': {
+    strongest: '#92400E',
+    strong: '#D97706',
+    medium: '#F59E0B',
+    weak: '#FBBF24',
+    weakest: '#FEF3C7'
   },
   'A2': {
-    strongest: '#B8B800',
-    strong: '#EEDE04',
-    medium: '#F0E833',
-    weak: '#F5F566',
-    weakest: '#FFFACD'
+    strongest: '#0F766E',
+    strong: '#14B8A6',
+    medium: '#2DD4BF',
+    weak: '#7DD3FC',
+    weakest: '#E6FFFA'
   }
 };
 

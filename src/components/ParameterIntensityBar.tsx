@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { dimensionColors } from './ResultsRadar';
+import { dimensionColors } from './diverging-chart/constants';
 
 interface ParameterIntensityBarProps {
   score: number;
@@ -13,18 +13,9 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
   parameterKey,
   parameterName
 }) => {
-  // Updated color mapping for new palette
-  const updatedDimensionColors = {
-    S: { primary: '#FD0100' },
-    L: { primary: '#333ED4' },
-    I: { primary: '#F76915' },
-    M: { primary: '#BF4ED6' },
-    A: { primary: '#2FA236' },
-    A2: { primary: '#EEDE04' }
-  };
-
   // Get the base color for this parameter
-  const baseColors = updatedDimensionColors[parameterKey as keyof typeof updatedDimensionColors] || { primary: '#FD0100' };
+  const baseColors = dimensionColors[parameterKey as keyof typeof dimensionColors];
+  const primaryColor = baseColors ? baseColors.strong : '#DC2626';
   
   // Calculate opacity based on score (1-5 scale) for intensity effect
   const intensity = Math.min(Math.max(score / 5, 0.2), 1);
@@ -42,7 +33,7 @@ const ParameterIntensityBar: React.FC<ParameterIntensityBarProps> = ({
           <div 
             className="h-full w-full rounded-full"
             style={{ 
-              background: `linear-gradient(to right, ${baseColors.primary}20, ${baseColors.primary}FF)`
+              background: `linear-gradient(to right, ${primaryColor}20, ${primaryColor}FF)`
             }}
           />
           

@@ -1,70 +1,15 @@
+
 import { SurveyResult, Dimension } from "@/lib/types";
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { dimensionInfo } from "@/data/questions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { dimensionColors } from "./diverging-chart/constants";
+
 interface ResultsRadarProps {
   result: SurveyResult;
   hideScores?: boolean;
 }
-
-// Updated SALIMA color palette with intensity levels
-export const dimensionColors = {
-  S: {
-    strongest: "#B30000",
-    strong: "#FD0100",
-    medium: "#FF4D4D",
-    weak: "#FF9999",
-    weakest: "#FFE6E6",
-    light: "#FFF5F5",
-    primary: "#FD0100"
-  },
-  L: {
-    strongest: "#0000B3",
-    strong: "#333ED4",
-    medium: "#6666FF",
-    weak: "#9999FF",
-    weakest: "#E6E6FF",
-    light: "#F5F5FF",
-    primary: "#333ED4"
-  },
-  I: {
-    strongest: "#CC4400",
-    strong: "#F76915",
-    medium: "#FF8533",
-    weak: "#FFAA66",
-    weakest: "#FFE6CC",
-    light: "#FFF8F0",
-    primary: "#F76915"
-  },
-  M: {
-    strongest: "#8A3399",
-    strong: "#BF4ED6",
-    medium: "#CC66E0",
-    weak: "#DD99E6",
-    weakest: "#F5E6FF",
-    light: "#FCF7FF",
-    primary: "#BF4ED6"
-  },
-  A: {
-    strongest: "#1F6B1F",
-    strong: "#2FA236",
-    medium: "#5CB85C",
-    weak: "#90EE90",
-    weakest: "#E6FFE6",
-    light: "#F0FFF0",
-    primary: "#2FA236"
-  },
-  A2: {
-    strongest: "#B8B800",
-    strong: "#EEDE04",
-    medium: "#F0E833",
-    weak: "#F5F566",
-    weakest: "#FFFACD",
-    light: "#FEFEF0",
-    primary: "#EEDE04"
-  }
-};
 
 // פונקציה לקבלת עוצמת צבע בהתאם לציון
 const getColorIntensity = (score: number, baseColors: any) => {
@@ -75,6 +20,7 @@ const getColorIntensity = (score: number, baseColors: any) => {
   if (normalizedScore >= 0.35) return baseColors.weak;
   return baseColors.weakest;
 };
+
 const ResultsRadar: React.FC<ResultsRadarProps> = ({
   result,
   hideScores = false
@@ -117,6 +63,7 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
     fullMark: 5,
     color: getColorIntensity(dimensions.A2.score, dimensionColors.A2)
   }];
+
   return <Card className="w-full h-full">
       <CardHeader className="pb-4">
         <CardTitle className="text-center text-lg sm:text-xl leading-tight">פרופיל מנהיגות SALIMA</CardTitle>
@@ -151,7 +98,7 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
           const baseColors = dimensionColors[dimension.dimension as keyof typeof dimensionColors];
           const intensityColor = getColorIntensity(dimension.score, baseColors);
           return <div key={dimension.dimension} className="text-center p-2 sm:p-3 border-2 rounded-lg transition-colors" style={{
-            backgroundColor: baseColors.light,
+            backgroundColor: baseColors.weakest,
             borderColor: intensityColor
           }}>
                   <p className="font-semibold text-xs sm:text-sm leading-tight">{dimension.title}</p>
@@ -166,4 +113,5 @@ const ResultsRadar: React.FC<ResultsRadarProps> = ({
       </CardContent>
     </Card>;
 };
+
 export default ResultsRadar;

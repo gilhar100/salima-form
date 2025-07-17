@@ -4,6 +4,7 @@ import { SurveyResult } from "@/lib/types";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { dimensionColors } from './diverging-chart/constants';
 
 interface PersonalColorProfileProps {
   result: SurveyResult;
@@ -15,52 +16,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
   const isMobile = useIsMobile();
   const [selectedDimension, setSelectedDimension] = useState<string | null>(null);
   const { dimensions } = result;
-
-  // Updated SALIMA color palette
-  const dimensionColors = {
-    'S': {
-      strongest: '#B30000',
-      strong: '#FD0100',
-      medium: '#FF4D4D',
-      weak: '#FF9999',
-      weakest: '#FFE6E6'
-    },
-    'L': {
-      strongest: '#0000B3',
-      strong: '#333ED4',
-      medium: '#6666FF',
-      weak: '#9999FF',
-      weakest: '#E6E6FF'
-    },
-    'I': {
-      strongest: '#CC4400',
-      strong: '#F76915',
-      medium: '#FF8533',
-      weak: '#FFAA66',
-      weakest: '#FFE6CC'
-    },
-    'M': {
-      strongest: '#8A3399',
-      strong: '#BF4ED6',
-      medium: '#CC66E0',
-      weak: '#DD99E6',
-      weakest: '#F5E6FF'
-    },
-    'A': {
-      strongest: '#1F6B1F',
-      strong: '#2FA236',
-      medium: '#5CB85C',
-      weak: '#90EE90',
-      weakest: '#E6FFE6'
-    },
-    'A2': {
-      strongest: '#B8B800',
-      strong: '#EEDE04',
-      medium: '#F0E833',
-      weak: '#F5F566',
-      weakest: '#FFFACD'
-    }
-  };
 
   // Dimension descriptions in Hebrew
   const dimensionDescriptions = {
@@ -98,13 +53,19 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     return 3;
   }
 
-  // הכנת הנתונים לתצוגה בגלגל הצבעים
+  // הכנת הנתונים לתצוגה בגלגל הצבעים - ordered for proper adjacency
   const profileData = [{
     name: 'אסטרטגיה',
     dimension: 'S',
     value: getExtremeNonLinearSize(dimensions.S.score),
     color: getIntensityColor(dimensions.S.score, dimensionColors.S),
     originalScore: dimensions.S.score
+  }, {
+    name: 'אדפטיביות',
+    dimension: 'A',
+    value: getExtremeNonLinearSize(dimensions.A.score),
+    color: getIntensityColor(dimensions.A.score, dimensionColors.A),
+    originalScore: dimensions.A.score
   }, {
     name: 'למידה',
     dimension: 'L',
@@ -118,23 +79,17 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({
     color: getIntensityColor(dimensions.I.score, dimensionColors.I),
     originalScore: dimensions.I.score
   }, {
-    name: 'משמעות',
-    dimension: 'M',
-    value: getExtremeNonLinearSize(dimensions.M.score),
-    color: getIntensityColor(dimensions.M.score, dimensionColors.M),
-    originalScore: dimensions.M.score
-  }, {
-    name: 'אדפטיביות',
-    dimension: 'A',
-    value: getExtremeNonLinearSize(dimensions.A.score),
-    color: getIntensityColor(dimensions.A.score, dimensionColors.A),
-    originalScore: dimensions.A.score
-  }, {
     name: 'אותנטיות',
     dimension: 'A2',
     value: getExtremeNonLinearSize(dimensions.A2.score),
     color: getIntensityColor(dimensions.A2.score, dimensionColors.A2),
     originalScore: dimensions.A2.score
+  }, {
+    name: 'משמעות',
+    dimension: 'M',
+    value: getExtremeNonLinearSize(dimensions.M.score),
+    color: getIntensityColor(dimensions.M.score, dimensionColors.M),
+    originalScore: dimensions.M.score
   }];
 
   const handlePieClick = (data: any) => {
