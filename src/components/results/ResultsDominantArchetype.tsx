@@ -43,10 +43,8 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const currentArchetype = archetypes[currentIndex];
   const isDominant = currentArchetype.name === dominantArchetype;
 
-  if (!dominantArchetype) {
-    console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
-    return null;
-  }
+  // Always render the component, even if no dominant archetype is set
+  console.log('ResultsDominantArchetype - Component will render with archetype:', dominantArchetype);
 
   return (
     <div className="mb-6" dir="rtl">
