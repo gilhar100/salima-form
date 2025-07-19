@@ -30,23 +30,37 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   ];
 
   // Find the index of the dominant archetype
-  const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+  const dominantIndex = dominantArchetype ? 
+    archetypes.findIndex(arch => arch.name === dominantArchetype) : -1;
+  
+  console.log('Dominant archetype search:', {
+    dominantArchetype,
+    dominantIndex,
+    archetypeNames: archetypes.map(a => a.name)
+  });
   
   // Set initial state to dominant archetype if found, otherwise default to first archetype
-  const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    const initialIndex = dominantIndex !== -1 ? dominantIndex : 0;
+    console.log('Setting initial currentIndex to:', initialIndex);
+    return initialIndex;
+  });
 
   // Update current index when dominantArchetype prop changes
   useEffect(() => {
+    console.log('useEffect triggered - dominantArchetype changed to:', dominantArchetype);
     if (dominantArchetype) {
       const newDominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+      console.log('Found new dominant index:', newDominantIndex);
       if (newDominantIndex !== -1) {
+        console.log('Updating currentIndex from', currentIndex, 'to', newDominantIndex);
         setCurrentIndex(newDominantIndex);
       }
     }
   }, [dominantArchetype]);
 
   const currentArchetype = archetypes[currentIndex];
-  const isDominant = currentArchetype.name === dominantArchetype;
+  const isDominant = dominantArchetype && currentArchetype.name === dominantArchetype;
 
   console.log('Component state:', {
     dominantIndex,
