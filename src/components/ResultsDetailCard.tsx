@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DimensionResult } from "@/lib/types";
@@ -50,18 +49,14 @@ const ResultsDetailCard = ({
 }: ResultsDetailCardProps) => {
   
   const getIntensityColor = (score: number) => {
-    if (score >= 4.5) return "bg-green-500";
-    if (score >= 4.0) return "bg-green-400";
+    if (score >= 4.0) return "bg-green-500";
     if (score >= 3.5) return "bg-yellow-400";
-    if (score >= 3.0) return "bg-orange-400";
     return "bg-red-400";
   };
   
   const getIntensityText = (score: number) => {
-    if (score >= 4.5) return "מצוין";
     if (score >= 4.0) return "חזק";
-    if (score >= 3.5) return "בינוני";
-    if (score >= 3.0) return "מתפתח";
+    if (score >= 3.5) return "מתפתח";
     return "לפיתוח";
   };
   
