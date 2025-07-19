@@ -14,33 +14,41 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const archetypes = [
     {
+      name: "המנהל הסקרן",
+      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי.",
+      icon: Crown,
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
+      lightBg: "#FFF3E0"
+    },
+    {
       name: "מנהל ההזדמנות",
-      description: "מאופיין בחשיבה רחבה, יוזמה ותגובה מהירה לשינויים. רואה את המפה הארגונית ומתמרן בה בגמישות ובחזון. יודע לזהות מגמות, לקרוא את הסביבה ולהוביל תהליכים גם בתנאים של חוסר ודאות.",
+      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים.",
       icon: Lightbulb,
-      color: "#3B82F6",
-      bgColor: "bg-blue-500"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      lightBg: "#F3E5F5"
     },
     {
       name: "המנהל המעצים",
-      description: "פועל מתוך חיבור לערכים ולתחושת שליחות. משדר אותנטיות, יוצר מרחב בטוח לצוות, ונותן משמעות לעשייה היומיומית. טיפוס שמעודד מעורבות, אמון וצמיחה אנושית אמיתית.",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
       icon: Users,
-      color: "#10B981",
-      bgColor: "bg-emerald-500"
-    },
-    {
-      name: "המנהל הסקרן",
-      description: "לומד כל הזמן, שואל שאלות ומעודד חדשנות. מעורר השראה דרך ההתלהבות מהעתיד ומהאפשרי. מנהיג שמקדם שינוי באמצעות ידע, רעיונות ודמיון יצירתי, וגורם לסביבה שלו לרצות להתפתח.",
-      icon: Crown,
-      color: "#F59E0B",
-      bgColor: "bg-amber-500"
+      color: "text-green-700",
+      bgColor: "bg-green-50",
+      lightBg: "#E8F5E9"
     }
   ];
 
   // Find the dominant archetype or default to first one
   const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
   const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
+  const [showCarousel, setShowCarousel] = useState(false);
 
   const currentArchetype = archetypes[currentIndex];
+
+  const cycleArchetype = () => {
+    setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
+  };
 
   if (!dominantArchetype) {
     console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
@@ -48,63 +56,57 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   }
 
   const IconComponent = currentArchetype.icon;
+  const isDominant = currentArchetype.name === dominantArchetype;
 
   return (
-    <div className="mb-6 space-y-4" dir="rtl">
-      {/* Main colored block */}
-      <div 
-        className="w-full rounded-xl p-6 text-center shadow-lg"
-        style={{ backgroundColor: currentArchetype.color }}
-      >
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <IconComponent className="w-8 h-8 text-white" />
-          <h2 className="text-white font-bold text-2xl lg:text-3xl">
-            {currentArchetype.name}
+    <Card 
+      className={`mb-3 sm:mb-4 lg:mb-6 border-2 shadow-lg rounded-xl transition-all duration-300 ${
+        isDominant ? 'border-gray-300' : 'border-gray-200'
+      } relative`} 
+      style={{ backgroundColor: currentArchetype.lightBg }}
+      dir="rtl"
+    >
+      <CardContent className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        {/* Subtle toggle link in top-right corner */}
+        <button
+          onClick={cycleArchetype}
+          className="absolute top-4 right-4 text-sm text-gray-600 hover:opacity-80 transition-opacity cursor-pointer"
+          style={{ direction: 'rtl' }}
+        >
+          לחץ כאן כדי לראות את סגנונות הניהול השונים
+        </button>
+
+        <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
+          {/* Title */}
+          <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
+            סגנון ניהולי דומיננטי
           </h2>
-        </div>
-        <p className="text-white/90 text-sm lg:text-base">
-          הארכיטיפ הדומיננטי שלך
-        </p>
-      </div>
-
-      {/* Toggle tabs */}
-      <div className="flex justify-center">
-        <div className="inline-flex rounded-lg bg-gray-100 p-1">
-          {archetypes.map((archetype, index) => (
-            <button
-              key={archetype.name}
-              onClick={() => setCurrentIndex(index)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                currentIndex === index
-                  ? 'text-white shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-              style={{
-                backgroundColor: currentIndex === index ? archetype.color : 'transparent'
-              }}
-            >
-              {archetype.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Description paragraph */}
-      <Card className="border-2 shadow-sm">
-        <CardContent className="p-6">
-          <p className="text-black leading-relaxed text-right text-base lg:text-lg" style={{ lineHeight: '1.7' }}>
+          
+          {/* Archetype Name with Icon - Ensure proper RTL alignment */}
+          <div className="flex items-center gap-2 sm:gap-3" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
+            <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${currentArchetype.color}`} />
+            <h3 className="text-black font-bold text-right text-base sm:text-lg lg:text-xl">
+              {currentArchetype.name}
+            </h3>
+            {isDominant && (
+              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
+                דומיננטי
+              </span>
+            )}
+          </div>
+          
+          {/* Description */}
+          <p className="text-black leading-relaxed text-right text-sm sm:text-base lg:text-lg" style={{ lineHeight: '1.6' }}>
             {currentArchetype.description}
           </p>
           
-          {/* Clarification note */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <p className="text-gray-600 leading-relaxed text-right text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
-              חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          {/* Clarification Paragraph */}
+          <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
+            חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
