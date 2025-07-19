@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -8,6 +9,8 @@ interface ResultsDominantArchetypeProps {
 const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   dominantArchetype
 }) => {
+  console.log('ResultsDominantArchetype rendering with dominantArchetype:', dominantArchetype);
+
   const archetypes = [
     {
       name: "מנהל ההזדמנות",
@@ -31,6 +34,13 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const currentArchetype = archetypes[currentIndex];
   const isDominant = currentArchetype.name === dominantArchetype;
+
+  console.log('Component state:', {
+    dominantIndex,
+    currentIndex,
+    currentArchetype: currentArchetype.name,
+    isDominant
+  });
 
   return (
     <div className="mb-6" dir="rtl">
@@ -75,4 +85,14 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
           {isDominant && (
             <div className="mt-4 p-3 bg-blue-50 rounded-lg">
               <p className="text-sm text-blue-800 text-right">
-                
+                זהו הארכיטיפ הדומיננטי שלך על בסיס התוצאות
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default ResultsDominantArchetype;
