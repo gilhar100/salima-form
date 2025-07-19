@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ResultsDominantArchetypeProps {
@@ -29,8 +29,21 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     }
   ];
 
+  // Find the index of the dominant archetype
   const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+  
+  // Set initial state to dominant archetype if found, otherwise default to first archetype
   const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
+
+  // Update current index when dominantArchetype prop changes
+  useEffect(() => {
+    if (dominantArchetype) {
+      const newDominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+      if (newDominantIndex !== -1) {
+        setCurrentIndex(newDominantIndex);
+      }
+    }
+  }, [dominantArchetype]);
 
   const currentArchetype = archetypes[currentIndex];
   const isDominant = currentArchetype.name === dominantArchetype;
@@ -39,7 +52,8 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     dominantIndex,
     currentIndex,
     currentArchetype: currentArchetype.name,
-    isDominant
+    isDominant,
+    dominantArchetype
   });
 
   return (
@@ -53,7 +67,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         </h2>
         {isDominant && (
           <p className="text-white/90 text-sm">
-            הארכיטיפ הדומיננטי שלך
+            סגנון הניהול הדומיננטי
           </p>
         )}
       </div>
