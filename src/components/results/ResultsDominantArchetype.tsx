@@ -11,6 +11,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   dominantArchetype
 }) => {
   console.log('ResultsDominantArchetype - dominantArchetype received:', dominantArchetype);
+  console.log('ResultsDominantArchetype - Component is rendering');
 
   const archetypes = [
     {
