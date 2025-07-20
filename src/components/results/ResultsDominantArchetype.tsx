@@ -41,13 +41,17 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Update currentIndex when dominantArchetype changes
+  // Update currentIndex when dominantArchetype changes - this ensures the dominant archetype is shown first
   useEffect(() => {
     if (dominantArchetype) {
       const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
       if (dominantIndex !== -1) {
         console.log('Setting current index to dominant archetype:', dominantIndex, dominantArchetype);
         setCurrentIndex(dominantIndex);
+      } else {
+        console.log('Dominant archetype not found in list:', dominantArchetype);
+        // If not found, default to first archetype
+        setCurrentIndex(0);
       }
     }
   }, [dominantArchetype]);

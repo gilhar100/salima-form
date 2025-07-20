@@ -1,4 +1,3 @@
-
 import { Users, Lightbulb, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -16,9 +15,9 @@ const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominan
         return {
           name: "מנהל ההזדמנות",
           description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים.",
-          icon: Lightbulb,
-          color: "text-blue-800",
-          bgColor: "bg-blue-50"
+          icon: Crown,
+          color: "text-purple-600",
+          bgColor: "bg-purple-50"
         };
       case "המנהל המעצים":
         return {
@@ -32,7 +31,7 @@ const ManagementStyleSection: React.FC<ManagementStyleSectionProps> = ({ dominan
         return {
           name: "המנהל הסקרן",
           description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי.",
-          icon: Crown,
+          icon: Lightbulb,
           color: "text-orange-600",
           bgColor: "bg-orange-50"
         };
