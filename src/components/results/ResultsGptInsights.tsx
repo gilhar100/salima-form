@@ -1,12 +1,12 @@
 
 interface GPTResults {
   insights: {
-    אסטרטגיה: string;
-    אדפטיביות: string;
-    לומד: string;
-    השראה: string;
-    משמעות: string;
-    אותנטיות: string;
+    S: string;
+    A: string;
+    L: string;
+    I: string;
+    M: string;
+    A2: string;
   };
 }
 
@@ -19,13 +19,18 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
     return null;
   }
 
-  // Define the order for archetype pairs: strategy-adaptive, learning-inspiration, meaning-authentic
-  const orderedKeys = ['אסטרטגיה', 'אדפטיביות', 'לומד', 'השראה', 'משמעות', 'אותנטיות'];
+  // Use the actual keys from the GPT results in the correct order
+  // Based on edge function logs: S, A, L, I, M, A2
+  const keyMapping: Record<string, string> = {
+    'S': 'אסטרטגיה',
+    'A': 'אדפטיביות', 
+    'L': 'לומד',
+    'I': 'השראה',
+    'M': 'משמעות',
+    'A2': 'אותנטיות'
+  };
   
-  // Debug logging
-  console.log('GPT Results insights keys:', Object.keys(gptResults.insights));
-  console.log('Ordered keys:', orderedKeys);
-  console.log('GPT Results insights:', gptResults.insights);
+  const orderedKeys = ['S', 'A', 'L', 'I', 'M', 'A2'];
 
   return (
     <div className="mt-6 sm:mt-8">
@@ -35,7 +40,8 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
       <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
         {orderedKeys.map((key) => {
           const content = gptResults.insights[key as keyof typeof gptResults.insights];
-          if (!content) return null;
+          const hebrewLabel = keyMapping[key];
+          if (!content || !hebrewLabel) return null;
           
           return (
             <div 
@@ -45,7 +51,7 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
             >
               <h3 className="font-bold text-salima-800 text-base sm:text-lg mb-3 flex items-center gap-2">
                 <span className="text-blue-600">📘</span>
-                {key}
+                {hebrewLabel}
               </h3>
               <div className="text-sm sm:text-base leading-relaxed text-gray-700 whitespace-pre-line">
                 {content}
