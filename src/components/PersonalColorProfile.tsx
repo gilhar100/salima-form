@@ -55,6 +55,17 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
+  const archetypeGroups = {
+    'S': '#8B5CF6', 'A': '#8B5CF6', // opportunity
+    'L': '#F97316', 'I': '#F97316', // curious
+    'M': '#10B981', 'A2': '#10B981' // empowering
+  };
+
+  const borderData = profileData.map(item => ({
+    value: item.value,
+    color: archetypeGroups[item.dimension as keyof typeof archetypeGroups] || '#ccc'
+  }));
+
   const handlePieClick = (data: any) => {
     if (data && data.dimension) {
       setSelectedDimension(selectedDimension === data.dimension ? null : data.dimension);
@@ -64,23 +75,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const handleClickOutside = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) setSelectedDimension(null);
   };
-
-  const archetypeGroups = [
-    { name: 'מנהל ההזדמנות', dimensions: ['S', 'A'], color: '#8B5CF6' },
-    { name: 'המנהל הסקרן', dimensions: ['L', 'I'], color: '#F97316' },
-    { name: 'המנהל המעצים', dimensions: ['M', 'A2'], color: '#10B981' }
-  ];
-
-  const archetypeBorderData = archetypeGroups.map(group => {
-    const total = profileData
-      .filter(item => group.dimensions.includes(item.dimension))
-      .reduce((sum, item) => sum + item.value, 0);
-    return {
-      name: group.name,
-      value: total,
-      color: group.color,
-    };
-  });
 
   return (
     <Card className="w-full">
@@ -93,25 +87,26 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={archetypeBorderData}
+                data={borderData}
                 cx="50%"
                 cy="50%"
-                outerRadius={isMobile ? "85%" : "90%"}
-                innerRadius={isMobile ? "82%" : "87%"}
+                outerRadius={isMobile ? "76%" : "76%"}
+                innerRadius={isMobile ? "73%" : "73%"}
                 startAngle={90}
                 endAngle={-270}
                 dataKey="value"
                 stroke="none"
               >
-                {archetypeBorderData.map((segment, index) => (
-                  <Cell key={`archetype-${index}`} fill={segment.color} />
+                {borderData.map((segment, index) => (
+                  <Cell key={`border-${index}`} fill={segment.color} />
                 ))}
               </Pie>
+
               <Pie
                 data={profileData}
                 cx="50%"
                 cy="50%"
-                outerRadius={isMobile ? "70%" : "75%"}
+                outerRadius={isMobile ? "70%" : "70%"}
                 innerRadius={isMobile ? "25%" : "30%"}
                 paddingAngle={2}
                 dataKey="value"
