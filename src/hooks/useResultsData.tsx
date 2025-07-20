@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { SurveyResult } from "@/lib/types";
@@ -67,6 +66,11 @@ export const useResultsData = () => {
       if (!surveyData.dominant_archetype) {
         console.log('Dominant archetype is empty, calculating...');
         
+        // Safely access archetype question values with fallback to null
+        const getQuestionValue = (questionKey: string) => {
+          return surveyData[questionKey] || null;
+        };
+        
         // Prepare the payload for the edge function
         const payload = {
           strategy: surveyData.strategy,
@@ -75,21 +79,21 @@ export const useResultsData = () => {
           meaning: surveyData.dimension_m,
           learning: surveyData.dimension_l,
           inspiration: surveyData.dimension_i,
-          q_91: surveyData.q91,
-          q_92: surveyData.q92,
-          q_93: surveyData.q93,
-          q_94: surveyData.q94,
-          q_95: surveyData.q95,
-          q_96: surveyData.q96,
-          q_97: surveyData.q97,
-          q_98: surveyData.q98,
-          q_99: surveyData.q99,
-          q_100: surveyData.q100,
-          q_101: surveyData.q101,
-          q_102: surveyData.q102,
-          q_103: surveyData.q103,
-          q_104: surveyData.q104,
-          q_105: surveyData.q105
+          q_91: getQuestionValue('q91'),
+          q_92: getQuestionValue('q92'),
+          q_93: getQuestionValue('q93'),
+          q_94: getQuestionValue('q94'),
+          q_95: getQuestionValue('q95'),
+          q_96: getQuestionValue('q96'),
+          q_97: getQuestionValue('q97'),
+          q_98: getQuestionValue('q98'),
+          q_99: getQuestionValue('q99'),
+          q_100: getQuestionValue('q100'),
+          q_101: getQuestionValue('q101'),
+          q_102: getQuestionValue('q102'),
+          q_103: getQuestionValue('q103'),
+          q_104: getQuestionValue('q104'),
+          q_105: getQuestionValue('q105')
         };
 
         console.log('Calling calculate-archetype edge function with payload:', payload);
