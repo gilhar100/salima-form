@@ -21,6 +21,11 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
 
   // Define the order for archetype pairs: strategy-adaptive, learning-inspiration, meaning-authentic
   const orderedKeys = ['אסטרטגיה', 'אדפטיביות', 'לומד', 'השראה', 'משמעות', 'אותנטיות'];
+  
+  // Debug logging
+  console.log('GPT Results insights keys:', Object.keys(gptResults.insights));
+  console.log('Ordered keys:', orderedKeys);
+  console.log('GPT Results insights:', gptResults.insights);
 
   return (
     <div className="mt-6 sm:mt-8">
