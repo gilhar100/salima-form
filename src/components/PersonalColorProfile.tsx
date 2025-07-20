@@ -39,25 +39,24 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   }
 
   const archetypeColors = {
-    'S': '#8B5CF6',
-    'A': '#8B5CF6',
-    'L': '#F97316',
-    'I': '#F97316',
-    'M': '#10B981',
-    'A2': '#10B981'
+    'opportunity': '#8B5CF6',
+    'curious': '#F97316',
+    'empowering': '#10B981'
   };
+
+  const archetypePairs = [
+    { keys: ['S', 'A'], color: archetypeColors.opportunity },
+    { keys: ['L', 'I'], color: archetypeColors.curious },
+    { keys: ['M', 'A2'], color: archetypeColors.empowering }
+  ];
 
   const order = ['S', 'A', 'L', 'I', 'M', 'A2'] as const;
 
   const profileData = order.map((dim) => {
     const dimension = dimensions[dim];
     const hebrewNames = {
-      'S': 'אסטרטגיה',
-      'A': 'אדפטיביות',
-      'L': 'למידה',
-      'I': 'השראה',
-      'M': 'משמעות',
-      'A2': 'אותנטיות'
+      'S': 'אסטרטגיה', 'A': 'אדפטיביות', 'L': 'למידה',
+      'I': 'השראה', 'M': 'משמעות', 'A2': 'אותנטיות'
     };
     return {
       name: hebrewNames[dim],
@@ -69,16 +68,27 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   });
 
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
-  let cumulativeAngle = 0;
-  const borderSegments = profileData.map(item => {
-    const start = cumulativeAngle;
+  let cumulative = 0;
+
+  const angleSegments = profileData.map(item => {
+    const start = cumulative;
     const angle = (item.value / totalValue) * 360;
-    cumulativeAngle += angle;
+    cumulative += angle;
     return {
-      ...item,
+      dimension: item.dimension,
       startAngle: start + 90,
       endAngle: start + angle + 90,
-      borderColor: archetypeColors[item.dimension as keyof typeof archetypeColors]
+      value: item.value
+    };
+  });
+
+  const archetypeSegments = archetypePairs.map(({ keys, color }) => {
+    const from = angleSegments.find(s => s.dimension === keys[0]);
+    const to = angleSegments.find(s => s.dimension === keys[1]);
+    return {
+      startAngle: from?.startAngle ?? 0,
+      endAngle: to?.endAngle ?? 0,
+      color
     };
   });
 
@@ -102,9 +112,9 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              {borderSegments.map((segment, index) => (
+              {archetypeSegments.map((segment, i) => (
                 <Pie
-                  key={`border-${index}`}
+                  key={`arc-${i}`}
                   data={[{ value: 1 }]}
                   cx="50%"
                   cy="50%"
@@ -115,7 +125,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                   dataKey="value"
                   stroke="none"
                 >
-                  <Cell fill={segment.borderColor} />
+                  <Cell fill={segment.color} />
                 </Pie>
               ))}
 
