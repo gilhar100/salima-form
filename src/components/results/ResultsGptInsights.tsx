@@ -19,7 +19,7 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
     return null;
   }
 
-  // Define the order for archetype pairs
+  // Define the order for archetype pairs: strategy-adaptive, learning-inspiration, meaning-authentic
   const orderedKeys = ['אסטרטגיה', 'אדפטיביות', 'לומד', 'השראה', 'משמעות', 'אותנטיות'];
 
   return (
