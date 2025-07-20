@@ -16,7 +16,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     {
       name: "המנהל הסקרן",
       description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי.",
-      icon: Crown,
+      icon: Lightbulb,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
       lightBg: "#FFF3E0"
@@ -24,14 +24,14 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     {
       name: "מנהל ההזדמנות",
       description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים.",
-      icon: Lightbulb,
+      icon: Crown,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
       lightBg: "#F3E5F5"
     },
     {
       name: "המנהל המעצים",
-      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות وראיית האחר כדי ליצור מרחב מצמיח סביבו.",
       icon: Users,
       color: "text-green-700",
       bgColor: "bg-green-50",
@@ -42,7 +42,6 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   // Find the dominant archetype or default to first one
   const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
   const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
-  const [showCarousel, setShowCarousel] = useState(false);
 
   const currentArchetype = archetypes[currentIndex];
 
