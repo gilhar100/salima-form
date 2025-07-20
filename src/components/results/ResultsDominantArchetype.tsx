@@ -91,7 +91,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
           {/* Title */}
           <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
-            סגנון ניהולי דומיננטי
+            {isDominant ? 'סגנון ניהולי דומיננטי' : 'סגנון ניהולי'}
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}
@@ -112,10 +112,12 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
             {currentArchetype.description}
           </p>
           
-          {/* Clarification Paragraph */}
-          <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
-            חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
-          </p>
+          {/* Clarification Paragraph - only show for dominant archetype */}
+          {isDominant && (
+            <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
+              חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
