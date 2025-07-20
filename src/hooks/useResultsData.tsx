@@ -46,7 +46,7 @@ export const useResultsData = () => {
 
   const calculateArchetypeIfNeeded = async (surveyId: string) => {
     try {
-      console.log('Checking if archetype calculation is needed for survey:', surveyId);
+      console.log('🔍 ARCHETYPE: Checking if archetype calculation is needed for survey:', surveyId);
       
       // First, get the current survey data to check if dominant_archetype is empty
       const { data: surveyData, error: fetchError } = await supabase
@@ -56,15 +56,15 @@ export const useResultsData = () => {
         .single();
 
       if (fetchError) {
-        console.error('Error fetching survey data:', fetchError);
+        console.error('❌ ARCHETYPE: Error fetching survey data:', fetchError);
         return;
       }
 
-      console.log('Survey data retrieved:', surveyData);
+      console.log('📊 ARCHETYPE: Survey data retrieved, dominant_archetype =', surveyData.dominant_archetype);
 
       // Check if dominant_archetype is empty or null
       if (!surveyData.dominant_archetype) {
-        console.log('Dominant archetype is empty, calculating...');
+        console.log('🚀 ARCHETYPE: Dominant archetype is empty, starting calculation...');
         
         // Safely access archetype question values with fallback to null
         const getQuestionValue = (questionKey: string) => {
@@ -96,9 +96,10 @@ export const useResultsData = () => {
           q_105: getQuestionValue('q105')
         };
 
-        console.log('Calling calculate-archetype edge function with payload:', payload);
+        console.log('📤 ARCHETYPE: About to call edge function with payload:', payload);
 
         // Call the edge function
+        console.log('🌐 ARCHETYPE: Making fetch request to edge function...');
         const response = await fetch('https://lhmrghebdtcbhmgtbqfe.functions.supabase.co/calculate-archetype', {
           method: 'POST',
           headers: {
@@ -107,12 +108,17 @@ export const useResultsData = () => {
           body: JSON.stringify(payload)
         });
 
+        console.log('📥 ARCHETYPE: Edge function response status:', response.status);
+        console.log('📥 ARCHETYPE: Edge function response ok:', response.ok);
+
         if (!response.ok) {
-          throw new Error(`Edge function call failed: ${response.status}`);
+          const errorText = await response.text();
+          console.error('❌ ARCHETYPE: Edge function error response:', errorText);
+          throw new Error(`Edge function call failed: ${response.status} - ${errorText}`);
         }
 
         const archetypeData: ArchetypeCalculationResponse = await response.json();
-        console.log('Archetype calculation response:', archetypeData);
+        console.log('✅ ARCHETYPE: Edge function response data:', archetypeData);
 
         // Update the database with the calculated archetype data
         const { error: updateError } = await supabase
