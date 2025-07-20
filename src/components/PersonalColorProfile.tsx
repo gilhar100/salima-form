@@ -90,7 +90,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
   
-  const archetypeBorderData = [];
   const dimensionAngles = profileData.map(item => {
     const startAngle = cumulativeAngle;
     const segmentSize = (item.value / totalValue) * 360;
@@ -103,35 +102,45 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
-  // Group consecutive dimensions by archetype
+  // Create continuous archetype border segments that cover the full circle
+  const archetypeBorderData = [];
+  
   for (const group of archetypeGroups) {
-    const groupDimensions = dimensionAngles.filter(d => group.dimensions.includes(d.dimension));
+    const groupDimensions = group.dimensions.map(dimKey => 
+      dimensionAngles.find(d => d.dimension === dimKey)
+    ).filter(Boolean);
     
     if (groupDimensions.length === 2) {
-      // Check if dimensions are consecutive
-      const dim1Index = dimensionAngles.findIndex(d => d.dimension === groupDimensions[0].dimension);
-      const dim2Index = dimensionAngles.findIndex(d => d.dimension === groupDimensions[1].dimension);
+      // Find the indices in the ordered array
+      const indices = groupDimensions.map(gd => 
+        dimensionAngles.findIndex(d => d.dimension === gd.dimension)
+      ).sort((a, b) => a - b);
       
-      if (Math.abs(dim1Index - dim2Index) === 1 || 
-          (dim1Index === 0 && dim2Index === dimensionAngles.length - 1) ||
-          (dim1Index === dimensionAngles.length - 1 && dim2Index === 0)) {
-        
-        const firstDim = dim1Index < dim2Index ? groupDimensions[0] : groupDimensions[1];
-        const secondDim = dim1Index < dim2Index ? groupDimensions[1] : groupDimensions[0];
-        
-        // Handle wrap-around case
-        let startAngle = firstDim.startAngle;
-        let endAngle = secondDim.endAngle;
-        
-        if (endAngle < startAngle) {
-          endAngle += 360;
-        }
+      // Check if dimensions are consecutive or wrap around
+      const areConsecutive = indices[1] - indices[0] === 1 || 
+                           (indices[0] === 0 && indices[1] === dimensionAngles.length - 1);
+      
+      if (areConsecutive) {
+        const firstDim = dimensionAngles[indices[0]];
+        const secondDim = dimensionAngles[indices[1]];
         
         archetypeBorderData.push({
-          startAngle,
-          endAngle,
+          startAngle: firstDim.startAngle,
+          endAngle: secondDim.endAngle,
           color: group.color,
-          name: group.name
+          name: group.name,
+          value: firstDim.segmentSize + secondDim.segmentSize
+        });
+      } else {
+        // Dimensions are not consecutive, create two separate segments
+        groupDimensions.forEach(gd => {
+          archetypeBorderData.push({
+            startAngle: gd.startAngle,
+            endAngle: gd.endAngle,
+            color: group.color,
+            name: group.name,
+            value: gd.segmentSize
+          });
         });
       }
     }
