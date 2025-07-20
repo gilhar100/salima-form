@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Users, Lightbulb, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,27 +41,34 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Update currentIndex when dominantArchetype changes - this ensures the dominant archetype is shown first
   useEffect(() => {
     if (dominantArchetype) {
-      const index = archetypes.findIndex(arch => arch.name === dominantArchetype);
-      if (index !== -1) {
-        setCurrentIndex(index);
+      const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+      if (dominantIndex !== -1) {
+        console.log('Setting current index to dominant archetype:', dominantIndex, dominantArchetype);
+        setCurrentIndex(dominantIndex);
+      } else {
+        console.log('Dominant archetype not found in list:', dominantArchetype);
+        // If not found, default to first archetype
+        setCurrentIndex(0);
       }
     }
   }, [dominantArchetype]);
+
+  const currentArchetype = archetypes[currentIndex];
+
+  const cycleArchetype = () => {
+    setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
+  };
 
   if (!dominantArchetype) {
     console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
     return null;
   }
 
-  const currentArchetype = archetypes[currentIndex];
   const IconComponent = currentArchetype.icon;
   const isDominant = currentArchetype.name === dominantArchetype;
-
-  const cycleArchetype = () => {
-    setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
-  };
 
   return (
     <Card 
