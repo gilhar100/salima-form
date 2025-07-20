@@ -21,7 +21,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     'L': 'גישה של צמיחה מתמשכת, פתיחות למשוב וללמידה מהצלחות וכישלונות. ממד הלמידה מצביע על סקרנות, עומק מקצועי ורצון להתפתח ולהשתפר כל הזמן.',
     'I': 'היכולת להניע אחרים באמצעות נרטיב, ערכים ודוגמה אישית. מנהלים עם השראה גבוהה יוצרים אמון, מעוררים מוטיבציה ומקרינים נוכחות מנהיגותית.',
     'M': 'קשר עמוק לערכים פנימיים, מחויבות לתרומה שמעבר לעצמי ולתחושת שליחות. ממד המשמעות מייצג מנהיגות קשובה שפועלת בהלימה למטרות ערכיות.',
-    'A2': 'שקיפות, יושרה ויכולת להביא את עצמך באופן כן ומדויק גם במצבי לחץ. ממד זה עוסק בכנות, אמפתיה, ובחיבור בין העולם הפנימי שלך להתנהלותך המקצועית.'
+    'A2': 'שקיפות, יושרה ויכולת להביא את עצמך באופן כן ומדויק גם במצבי לחץ. ממד זה עוסק בכנות, אמפתיה, ובחיבור בין העולם הפnימי שלך להתנהלותך המקצועית.'
   };
 
   function getExtremeNonLinearSize(score: number): number {
@@ -67,20 +67,75 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     if (e.target === e.currentTarget) setSelectedDimension(null);
   };
 
-  // Calculate cumulative angles for each segment
+  // Calculate archetype border data
+  const archetypeGroups = [
+    { 
+      name: 'מנהל ההזדמנות', 
+      dimensions: ['S', 'A'], 
+      color: '#8B5CF6' // purple
+    },
+    { 
+      name: 'המנהל הסקרן', 
+      dimensions: ['L', 'I'], 
+      color: '#F97316' // orange
+    },
+    { 
+      name: 'המנהל המעצים', 
+      dimensions: ['M', 'A2'], 
+      color: '#10B981' // green
+    }
+  ];
+
+  // Calculate archetype border segments based on dimension positions and scores
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
-  const segmentAngles = profileData.map(item => {
+  
+  const archetypeBorderData = [];
+  const dimensionAngles = profileData.map(item => {
     const startAngle = cumulativeAngle;
     const segmentSize = (item.value / totalValue) * 360;
     cumulativeAngle += segmentSize;
     return {
       dimension: item.dimension,
       startAngle,
-      endAngle: cumulativeAngle
+      endAngle: cumulativeAngle,
+      segmentSize
     };
   });
 
+  // Group consecutive dimensions by archetype
+  for (const group of archetypeGroups) {
+    const groupDimensions = dimensionAngles.filter(d => group.dimensions.includes(d.dimension));
+    
+    if (groupDimensions.length === 2) {
+      // Check if dimensions are consecutive
+      const dim1Index = dimensionAngles.findIndex(d => d.dimension === groupDimensions[0].dimension);
+      const dim2Index = dimensionAngles.findIndex(d => d.dimension === groupDimensions[1].dimension);
+      
+      if (Math.abs(dim1Index - dim2Index) === 1 || 
+          (dim1Index === 0 && dim2Index === dimensionAngles.length - 1) ||
+          (dim1Index === dimensionAngles.length - 1 && dim2Index === 0)) {
+        
+        const firstDim = dim1Index < dim2Index ? groupDimensions[0] : groupDimensions[1];
+        const secondDim = dim1Index < dim2Index ? groupDimensions[1] : groupDimensions[0];
+        
+        // Handle wrap-around case
+        let startAngle = firstDim.startAngle;
+        let endAngle = secondDim.endAngle;
+        
+        if (endAngle < startAngle) {
+          endAngle += 360;
+        }
+        
+        archetypeBorderData.push({
+          startAngle,
+          endAngle,
+          color: group.color,
+          name: group.name
+        });
+      }
+    }
+  }
 
   return (
     <Card className="w-full">
@@ -92,6 +147,26 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
+              {/* Archetype border segments */}
+              <Pie
+                data={archetypeBorderData.map(segment => ({ value: segment.endAngle - segment.startAngle }))}
+                cx="50%"
+                cy="50%"
+                outerRadius={isMobile ? "85%" : "90%"}
+                innerRadius={isMobile ? "82%" : "87%"}
+                startAngle={90}
+                dataKey="value"
+                stroke="none"
+              >
+                {archetypeBorderData.map((segment, index) => (
+                  <Cell
+                    key={`archetype-${index}`}
+                    fill={segment.color}
+                  />
+                ))}
+              </Pie>
+              
+              {/* Main dimension pie */}
               <Pie
                 data={profileData}
                 cx="50%"
