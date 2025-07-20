@@ -1,4 +1,5 @@
 
+
 interface GPTResults {
   insights: {
     S: string;
@@ -19,8 +20,7 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
     return null;
   }
 
-  // Use the actual keys from the GPT results in the correct order
-  // Based on edge function logs: S, A, L, I, M, A2
+  // Map GPT keys to Hebrew labels
   const keyMapping: Record<string, string> = {
     'S': 'אסטרטגיה',
     'A': 'אדפטיביות', 
@@ -30,7 +30,11 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
     'A2': 'אותנטיות'
   };
   
-  const orderedKeys = ['S', 'A', 'L', 'I', 'M', 'A2'];
+  // Order for the 2-column grid layout (right column first, then left column for each row)
+  // Top row: אדפטיביות (right), אסטרטגיה (left)
+  // Middle row: למידה (right), השראה (left) 
+  // Bottom row: משמעות (right), אותנטיות (left)
+  const orderedKeys = ['A', 'S', 'L', 'I', 'M', 'A2'];
 
   return (
     <div className="mt-6 sm:mt-8">
@@ -65,3 +69,4 @@ const ResultsGptInsights: React.FC<ResultsGptInsightsProps> = ({ gptResults }) =
 };
 
 export default ResultsGptInsights;
+
