@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
-import { calculateDominantArchetype } from "./archetype-calculator";
 
 // Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
@@ -21,10 +20,6 @@ export const saveArchetypeAnswersToDatabase = async (
   try {
     console.log('שמירת תשובות ארכיטיפ במסד הנתונים:', archetypeAnswers);
     
-    // Calculate dominant archetype
-    const dominantArchetype = calculateDominantArchetype(archetypeAnswers);
-    console.log('Calculated dominant archetype:', dominantArchetype);
-    
     // For each archetype answer, we could save it to a separate responses table
     // or update the existing archetype_logic entries with user responses
     // For now, we'll log the archetype responses - this could be extended
@@ -36,11 +31,7 @@ export const saveArchetypeAnswersToDatabase = async (
     // TODO: If you want to store individual user responses to archetype questions,
     // create a new table "archetype_responses" and save the data there
     
-    return { 
-      success: true, 
-      message: 'Archetype answers processed',
-      dominantArchetype 
-    };
+    return { success: true, message: 'Archetype answers processed' };
   } catch (error) {
     console.error('שגיאה בשמירת תשובות ארכיטיפ:', error);
     throw error;
@@ -55,15 +46,10 @@ export const saveSurveyToDatabase = async (
 ) => {
   try {
     console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
-    console.log('Raw answers being saved:', rawAnswers);
     
-    // Calculate dominant archetype from all answers (including archetype questions 91-105)
-    const dominantArchetype = calculateDominantArchetype(rawAnswers);
-    console.log('Dominant archetype calculated for survey save:', dominantArchetype);
-    
-    // Prepare raw answers as individual columns (questions 1-105 now)
+    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
     const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 105; i++) {
+    for (let i = 1; i <= 90; i++) {
       const answer = rawAnswers.find(a => a.questionId === i);
       rawAnswersObject[`q${i}`] = answer ? answer.value : null;
     }
@@ -90,9 +76,6 @@ export const saveSurveyToDatabase = async (
       dimension_a2: results.dimensions.A2.score,
       dimension_s: results.dimensions.S.score,
       
-      // Add dominant archetype - this is the key fix
-      dominant_archetype: dominantArchetype,
-      
       // Consent and anonymity
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
@@ -103,13 +86,10 @@ export const saveSurveyToDatabase = async (
       answers: answersArray
     };
 
-    console.log('Survey response to save (with dominant_archetype):', surveyResponse);
-    console.log('Dominant archetype being saved:', surveyResponse.dominant_archetype);
-
     const { data, error } = await supabase
       .from('survey_responses')
       .insert(surveyResponse)
-      .select('id, dominant_archetype')
+      .select('id')
       .single();
 
     if (error) {
@@ -118,7 +98,6 @@ export const saveSurveyToDatabase = async (
     }
 
     console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
-    console.log('Dominant archetype saved to database:', data.dominant_archetype);
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת נתוני השאלון:', error);
@@ -135,13 +114,9 @@ export const saveColleagueSurveyToDatabase = async (
   try {
     console.log('שמירת הערכת עמית במסד הנתונים:', submission);
     
-    // Calculate dominant archetype for colleague survey too
-    const dominantArchetype = calculateDominantArchetype(rawAnswers);
-    console.log('Dominant archetype calculated for colleague survey:', dominantArchetype);
-    
-    // Prepare raw answers as individual columns (questions 1-105 now)
+    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
     const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 105; i++) {
+    for (let i = 1; i <= 90; i++) {
       const answer = rawAnswers.find(a => a.questionId === i);
       rawAnswersObject[`q${i}`] = answer ? answer.value : null;
     }
@@ -174,9 +149,6 @@ export const saveColleagueSurveyToDatabase = async (
       dimension_a: submission.dimensions.A,
       dimension_a2: submission.dimensions.A2,
       
-      // Add dominant archetype
-      dominant_archetype: dominantArchetype,
-      
       // Consent and anonymity
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
@@ -189,7 +161,7 @@ export const saveColleagueSurveyToDatabase = async (
     const { data, error } = await supabase
       .from('colleague_survey_responses')
       .insert(colleagueResponse)
-      .select('id, dominant_archetype')
+      .select('id')
       .single();
 
     if (error) {
@@ -198,7 +170,6 @@ export const saveColleagueSurveyToDatabase = async (
     }
 
     console.log('הערכת עמית נשמרה בהצלחה עם ID:', data.id);
-    console.log('Dominant archetype saved for colleague survey:', data.dominant_archetype);
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת הערכת עמית:', error);
@@ -209,8 +180,6 @@ export const saveColleagueSurveyToDatabase = async (
 // Function to get survey results with insights from database
 export const getSurveyWithInsights = async (surveyId: string) => {
   try {
-    console.log('Fetching survey with insights for ID:', surveyId);
-    
     const { data, error } = await supabase
       .from('survey_responses')
       .select('*')
@@ -222,9 +191,6 @@ export const getSurveyWithInsights = async (surveyId: string) => {
       throw error;
     }
 
-    console.log('Survey data fetched from database:', data);
-    console.log('Dominant archetype from database:', data?.dominant_archetype);
-    
     return data;
   } catch (error) {
     console.error('Error getting survey with insights:', error);

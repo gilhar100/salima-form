@@ -40,20 +40,9 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   ];
 
   // Find the dominant archetype or default to first one
-  const dominantIndex = dominantArchetype 
-    ? archetypes.findIndex(arch => arch.name === dominantArchetype)
-    : -1;
-  
-  // If no dominant archetype found or provided, default to first archetype
-  const initialIndex = dominantIndex !== -1 ? dominantIndex : 0;
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
-
-  console.log('Dominant archetype search result:', {
-    dominantArchetype,
-    dominantIndex,
-    initialIndex,
-    currentIndex
-  });
+  const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+  const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
+  const [showCarousel, setShowCarousel] = useState(false);
 
   const currentArchetype = archetypes[currentIndex];
 
@@ -61,9 +50,13 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
   };
 
-  // Always render the component, even if no dominant archetype data
+  if (!dominantArchetype) {
+    console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
+    return null;
+  }
+
   const IconComponent = currentArchetype.icon;
-  const isDominant = dominantArchetype && currentArchetype.name === dominantArchetype;
+  const isDominant = currentArchetype.name === dominantArchetype;
 
   return (
     <Card 
@@ -86,7 +79,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
           {/* Title */}
           <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
-            סגנון הניהול הדומיננטי
+            סגנון ניהולי דומיננטי
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}
