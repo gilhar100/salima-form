@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Users, Lightbulb, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,34 +40,27 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Update currentIndex when dominantArchetype changes - this ensures the dominant archetype is shown first
   useEffect(() => {
     if (dominantArchetype) {
-      const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
-      if (dominantIndex !== -1) {
-        console.log('Setting current index to dominant archetype:', dominantIndex, dominantArchetype);
-        setCurrentIndex(dominantIndex);
-      } else {
-        console.log('Dominant archetype not found in list:', dominantArchetype);
-        // If not found, default to first archetype
-        setCurrentIndex(0);
+      const index = archetypes.findIndex(arch => arch.name === dominantArchetype);
+      if (index !== -1) {
+        setCurrentIndex(index);
       }
     }
   }, [dominantArchetype]);
-
-  const currentArchetype = archetypes[currentIndex];
-
-  const cycleArchetype = () => {
-    setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
-  };
 
   if (!dominantArchetype) {
     console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
     return null;
   }
 
+  const currentArchetype = archetypes[currentIndex];
   const IconComponent = currentArchetype.icon;
   const isDominant = currentArchetype.name === dominantArchetype;
+
+  const cycleArchetype = () => {
+    setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <Card 
@@ -91,7 +83,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
           {/* Title */}
           <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
-            {isDominant ? 'סגנון ניהולי דומיננטי' : 'סגנון ניהולי'}
+            סגנון ניהולי דומיננטי
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}
@@ -112,12 +104,10 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
             {currentArchetype.description}
           </p>
           
-          {/* Clarification Paragraph - only show for dominant archetype */}
-          {isDominant && (
-            <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
-              חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
-            </p>
-          )}
+          {/* Clarification Paragraph */}
+          <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
+            חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
+          </p>
         </div>
       </CardContent>
     </Card>
