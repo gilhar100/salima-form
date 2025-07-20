@@ -102,7 +102,69 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     }
   }
 
-  return <div>/* chart JSX remains here */</div>;
+  return (
+    <Card className="w-full">
+      <CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
+        <CardTitle className="text-center text-black text-xl sm:text-2xl">טביעת צבע אישית</CardTitle>
+        <p className="text-center text-black text-sm sm:text-base">הפרופיל הצבעוני הייחודי שלך במנהיגות</p>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center px-4 sm:px-6" onClick={handleClickOutside}>
+        <div className="w-full h-64 sm:h-80 lg:h-96 relative">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              {/* Archetype border segments */}
+              <Pie
+                data={archetypeBorderData.map(segment => ({ value: segment.endAngle - segment.startAngle }))}
+                cx="50%"
+                cy="50%"
+                outerRadius={isMobile ? "85%" : "90%"}
+                innerRadius={isMobile ? "82%" : "87%"}
+                startAngle={90}
+                dataKey="value"
+                stroke="none"
+              >
+                {archetypeBorderData.map((segment, index) => (
+                  <Cell key={`archetype-${index}`} fill={segment.color} />
+                ))}
+              </Pie>
+
+              {/* Main dimension pie */}
+              <Pie
+                data={profileData}
+                cx="50%"
+                cy="50%"
+                outerRadius={isMobile ? "70%" : "75%"}
+                innerRadius={isMobile ? "25%" : "30%"}
+                paddingAngle={2}
+                dataKey="value"
+                onClick={handlePieClick}
+                style={{ cursor: 'pointer' }}
+              >
+                {profileData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.color}
+                    stroke={selectedDimension === entry.dimension ? '#333' : 'none'}
+                    strokeWidth={selectedDimension === entry.dimension ? 3 : 0}
+                  />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value, name) => [name, '']}
+                labelFormatter={() => ''}
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #ccc',
+                  borderRadius: '8px',
+                  fontSize: isMobile ? '14px' : '16px'
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default PersonalColorProfile;
