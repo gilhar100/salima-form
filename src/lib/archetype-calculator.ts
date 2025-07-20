@@ -1,134 +1,186 @@
-import { Answer } from "./types";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { SurveyResult, Answer } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
+import { getSurveyWithInsights } from "@/lib/survey-service";
+import { supabase } from "@/integrations/supabase/client";
+import { calculateDominantArchetype } from "@/lib/archetype-logic";
 
-// Archetype definitions with their SALIMA parameters
-const ARCHETYPES = {
-  "המנהל הסקרן": {
-    parameters: ["Learning", "Inspiration"],
-    questions: [93, 96, 98, 100, 105] // Questions 93, 96, 98, 100, 105
-  },
-  "מנהל ההזדמנות": {
-    parameters: ["Strategy", "Adaptive"],
-    questions: [91, 94, 97, 101, 103] // Questions 91, 94, 97, 101, 103
-  },
-  "המנהל המעצים": {
-    parameters: ["Authenticity", "Meaning"],
-    questions: [92, 95, 99, 102, 104] // Questions 92, 95, 99, 102, 104
-  }
-};
+interface DatabaseInsights {
+  insight_strategy?: string;
+  insight_adaptive?: string;
+  insight_learning?: string;
+  insight_inspiration?: string;
+  insight_meaning?: string;
+  insight_authentic?: string;
+  dominant_archetype?: string;
+}
 
-// Parameter to question mapping (from the existing SALIMA logic)
-const PARAMETER_QUESTIONS = {
-  "Strategy": [1, 7, 13, 19, 25, 31, 37, 43, 49, 55, 61, 67, 73, 79, 85],
-  "Learning": [2, 8, 14, 20, 26, 32, 38, 44, 50, 56, 62, 68, 74, 80, 86],
-  "Inspiration": [3, 9, 15, 21, 27, 33, 39, 45, 51, 57, 63, 69, 75, 81, 87],
-  "Meaning": [4, 10, 16, 22, 28, 34, 40, 46, 52, 58, 64, 70, 76, 82, 88],
-  "Authenticity": [5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, 77, 83, 89],
-  "Adaptive": [6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90]
-};
+interface GPTResults {
+  insights: {
+    אסטרטגיה: string;
+    אדפטיביות: string;
+    לומד: string;
+    השראה: string;
+    משמעות: string;
+    אותנטיות: string;
+  };
+}
 
-// Questions that need to be reversed (from the existing logic)
-const REVERSED_QUESTIONS = [1, 3, 7, 9, 13, 15, 19, 21, 25, 27, 31, 33, 37, 39, 43, 45, 49, 51, 55, 57, 61, 63, 67, 69, 73, 75, 79, 81, 85, 87];
+export const useResultsData = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [results, setResults] = useState<SurveyResult | null>(null);
+  const [answers, setAnswers] = useState<Answer[]>([]);
+  const [insights, setInsights] = useState<DatabaseInsights>({});
+  const [gptResults, setGptResults] = useState<GPTResults | null>(null);
+  const [surveyId, setSurveyId] = useState<string | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const [insightsAvailable, setInsightsAvailable] = useState(false);
 
-// Calculate effective score (considering reversed questions)
-const calculateEffectiveScore = (questionId: number, value: number): number => {
-  return REVERSED_QUESTIONS.includes(questionId) ? (6 - value) : value;
-};
+  const calculateArchetypeIfNeeded = async (surveyId: string, parsedAnswers: Answer[]) => {
+    try {
+      console.log('🔍 ARCHETYPE: Checking if archetype calculation is needed for survey:', surveyId);
 
-// Calculate average score for a parameter
-const calculateParameterScore = (parameter: string, answers: Answer[]): number => {
-  const questionIds = PARAMETER_QUESTIONS[parameter as keyof typeof PARAMETER_QUESTIONS] || [];
-  const relevantAnswers = answers.filter(answer => questionIds.includes(answer.questionId));
-  
-  if (relevantAnswers.length === 0) {
-    console.warn(`No answers found for parameter: ${parameter}`);
-    return 0;
-  }
-  
-  const totalScore = relevantAnswers.reduce((sum, answer) => {
-    return sum + calculateEffectiveScore(answer.questionId, answer.value);
-  }, 0);
-  
-  return totalScore / relevantAnswers.length;
-};
+      const { data: surveyData, error: fetchError } = await supabase
+        .from('survey_responses')
+        .select('*')
+        .eq('id', surveyId)
+        .single();
 
-// Calculate average score for archetype-specific questions
-const calculateArchetypeQuestionsScore = (archetypeQuestions: number[], answers: Answer[]): number => {
-  const relevantAnswers = answers.filter(answer => archetypeQuestions.includes(answer.questionId));
-  
-  if (relevantAnswers.length === 0) {
-    console.warn(`No archetype questions answered`);
-    return 0;
-  }
-  
-  const totalScore = relevantAnswers.reduce((sum, answer) => {
-    return sum + answer.value; // Archetype questions are not reversed
-  }, 0);
-  
-  return totalScore / relevantAnswers.length;
-};
+      if (fetchError) {
+        console.error('❌ ARCHETYPE: Error fetching survey data:', fetchError);
+        return;
+      }
 
-// Calculate scores for all archetypes
-export const calculateAllArchetypeScores = (allAnswers: Answer[]): Record<string, number> => {
-  console.log('Calculating all archetype scores with answers:', allAnswers.length);
-  
-  if (allAnswers.length === 0) {
-    console.warn('No answers provided for archetype calculation');
-    return {
-      "המנהל הסקרן": 0,
-      "מנהל ההזדמנות": 0,
-      "המנהל המעצים": 0
-    };
-  }
-  
-  const scores: Record<string, number> = {};
-  
-  Object.entries(ARCHETYPES).forEach(([archetypeName, archetypeData]) => {
-    console.log(`Calculating score for archetype: ${archetypeName}`);
-    
-    // Calculate parameter scores (70% weight)
-    const parameter1Score = calculateParameterScore(archetypeData.parameters[0], allAnswers);
-    const parameter2Score = calculateParameterScore(archetypeData.parameters[1], allAnswers);
-    const averageParameterScore = (parameter1Score + parameter2Score) / 2;
-    
-    console.log(`Parameter scores for ${archetypeName}: ${archetypeData.parameters[0]}=${parameter1Score}, ${archetypeData.parameters[1]}=${parameter2Score}, average=${averageParameterScore}`);
-    
-    // Calculate archetype-specific questions score (30% weight)
-    const archetypeQuestionsScore = calculateArchetypeQuestionsScore(archetypeData.questions, allAnswers);
-    
-    console.log(`Archetype questions score for ${archetypeName}: ${archetypeQuestionsScore}`);
-    
-    // Combined score: 70% parameters + 30% archetype questions
-    const combinedScore = (averageParameterScore * 0.7) + (archetypeQuestionsScore * 0.3);
-    
-    console.log(`Combined score for ${archetypeName}: ${combinedScore}`);
-    scores[archetypeName] = combinedScore;
-  });
-  
-  console.log('All archetype scores calculated:', scores);
-  return scores;
-};
+      console.log('📊 ARCHETYPE: Survey data retrieved, dominant_archetype =', surveyData.dominant_archetype);
 
-// Calculate dominant archetype
-export const calculateDominantArchetype = (allAnswers: Answer[]): string => {
-  console.log('Calculating dominant archetype with answers:', allAnswers.length);
-  
-  if (allAnswers.length === 0) {
-    console.warn('No answers provided for archetype calculation');
-    return "המנהל הסקרן"; // Default fallback
-  }
-  
-  const scores = calculateAllArchetypeScores(allAnswers);
-  
-  let highestScore = -1;
-  let dominantArchetype = "המנהל הסקרן";
-  
-  Object.entries(scores).forEach(([archetypeName, score]) => {
-    if (score > highestScore) {
-      highestScore = score;
-      dominantArchetype = archetypeName;
+      if (!surveyData.dominant_archetype) {
+        const dominant = calculateDominantArchetype(parsedAnswers);
+
+        console.log('✅ ARCHETYPE: Calculated dominant archetype:', dominant);
+
+        const { error: updateError } = await supabase
+          .from('survey_responses')
+          .update({ dominant_archetype: dominant })
+          .eq('id', surveyId);
+
+        if (updateError) {
+          console.error('Error updating survey with dominant archetype:', updateError);
+          throw updateError;
+        }
+
+        setInsights(prev => ({
+          ...prev,
+          dominant_archetype: dominant
+        }));
+
+        toast({
+          title: "חישוב ארכיטיפ הושלם",
+          description: "הסגנון הניהולי הדומיננטי חושב בהצלחה"
+        });
+      } else {
+        console.log('🟢 ARCHETYPE: Dominant archetype already exists:', surveyData.dominant_archetype);
+      }
+    } catch (error) {
+      console.error('Error calculating archetype:', error);
+      toast({
+        title: "שגיאה בחישוב הארכיטיפ",
+        description: "אירעה שגיאה בחישוב הסגנון הניהולי הדומיננטי",
+        variant: "destructive"
+      });
     }
-  });
-  
-  console.log(`Dominant archetype determined: ${dominantArchetype} with score: ${highestScore}`);
-  return dominantArchetype;
+  };
+
+  useEffect(() => {
+    console.log('Results page mounted, checking localStorage...');
+    const savedResults = localStorage.getItem('salimaResults');
+    const savedAnswers = localStorage.getItem('salimaAnswers');
+    const savedSurveyId = localStorage.getItem('salimaSurveyId');
+    const savedGptResults = localStorage.getItem('gptResults');
+
+    if (savedResults) {
+      try {
+        const parsedResults = JSON.parse(savedResults);
+        setResults(parsedResults);
+
+        if (savedAnswers) {
+          const parsedAnswers = JSON.parse(savedAnswers);
+          setAnswers(parsedAnswers);
+
+          if (savedSurveyId) {
+            setSurveyId(savedSurveyId);
+            fetchInsightsWithDelay(savedSurveyId);
+            calculateArchetypeIfNeeded(savedSurveyId, parsedAnswers);
+          }
+        }
+
+        if (savedGptResults) {
+          setGptResults(JSON.parse(savedGptResults));
+        }
+
+        toast({
+          title: "תוצאות השאלון",
+          description: "הנתונים כבר נשמרו במערכת בהצלחה"
+        });
+      } catch (error) {
+        console.error('Error parsing saved results:', error);
+        toast({
+          title: "שגיאה בטעינת התוצאות",
+          description: "אירעה שגיאה בטעינת התוצאות השמורות",
+          variant: "destructive"
+        });
+        navigate('/');
+      }
+    } else {
+      toast({
+        title: "לא נמצאו תוצאות",
+        description: "אנא מלא/י את השאלון תחילה",
+        variant: "destructive"
+      });
+      navigate('/');
+    }
+  }, [navigate, toast]);
+
+  const fetchInsightsWithDelay = async (surveyId: string) => {
+    setIsLoadingInsights(true);
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    try {
+      const data = await getSurveyWithInsights(surveyId);
+
+      const fetchedInsights = {
+        insight_strategy: data.insight_strategy,
+        insight_adaptive: data.insight_adaptive,
+        insight_learning: data.insight_learning,
+        insight_inspiration: data.insight_inspiration,
+        insight_meaning: data.insight_meaning,
+        insight_authentic: data.insight_authentic,
+        dominant_archetype: data.dominant_archetype
+      };
+
+      setInsights(fetchedInsights);
+      setInsightsAvailable(Object.values(fetchedInsights).some(i => i && i.trim() !== ''));
+    } catch (error) {
+      console.error('Error fetching insights:', error);
+      setInsightsAvailable(false);
+    } finally {
+      setIsLoadingInsights(false);
+    }
+  };
+
+  const handleRefreshInsights = () => {
+    if (surveyId) fetchInsightsWithDelay(surveyId);
+  };
+
+  return {
+    results,
+    answers,
+    insights,
+    gptResults,
+    surveyId,
+    isLoadingInsights,
+    insightsAvailable,
+    handleRefreshInsights
+  };
 };
