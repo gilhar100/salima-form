@@ -38,33 +38,49 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return 3;
   }
 
-  const archetypeOrder = ['S', 'A', 'L', 'I', 'M', 'A2'] as const;
+  const archetypeColors = {
+    'S': '#8B5CF6',
+    'A': '#8B5CF6',
+    'L': '#F97316',
+    'I': '#F97316',
+    'M': '#10B981',
+    'A2': '#10B981'
+  };
 
-  const profileData = archetypeOrder.map(dimKey => {
-    const dimension = dimensions[dimKey];
+  const order = ['S', 'A', 'L', 'I', 'M', 'A2'] as const;
+
+  const profileData = order.map((dim) => {
+    const dimension = dimensions[dim];
     const hebrewNames = {
-      'S': 'אסטרטגיה', 'A': 'אדפטיביות', 'L': 'למידה',
-      'I': 'השראה', 'A2': 'אותנטיות', 'M': 'משמעות'
+      'S': 'אסטרטגיה',
+      'A': 'אדפטיביות',
+      'L': 'למידה',
+      'I': 'השראה',
+      'M': 'משמעות',
+      'A2': 'אותנטיות'
     };
     return {
-      name: hebrewNames[dimKey],
-      dimension: dimKey,
+      name: hebrewNames[dim],
+      dimension: dim,
       value: getExtremeNonLinearSize(dimension.score),
-      color: dimensionColors[dimKey].strong,
+      color: dimensionColors[dim].strong,
       originalScore: dimension.score
     };
   });
 
-  const archetypeGroups = {
-    'S': '#8B5CF6', 'A': '#8B5CF6', // opportunity
-    'L': '#F97316', 'I': '#F97316', // curious
-    'M': '#10B981', 'A2': '#10B981' // empowering
-  };
-
-  const borderData = profileData.map(item => ({
-    value: item.value,
-    color: archetypeGroups[item.dimension as keyof typeof archetypeGroups] || '#ccc'
-  }));
+  const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
+  let cumulativeAngle = 0;
+  const borderSegments = profileData.map(item => {
+    const start = cumulativeAngle;
+    const angle = (item.value / totalValue) * 360;
+    cumulativeAngle += angle;
+    return {
+      ...item,
+      startAngle: start + 90,
+      endAngle: start + angle + 90,
+      borderColor: archetypeColors[item.dimension as keyof typeof archetypeColors]
+    };
+  });
 
   const handlePieClick = (data: any) => {
     if (data && data.dimension) {
@@ -86,21 +102,22 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                data={borderData}
-                cx="50%"
-                cy="50%"
-                outerRadius={isMobile ? "76%" : "76%"}
-                innerRadius={isMobile ? "73%" : "73%"}
-                startAngle={90}
-                endAngle={-270}
-                dataKey="value"
-                stroke="none"
-              >
-                {borderData.map((segment, index) => (
-                  <Cell key={`border-${index}`} fill={segment.color} />
-                ))}
-              </Pie>
+              {borderSegments.map((segment, index) => (
+                <Pie
+                  key={`border-${index}`}
+                  data={[{ value: 1 }]}
+                  cx="50%"
+                  cy="50%"
+                  startAngle={segment.startAngle}
+                  endAngle={segment.endAngle}
+                  outerRadius={"76%"}
+                  innerRadius={"73%"}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  <Cell fill={segment.borderColor} />
+                </Pie>
+              ))}
 
               <Pie
                 data={profileData}
