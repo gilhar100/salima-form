@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
+import { calculateDominantArchetype } from "./archetype-calculator";
 
 // Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
@@ -57,6 +58,15 @@ export const saveSurveyToDatabase = async (
     // Convert Answer[] to number[] for database compatibility
     const answersArray = rawAnswers.map(answer => answer.value);
     
+    // Get all answers including archetype questions for dominant archetype calculation
+    const allAnswers = JSON.parse(localStorage.getItem('salimaAnswers') || '[]').concat(
+      JSON.parse(localStorage.getItem('archetypeAnswers') || '[]')
+    );
+    
+    // Calculate dominant archetype
+    const dominantArchetype = calculateDominantArchetype(allAnswers);
+    console.log('Calculated dominant archetype:', dominantArchetype);
+    
     const surveyResponse = {
       // Basic info
       user_name: results.userInfo.name,
@@ -75,6 +85,9 @@ export const saveSurveyToDatabase = async (
       dimension_a: results.dimensions.A.score,
       dimension_a2: results.dimensions.A2.score,
       dimension_s: results.dimensions.S.score,
+      
+      // Dominant archetype
+      dominant_archetype: dominantArchetype,
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
@@ -124,6 +137,15 @@ export const saveColleagueSurveyToDatabase = async (
     // Convert Answer[] to number[] for database compatibility
     const answersArray = rawAnswers.map(answer => answer.value);
 
+    // Get all answers including archetype questions for dominant archetype calculation
+    const allAnswers = JSON.parse(localStorage.getItem('salimaAnswers') || '[]').concat(
+      JSON.parse(localStorage.getItem('archetypeAnswers') || '[]')
+    );
+    
+    // Calculate dominant archetype
+    const dominantArchetype = calculateDominantArchetype(allAnswers);
+    console.log('Calculated dominant archetype for colleague:', dominantArchetype);
+
     const colleagueResponse = {
       // Manager info
       manager_name: submission.evaluatorInfo.managerName,
@@ -148,6 +170,9 @@ export const saveColleagueSurveyToDatabase = async (
       dimension_m: submission.dimensions.M,
       dimension_a: submission.dimensions.A,
       dimension_a2: submission.dimensions.A2,
+      
+      // Dominant archetype
+      dominant_archetype: dominantArchetype,
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
