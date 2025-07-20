@@ -86,7 +86,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
           {/* Title */}
           <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
-            סגנון ניהולי דומיננטי
+            סגנון הניהול הדומיננטי
           </h2>
           
           {/* Archetype Name with Icon - Ensure proper RTL alignment */}

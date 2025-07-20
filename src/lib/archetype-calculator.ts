@@ -34,10 +34,12 @@ export const calculateDominantArchetype = (answers: Answer[]): string => {
   Object.entries(ARCHETYPE_QUESTIONS).forEach(([archetype, questionIds]) => {
     const archetypeScore = questionIds.reduce((sum, questionId) => {
       const answer = archetypeAnswers.find(a => a.questionId === questionId);
-      return sum + (answer ? answer.value : 0);
+      const answerValue = answer ? answer.value : 0;
+      console.log(`Question ${questionId} for ${archetype}: ${answerValue}`);
+      return sum + answerValue;
     }, 0);
     scores[archetype as keyof typeof scores] = archetypeScore;
-    console.log(`${archetype} score:`, archetypeScore);
+    console.log(`${archetype} total score:`, archetypeScore);
   });
   
   // Find the archetype with the highest score
@@ -45,8 +47,8 @@ export const calculateDominantArchetype = (answers: Answer[]): string => {
     current[1] > prev[1] ? current : prev
   )[0];
   
-  console.log('Calculated dominant archetype:', dominantArchetype);
-  console.log('All scores:', scores);
+  console.log('Final calculated dominant archetype:', dominantArchetype);
+  console.log('All archetype scores:', scores);
   
   return dominantArchetype;
 };

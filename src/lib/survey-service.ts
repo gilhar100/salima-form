@@ -55,14 +55,15 @@ export const saveSurveyToDatabase = async (
 ) => {
   try {
     console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
+    console.log('Raw answers being saved:', rawAnswers);
     
     // Calculate dominant archetype from all answers (including archetype questions 91-105)
     const dominantArchetype = calculateDominantArchetype(rawAnswers);
-    console.log('Dominant archetype calculated for survey:', dominantArchetype);
+    console.log('Dominant archetype calculated for survey save:', dominantArchetype);
     
-    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
+    // Prepare raw answers as individual columns (questions 1-105 now)
     const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 90; i++) {
+    for (let i = 1; i <= 105; i++) {
       const answer = rawAnswers.find(a => a.questionId === i);
       rawAnswersObject[`q${i}`] = answer ? answer.value : null;
     }
@@ -89,7 +90,7 @@ export const saveSurveyToDatabase = async (
       dimension_a2: results.dimensions.A2.score,
       dimension_s: results.dimensions.S.score,
       
-      // Add dominant archetype
+      // Add dominant archetype - this is the key fix
       dominant_archetype: dominantArchetype,
       
       // Consent and anonymity
@@ -102,12 +103,13 @@ export const saveSurveyToDatabase = async (
       answers: answersArray
     };
 
-    console.log('Survey response to save:', surveyResponse);
+    console.log('Survey response to save (with dominant_archetype):', surveyResponse);
+    console.log('Dominant archetype being saved:', surveyResponse.dominant_archetype);
 
     const { data, error } = await supabase
       .from('survey_responses')
       .insert(surveyResponse)
-      .select('id')
+      .select('id, dominant_archetype')
       .single();
 
     if (error) {
@@ -116,6 +118,7 @@ export const saveSurveyToDatabase = async (
     }
 
     console.log('תוצאות השאלון נשמרו בהצלחה עם ID:', data.id);
+    console.log('Dominant archetype saved to database:', data.dominant_archetype);
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת נתוני השאלון:', error);
@@ -136,9 +139,9 @@ export const saveColleagueSurveyToDatabase = async (
     const dominantArchetype = calculateDominantArchetype(rawAnswers);
     console.log('Dominant archetype calculated for colleague survey:', dominantArchetype);
     
-    // Prepare raw answers as individual columns (only questions 1-90 for core survey)
+    // Prepare raw answers as individual columns (questions 1-105 now)
     const rawAnswersObject: Record<string, number | null> = {};
-    for (let i = 1; i <= 90; i++) {
+    for (let i = 1; i <= 105; i++) {
       const answer = rawAnswers.find(a => a.questionId === i);
       rawAnswersObject[`q${i}`] = answer ? answer.value : null;
     }
@@ -186,7 +189,7 @@ export const saveColleagueSurveyToDatabase = async (
     const { data, error } = await supabase
       .from('colleague_survey_responses')
       .insert(colleagueResponse)
-      .select('id')
+      .select('id, dominant_archetype')
       .single();
 
     if (error) {
@@ -195,6 +198,7 @@ export const saveColleagueSurveyToDatabase = async (
     }
 
     console.log('הערכת עמית נשמרה בהצלחה עם ID:', data.id);
+    console.log('Dominant archetype saved for colleague survey:', data.dominant_archetype);
     return data;
   } catch (error) {
     console.error('שגיאה בשמירת הערכת עמית:', error);
@@ -205,6 +209,8 @@ export const saveColleagueSurveyToDatabase = async (
 // Function to get survey results with insights from database
 export const getSurveyWithInsights = async (surveyId: string) => {
   try {
+    console.log('Fetching survey with insights for ID:', surveyId);
+    
     const { data, error } = await supabase
       .from('survey_responses')
       .select('*')
@@ -216,6 +222,9 @@ export const getSurveyWithInsights = async (surveyId: string) => {
       throw error;
     }
 
+    console.log('Survey data fetched from database:', data);
+    console.log('Dominant archetype from database:', data?.dominant_archetype);
+    
     return data;
   } catch (error) {
     console.error('Error getting survey with insights:', error);
