@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
+import { calculateDominantArchetype } from "./archetype-calculator";
 
 // Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
@@ -20,6 +21,10 @@ export const saveArchetypeAnswersToDatabase = async (
   try {
     console.log('שמירת תשובות ארכיטיפ במסד הנתונים:', archetypeAnswers);
     
+    // Calculate dominant archetype
+    const dominantArchetype = calculateDominantArchetype(archetypeAnswers);
+    console.log('Calculated dominant archetype:', dominantArchetype);
+    
     // For each archetype answer, we could save it to a separate responses table
     // or update the existing archetype_logic entries with user responses
     // For now, we'll log the archetype responses - this could be extended
@@ -31,7 +36,11 @@ export const saveArchetypeAnswersToDatabase = async (
     // TODO: If you want to store individual user responses to archetype questions,
     // create a new table "archetype_responses" and save the data there
     
-    return { success: true, message: 'Archetype answers processed' };
+    return { 
+      success: true, 
+      message: 'Archetype answers processed',
+      dominantArchetype 
+    };
   } catch (error) {
     console.error('שגיאה בשמירת תשובות ארכיטיפ:', error);
     throw error;
@@ -46,6 +55,10 @@ export const saveSurveyToDatabase = async (
 ) => {
   try {
     console.log('שמירת תוצאות שאלון במסד הנתונים:', results);
+    
+    // Calculate dominant archetype from all answers (including archetype questions 91-105)
+    const dominantArchetype = calculateDominantArchetype(rawAnswers);
+    console.log('Dominant archetype calculated for survey:', dominantArchetype);
     
     // Prepare raw answers as individual columns (only questions 1-90 for core survey)
     const rawAnswersObject: Record<string, number | null> = {};
@@ -76,6 +89,9 @@ export const saveSurveyToDatabase = async (
       dimension_a2: results.dimensions.A2.score,
       dimension_s: results.dimensions.S.score,
       
+      // Add dominant archetype
+      dominant_archetype: dominantArchetype,
+      
       // Consent and anonymity
       consent_for_research: consentForResearch,
       is_anonymous: isAnonymous,
@@ -85,6 +101,8 @@ export const saveSurveyToDatabase = async (
       ...rawAnswersObject,
       answers: answersArray
     };
+
+    console.log('Survey response to save:', surveyResponse);
 
     const { data, error } = await supabase
       .from('survey_responses')
@@ -113,6 +131,10 @@ export const saveColleagueSurveyToDatabase = async (
 ) => {
   try {
     console.log('שמירת הערכת עמית במסד הנתונים:', submission);
+    
+    // Calculate dominant archetype for colleague survey too
+    const dominantArchetype = calculateDominantArchetype(rawAnswers);
+    console.log('Dominant archetype calculated for colleague survey:', dominantArchetype);
     
     // Prepare raw answers as individual columns (only questions 1-90 for core survey)
     const rawAnswersObject: Record<string, number | null> = {};
@@ -148,6 +170,9 @@ export const saveColleagueSurveyToDatabase = async (
       dimension_m: submission.dimensions.M,
       dimension_a: submission.dimensions.A,
       dimension_a2: submission.dimensions.A2,
+      
+      // Add dominant archetype
+      dominant_archetype: dominantArchetype,
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
