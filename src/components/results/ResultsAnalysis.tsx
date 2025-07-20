@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
@@ -88,6 +87,9 @@ const ResultsAnalysis: React.FC<ResultsAnalysisProps> = ({
     }
   };
 
+  // Fixed order: top-left to bottom-right
+  const fixedDimensionOrder = ['S', 'A', 'I', 'L', 'A2', 'M'];
+
   return (
     <div className="space-y-3 sm:space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
@@ -118,19 +120,21 @@ const ResultsAnalysis: React.FC<ResultsAnalysisProps> = ({
           התובנות נטענות כעת... אנא המתן מספר שניות והטען מחדש
         </div>
       )}
-      
-      <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 xl:grid-cols-2">
-        {Object.values(result.dimensions).map(dimension => (
-          <ResultsDetailCard 
-            key={dimension.dimension} 
-            dimension={dimension} 
-            answers={answers} 
-            insight={getInsightForDimension(dimension.dimension, insights)} 
-            isLoadingInsight={isLoadingInsights} 
-          />
-        ))}
-      </div>
 
+      <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 xl:grid-cols-2 rtl text-right">
+        {fixedDimensionOrder.map(dimensionKey => {
+          const dimension = result.dimensions[dimensionKey];
+          return (
+            <ResultsDetailCard 
+              key={dimensionKey}
+              dimension={dimension}
+              answers={answers}
+              insight={getInsightForDimension(dimensionKey, insights)}
+              isLoadingInsight={isLoadingInsights}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
