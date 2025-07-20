@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { SurveyResult, ColleagueSubmissionResult, Answer, UserInfo } from "./types";
-import { calculateDominantArchetype } from "./archetype-calculator";
+import { calculateDominantArchetype, calculateAllArchetypeScores } from "./archetype-calculator";
 
 // Helper function to convert raw answers array to object - now handles questions 1-105
 const convertRawAnswersToObject = (rawAnswers: Answer[]): Record<string, number | null> => {
@@ -58,14 +58,16 @@ export const saveSurveyToDatabase = async (
     // Convert Answer[] to number[] for database compatibility
     const answersArray = rawAnswers.map(answer => answer.value);
     
-    // Get all answers including archetype questions for dominant archetype calculation
+    // Get all answers including archetype questions for calculations
     const allAnswers = JSON.parse(localStorage.getItem('salimaAnswers') || '[]').concat(
       JSON.parse(localStorage.getItem('archetypeAnswers') || '[]')
     );
     
-    // Calculate dominant archetype
+    // Calculate dominant archetype and individual scores
     const dominantArchetype = calculateDominantArchetype(allAnswers);
+    const archetypeScores = calculateAllArchetypeScores(allAnswers);
     console.log('Calculated dominant archetype:', dominantArchetype);
+    console.log('Calculated archetype scores:', archetypeScores);
     
     const surveyResponse = {
       // Basic info
@@ -86,8 +88,11 @@ export const saveSurveyToDatabase = async (
       dimension_a2: results.dimensions.A2.score,
       dimension_s: results.dimensions.S.score,
       
-      // Dominant archetype
+      // Dominant archetype and individual scores
       dominant_archetype: dominantArchetype,
+      archetype_1_score: archetypeScores["המנהל הסקרן"],
+      archetype_2_score: archetypeScores["מנהל ההזדמנות"],
+      archetype_3_score: archetypeScores["המנהל המעצים"],
       
       // Consent and anonymity
       consent_for_research: consentForResearch,
@@ -137,14 +142,16 @@ export const saveColleagueSurveyToDatabase = async (
     // Convert Answer[] to number[] for database compatibility
     const answersArray = rawAnswers.map(answer => answer.value);
 
-    // Get all answers including archetype questions for dominant archetype calculation
+    // Get all answers including archetype questions for calculations
     const allAnswers = JSON.parse(localStorage.getItem('salimaAnswers') || '[]').concat(
       JSON.parse(localStorage.getItem('archetypeAnswers') || '[]')
     );
     
-    // Calculate dominant archetype
+    // Calculate dominant archetype and individual scores
     const dominantArchetype = calculateDominantArchetype(allAnswers);
+    const archetypeScores = calculateAllArchetypeScores(allAnswers);
     console.log('Calculated dominant archetype for colleague:', dominantArchetype);
+    console.log('Calculated archetype scores for colleague:', archetypeScores);
 
     const colleagueResponse = {
       // Manager info
@@ -171,8 +178,11 @@ export const saveColleagueSurveyToDatabase = async (
       dimension_a: submission.dimensions.A,
       dimension_a2: submission.dimensions.A2,
       
-      // Dominant archetype
+      // Dominant archetype and individual scores
       dominant_archetype: dominantArchetype,
+      archetype_1_score: archetypeScores["המנהל הסקרן"],
+      archetype_2_score: archetypeScores["מנהל ההזדמנות"],
+      archetype_3_score: archetypeScores["המנהל המעצים"],
       
       // Consent and anonymity
       consent_for_research: consentForResearch,

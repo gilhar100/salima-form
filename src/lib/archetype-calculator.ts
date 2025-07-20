@@ -1,4 +1,3 @@
-
 import { Answer } from "./types";
 
 // Archetype definitions with their SALIMA parameters
@@ -68,17 +67,20 @@ const calculateArchetypeQuestionsScore = (archetypeQuestions: number[], answers:
   return totalScore / relevantAnswers.length;
 };
 
-// Calculate dominant archetype
-export const calculateDominantArchetype = (allAnswers: Answer[]): string => {
-  console.log('Calculating dominant archetype with answers:', allAnswers.length);
+// Calculate scores for all archetypes
+export const calculateAllArchetypeScores = (allAnswers: Answer[]): Record<string, number> => {
+  console.log('Calculating all archetype scores with answers:', allAnswers.length);
   
   if (allAnswers.length === 0) {
     console.warn('No answers provided for archetype calculation');
-    return "המנהל הסקרן"; // Default fallback
+    return {
+      "המנהל הסקרן": 0,
+      "מנהל ההזדמנות": 0,
+      "המנהל המעצים": 0
+    };
   }
   
-  let highestScore = -1;
-  let dominantArchetype = "המנהל הסקרן";
+  const scores: Record<string, number> = {};
   
   Object.entries(ARCHETYPES).forEach(([archetypeName, archetypeData]) => {
     console.log(`Calculating score for archetype: ${archetypeName}`);
@@ -99,9 +101,30 @@ export const calculateDominantArchetype = (allAnswers: Answer[]): string => {
     const combinedScore = (averageParameterScore * 0.7) + (archetypeQuestionsScore * 0.3);
     
     console.log(`Combined score for ${archetypeName}: ${combinedScore}`);
-    
-    if (combinedScore > highestScore) {
-      highestScore = combinedScore;
+    scores[archetypeName] = combinedScore;
+  });
+  
+  console.log('All archetype scores calculated:', scores);
+  return scores;
+};
+
+// Calculate dominant archetype
+export const calculateDominantArchetype = (allAnswers: Answer[]): string => {
+  console.log('Calculating dominant archetype with answers:', allAnswers.length);
+  
+  if (allAnswers.length === 0) {
+    console.warn('No answers provided for archetype calculation');
+    return "המנהל הסקרן"; // Default fallback
+  }
+  
+  const scores = calculateAllArchetypeScores(allAnswers);
+  
+  let highestScore = -1;
+  let dominantArchetype = "המנהל הסקרן";
+  
+  Object.entries(scores).forEach(([archetypeName, score]) => {
+    if (score > highestScore) {
+      highestScore = score;
       dominantArchetype = archetypeName;
     }
   });
