@@ -86,7 +86,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     }
   ];
 
-  // Calculate archetype border segments based on dimension positions and scores
+  // Calculate archetype border segments - 3 segments covering the full circle
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
   let cumulativeAngle = 0;
   
@@ -98,52 +98,51 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
       dimension: item.dimension,
       startAngle,
       endAngle: cumulativeAngle,
-      segmentSize
+      segmentSize,
+      value: item.value
     };
   });
 
-  // Create continuous archetype border segments that cover the full circle
+  // Create archetype border segments based on consecutive dimension pairs
   const archetypeBorderData = [];
   
-  for (const group of archetypeGroups) {
-    const groupDimensions = group.dimensions.map(dimKey => 
-      dimensionAngles.find(d => d.dimension === dimKey)
-    ).filter(Boolean);
-    
-    if (groupDimensions.length === 2) {
-      // Find the indices in the ordered array
-      const indices = groupDimensions.map(gd => 
-        dimensionAngles.findIndex(d => d.dimension === gd.dimension)
-      ).sort((a, b) => a - b);
-      
-      // Check if dimensions are consecutive or wrap around
-      const areConsecutive = indices[1] - indices[0] === 1 || 
-                           (indices[0] === 0 && indices[1] === dimensionAngles.length - 1);
-      
-      if (areConsecutive) {
-        const firstDim = dimensionAngles[indices[0]];
-        const secondDim = dimensionAngles[indices[1]];
-        
-        archetypeBorderData.push({
-          startAngle: firstDim.startAngle,
-          endAngle: secondDim.endAngle,
-          color: group.color,
-          name: group.name,
-          value: firstDim.segmentSize + secondDim.segmentSize
-        });
-      } else {
-        // Dimensions are not consecutive, create two separate segments
-        groupDimensions.forEach(gd => {
-          archetypeBorderData.push({
-            startAngle: gd.startAngle,
-            endAngle: gd.endAngle,
-            color: group.color,
-            name: group.name,
-            value: gd.segmentSize
-          });
-        });
-      }
-    }
+  // מנהל ההזדמנות: S + A (positions 0,1)
+  const strategyDim = dimensionAngles.find(d => d.dimension === 'S');
+  const adaptiveDim = dimensionAngles.find(d => d.dimension === 'A');
+  if (strategyDim && adaptiveDim) {
+    archetypeBorderData.push({
+      startAngle: strategyDim.startAngle,
+      endAngle: adaptiveDim.endAngle,
+      color: '#8B5CF6', // purple
+      name: 'מנהל ההזדמנות',
+      value: strategyDim.value + adaptiveDim.value
+    });
+  }
+
+  // המנהל הסקרן: L + I (positions 2,3)
+  const learningDim = dimensionAngles.find(d => d.dimension === 'L');
+  const inspirationDim = dimensionAngles.find(d => d.dimension === 'I');
+  if (learningDim && inspirationDim) {
+    archetypeBorderData.push({
+      startAngle: learningDim.startAngle,
+      endAngle: inspirationDim.endAngle,
+      color: '#F97316', // orange
+      name: 'המנהל הסקרן',
+      value: learningDim.value + inspirationDim.value
+    });
+  }
+
+  // המנהל המעצים: M + A2 (positions 4,5)
+  const meaningDim = dimensionAngles.find(d => d.dimension === 'M');
+  const authenticDim = dimensionAngles.find(d => d.dimension === 'A2');
+  if (meaningDim && authenticDim) {
+    archetypeBorderData.push({
+      startAngle: meaningDim.startAngle,
+      endAngle: authenticDim.endAngle,
+      color: '#10B981', // green
+      name: 'המנהל המעצים',
+      value: meaningDim.value + authenticDim.value
+    });
   }
 
   return (
