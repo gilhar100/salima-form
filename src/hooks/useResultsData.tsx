@@ -71,9 +71,13 @@ export const useResultsData = () => {
         }
 
         if (savedGptResults) {
-          const parsedGptResults = JSON.parse(savedGptResults);
-          setGptResults(parsedGptResults);
-          console.log('Loaded GPT results:', parsedGptResults);
+          try {
+            const parsedGptResults = JSON.parse(savedGptResults);
+            setGptResults(parsedGptResults);
+            console.log('Loaded GPT results:', parsedGptResults);
+          } catch (gptError) {
+            console.error('Error parsing GPT results:', gptError);
+          }
         }
 
         toast({
@@ -112,27 +116,30 @@ export const useResultsData = () => {
       const data = await getSurveyWithInsights(surveyId);
       console.log('Insights data received:', data);
 
+      // Safely handle the insights data
       const fetchedInsights = {
-        insight_strategy: data.insight_strategy,
-        insight_adaptive: data.insight_adaptive,
-        insight_learning: data.insight_learning,
-        insight_inspiration: data.insight_inspiration,
-        insight_meaning: data.insight_meaning,
-        insight_authentic: data.insight_authentic,
-        dominant_archetype: data.dominant_archetype
+        insight_strategy: data?.insight_strategy || null,
+        insight_adaptive: data?.insight_adaptive || null,
+        insight_learning: data?.insight_learning || null,
+        insight_inspiration: data?.insight_inspiration || null,
+        insight_meaning: data?.insight_meaning || null,
+        insight_authentic: data?.insight_authentic || null,
+        dominant_archetype: data?.dominant_archetype || null
       };
 
       console.log('Setting insights state with:', fetchedInsights);
-      console.log('Dominant archetype from database:', data.dominant_archetype);
+      console.log('Dominant archetype from database:', data?.dominant_archetype);
       setInsights(fetchedInsights);
 
       // Check if any insights are available
-      const hasAnyInsight = Object.values(fetchedInsights).some(insight => insight && insight.trim() !== '');
+      const hasAnyInsight = Object.values(fetchedInsights).some(insight => insight && typeof insight === 'string' && insight.trim() !== '');
       setInsightsAvailable(hasAnyInsight);
       console.log('Insights availability check:', hasAnyInsight);
     } catch (error) {
       console.error('Error fetching insights:', error);
       setInsightsAvailable(false);
+      // Set empty insights object to prevent null reference errors
+      setInsights({});
     } finally {
       setIsLoadingInsights(false);
     }

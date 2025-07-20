@@ -11,15 +11,20 @@ const ARCHETYPE_QUESTIONS = {
 export const calculateDominantArchetype = (answers: Answer[]): string => {
   console.log('Calculating dominant archetype from answers:', answers);
   
-  // Filter answers for archetype questions (91-105)
+  // Filter answers for archetype questions (91-105) - make sure we have valid answers
   const archetypeAnswers = answers.filter(answer => 
-    answer.questionId >= 91 && answer.questionId <= 105
+    answer && 
+    typeof answer.questionId === 'number' && 
+    typeof answer.value === 'number' &&
+    answer.questionId >= 91 && 
+    answer.questionId <= 105
   );
   
-  console.log('Archetype answers (91-105):', archetypeAnswers);
+  console.log('Valid archetype answers (91-105):', archetypeAnswers);
   
-  if (archetypeAnswers.length === 0) {
-    console.log('No archetype answers found, returning default');
+  // If we don't have enough archetype answers, return a default
+  if (archetypeAnswers.length < 5) {
+    console.log('Not enough archetype answers, returning default');
     return "המנהל הסקרן"; // Default fallback
   }
   
