@@ -65,42 +65,22 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     if (e.target === e.currentTarget) setSelectedDimension(null);
   };
 
-  const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
-  let cumulativeAngle = 0;
-
-  const dimensionAngles = profileData.map(item => {
-    const startAngle = cumulativeAngle;
-    const segmentSize = (item.value / totalValue) * 360;
-    cumulativeAngle += segmentSize;
-    return {
-      dimension: item.dimension,
-      startAngle,
-      endAngle: cumulativeAngle,
-      segmentSize,
-      value: item.value
-    };
-  });
-
   const archetypeGroups = [
     { name: 'מנהל ההזדמנות', dimensions: ['S', 'A'], color: '#8B5CF6' },
     { name: 'המנהל הסקרן', dimensions: ['L', 'I'], color: '#F97316' },
     { name: 'המנהל המעצים', dimensions: ['M', 'A2'], color: '#10B981' }
   ];
 
-  const archetypeBorderData = [];
-  for (let i = 0; i < archetypeOrder.length; i += 2) {
-    const dim1 = dimensionAngles.find(d => d.dimension === archetypeOrder[i]);
-    const dim2 = dimensionAngles.find(d => d.dimension === archetypeOrder[i + 1]);
-    const color = archetypeGroups[Math.floor(i / 2)].color;
-    if (dim1 && dim2) {
-      archetypeBorderData.push({
-        startAngle: dim1.startAngle,
-        endAngle: dim2.endAngle,
-        color,
-        value: dim1.value + dim2.value
-      });
-    }
-  }
+  const archetypeBorderData = archetypeGroups.map(group => {
+    const total = profileData
+      .filter(item => group.dimensions.includes(item.dimension))
+      .reduce((sum, item) => sum + item.value, 0);
+    return {
+      name: group.name,
+      value: total,
+      color: group.color,
+    };
+  });
 
   return (
     <Card className="w-full">
@@ -113,12 +93,13 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={archetypeBorderData.map(segment => ({ value: segment.endAngle - segment.startAngle }))}
+                data={archetypeBorderData}
                 cx="50%"
                 cy="50%"
                 outerRadius={isMobile ? "85%" : "90%"}
                 innerRadius={isMobile ? "82%" : "87%"}
                 startAngle={90}
+                endAngle={-270}
                 dataKey="value"
                 stroke="none"
               >
@@ -126,7 +107,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                   <Cell key={`archetype-${index}`} fill={segment.color} />
                 ))}
               </Pie>
-
               <Pie
                 data={profileData}
                 cx="50%"
