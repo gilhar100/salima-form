@@ -56,9 +56,6 @@ const ResultsContent: React.FC<ResultsContentProps> = ({
   insightsAvailable,
   onRefreshInsights
 }) => {
-  console.log('ResultsContent - insights received:', insights);
-  console.log('ResultsContent - dominant_archetype:', insights.dominant_archetype);
-
   const highestDimension = Object.values(results.dimensions).reduce((prev, current) => 
     prev.score > current.score ? prev : current
   );

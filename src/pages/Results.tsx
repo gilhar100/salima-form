@@ -25,7 +25,6 @@ const Results = () => {
   }
 
   console.log('Rendering results page with data:', results);
-  console.log('Insights data being passed:', insights);
 
   return (
     <ResultsContent 

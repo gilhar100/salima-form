@@ -111,8 +111,6 @@ export const useResultsData = () => {
       console.log('Fetching insights after delay for survey ID:', surveyId);
       const data = await getSurveyWithInsights(surveyId);
       console.log('Insights data received:', data);
-      console.log('Raw dominant_archetype value:', data.dominant_archetype);
-      console.log('Type of dominant_archetype:', typeof data.dominant_archetype);
 
       const fetchedInsights = {
         insight_strategy: data.insight_strategy,
@@ -146,9 +144,6 @@ export const useResultsData = () => {
       fetchInsightsWithDelay(surveyId);
     }
   };
-
-  console.log('useResultsData returning insights:', insights);
-  console.log('Current insights.dominant_archetype:', insights.dominant_archetype);
 
   return {
     results,
