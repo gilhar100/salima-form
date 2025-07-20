@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Users, Lightbulb, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -31,7 +31,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "המנהל המעצים",
-      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות وראיית האחר כדי ליצור מרחב מצמיח סביבו.",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
       icon: Users,
       color: "text-green-700",
       bgColor: "bg-green-50",
@@ -39,9 +39,18 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     }
   ];
 
-  // Find the dominant archetype or default to first one
-  const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
-  const [currentIndex, setCurrentIndex] = useState(dominantIndex !== -1 ? dominantIndex : 0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update currentIndex when dominantArchetype changes
+  useEffect(() => {
+    if (dominantArchetype) {
+      const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
+      if (dominantIndex !== -1) {
+        console.log('Setting current index to dominant archetype:', dominantIndex, dominantArchetype);
+        setCurrentIndex(dominantIndex);
+      }
+    }
+  }, [dominantArchetype]);
 
   const currentArchetype = archetypes[currentIndex];
 
