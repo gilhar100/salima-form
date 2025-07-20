@@ -155,10 +155,10 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
           ))}
         </div>
 
-        <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-sm sm:text-base px-2">
+        <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-base sm:text-lg lg:text-xl px-2 font-bold">
           גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
           <br />
-          <span className="text-xs text-gray-600 mt-1 block">לחץ על פרק או על שם הממד למידע נוסף</span>
+          <span className="text-sm sm:text-base text-gray-600 mt-1 block font-normal">לחץ על פרק או על שם הממד למידע נוסף</span>
         </div>
       </CardContent>
     </Card>
