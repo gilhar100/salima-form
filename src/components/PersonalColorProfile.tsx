@@ -112,7 +112,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              {/* Archetype border segments */}
               <Pie
                 data={archetypeBorderData.map(segment => ({ value: segment.endAngle - segment.startAngle }))}
                 cx="50%"
@@ -128,7 +127,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
                 ))}
               </Pie>
 
-              {/* Main dimension pie */}
               <Pie
                 data={profileData}
                 cx="50%"
@@ -161,6 +159,43 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
               />
             </PieChart>
           </ResponsiveContainer>
+        </div>
+
+        {selectedDimension && (
+          <div className="mt-4 p-4 bg-white border-2 rounded-lg shadow-lg max-w-2xl w-full" style={{ borderColor: profileData.find(d => d.dimension === selectedDimension)?.color }}>
+            <h3 className="font-bold text-lg mb-3 text-center text-black">
+              {profileData.find(d => d.dimension === selectedDimension)?.name}
+            </h3>
+            <p className="text-sm sm:text-base leading-relaxed text-black text-right" dir="rtl">
+              {dimensionDescriptions[selectedDimension as keyof typeof dimensionDescriptions]}
+            </p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 mt-3 sm:mt-4 w-full max-w-2xl">
+          {profileData.map((dimension, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 p-2 sm:p-3 rounded-lg border-2 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+              style={{ backgroundColor: 'white', borderColor: dimension.color }}
+              onClick={() => handlePieClick(dimension)}
+            >
+              <div className="w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 border-gray-300 shadow-md flex-shrink-0" style={{ backgroundColor: dimension.color }} />
+              <div className="flex-1 min-w-0">
+                <p className="text-black font-medium truncate text-xs sm:text-sm">
+                  {dimension.name}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-black text-center mt-3 sm:mt-4 max-w-lg text-base sm:text-lg lg:text-xl px-2">
+          <span className="font-bold">
+            גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
+          </span>
+          <br />
+          <span className="text-sm sm:text-base text-gray-600 mt-1 block font-bold">לחץ על פרק או על שם הממד למידע נוסף</span>
         </div>
       </CardContent>
     </Card>
