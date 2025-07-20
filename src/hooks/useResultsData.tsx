@@ -53,8 +53,8 @@ export const useResultsData = () => {
       if (!surveyData.dominant_archetype) {
         const getScore = (key: string) => typeof surveyData[key] === "number" ? surveyData[key] : 0;
 
-        const strategyAdaptiveAvg = (surveyData.strategy + surveyData.dimension_adaptive) / 2;
-        const authenticityMeaningAvg = (surveyData.dimension_authentic + surveyData.dimension_m) / 2;
+        const strategyAdaptiveAvg = (surveyData.strategy + surveyData.dimension_a) / 2;
+        const authenticityMeaningAvg = (surveyData.dimension_a2 + surveyData.dimension_m) / 2;
         const learningInspirationAvg = (surveyData.dimension_l + surveyData.dimension_i) / 2;
 
         const opportunityAvg = (
