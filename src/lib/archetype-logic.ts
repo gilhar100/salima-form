@@ -1,5 +1,6 @@
 
 import { Answer } from "./types";
+import { questions } from "@/data/questions";
 
 // Archetype calculation logic
 export const calculateDominantArchetype = (answers: Answer[]): string => {
@@ -61,11 +62,13 @@ export const calculateAllArchetypeScores = (answers: Answer[]): Record<string, n
 
 // Helper function to calculate dimension scores from answers
 const calculateDimensionScore = (answers: Answer[], dimension: string): number => {
-  // This is a simplified calculation - you might need to adjust based on your specific logic
-  // For now, we'll calculate an average of relevant questions
+  // Filter answers by the specific dimension
+  const relevantQuestionIds = questions
+    .filter(q => q.dimension === dimension && q.id >= 1 && q.id <= 90)
+    .map(q => q.id);
+  
   const relevantAnswers = answers.filter(answer => 
-    // You'll need to define which questions belong to which dimensions
-    answer.questionId >= 1 && answer.questionId <= 90
+    relevantQuestionIds.includes(answer.questionId)
   );
   
   if (relevantAnswers.length === 0) return 0;
