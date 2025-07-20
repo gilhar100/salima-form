@@ -160,7 +160,7 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
             גודל הפרק משקף את חוזק הממד בפרופיל המנהיגות שלך
           </span>
           <br />
-          <span className="text-sm sm:text-base text-gray-600 mt-1 block font-normal">לחץ על פרק או על שם הממד למידע נוסף</span>
+          <span className="text-sm sm:text-base text-gray-600 mt-1 block font-bold">לחץ על פרק או על שם הממד למידע נוסף</span>
         </div>
       </CardContent>
     </Card>
