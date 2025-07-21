@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Users, Lightbulb, Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,11 +6,45 @@ interface ResultsDominantArchetypeProps {
   dominantArchetype: string | null | undefined;
 }
 
+const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
+  // Define which letter indices are relevant to which archetype
+  const highlightMap: Record<string, number[]> = {
+    'מנהל ההזדמנות': [0, 1], // S, A (first A)
+    'המנהל הסקרן': [2, 3],   // L, I
+    'המנהל המעצים': [4, 5],  // M, A (second A)
+  };
+
+  const colorMap: Record<number, string> = {
+    0: 'text-purple-600', // S
+    1: 'text-purple-600', // A (first A)
+    2: 'text-orange-600', // L
+    3: 'text-orange-600', // I
+    4: 'text-green-700',  // M
+    5: 'text-green-700',  // A (second A)
+  };
+
+  const letters = ['S', 'A', 'L', 'I', 'M', 'A'];
+  const highlightedIndices = highlightMap[archetype] || [];
+
+  return (
+    <div className="flex justify-center mt-2 space-x-1 rtl:space-x-reverse">
+      {letters.map((letter, index) => {
+        const isHighlighted = highlightedIndices.includes(index);
+        const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
+        const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
+        return (
+          <span key={index} className={`${colorClass} ${sizeClass}`}>
+            {letter}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
 const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   dominantArchetype
 }) => {
-  console.log('ResultsDominantArchetype - dominantArchetype received:', dominantArchetype);
-
   const archetypes = [
     {
       name: "המנהל הסקרן",
@@ -41,45 +74,32 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Update currentIndex when dominantArchetype changes - this ensures the dominant archetype is shown first
   useEffect(() => {
     if (dominantArchetype) {
       const dominantIndex = archetypes.findIndex(arch => arch.name === dominantArchetype);
-      if (dominantIndex !== -1) {
-        console.log('Setting current index to dominant archetype:', dominantIndex, dominantArchetype);
-        setCurrentIndex(dominantIndex);
-      } else {
-        console.log('Dominant archetype not found in list:', dominantArchetype);
-        // If not found, default to first archetype
-        setCurrentIndex(0);
-      }
+      setCurrentIndex(dominantIndex !== -1 ? dominantIndex : 0);
     }
   }, [dominantArchetype]);
 
   const currentArchetype = archetypes[currentIndex];
+  const IconComponent = currentArchetype.icon;
+  const isDominant = currentArchetype.name === dominantArchetype;
 
   const cycleArchetype = () => {
     setCurrentIndex((prev) => (prev === archetypes.length - 1 ? 0 : prev + 1));
   };
 
-  if (!dominantArchetype) {
-    console.log('ResultsDominantArchetype - No dominant archetype data, component will not render');
-    return null;
-  }
-
-  const IconComponent = currentArchetype.icon;
-  const isDominant = currentArchetype.name === dominantArchetype;
+  if (!dominantArchetype) return null;
 
   return (
-    <Card 
+    <Card
       className={`mb-3 sm:mb-4 lg:mb-6 border-2 shadow-lg rounded-xl transition-all duration-300 ${
         isDominant ? 'border-gray-300' : 'border-gray-200'
-      } relative`} 
+      } relative`}
       style={{ backgroundColor: currentArchetype.lightBg }}
       dir="rtl"
     >
       <CardContent className="px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
-        {/* Subtle toggle link in top-right corner */}
         <button
           onClick={cycleArchetype}
           className="absolute top-4 right-4 text-sm text-gray-600 hover:opacity-80 transition-opacity cursor-pointer"
@@ -89,12 +109,10 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
         </button>
 
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 mt-6">
-          {/* Title */}
           <h2 className="text-black font-bold text-right text-lg sm:text-xl lg:text-2xl">
             סגנון ניהולי דומיננטי
           </h2>
-          
-          {/* Archetype Name with Icon - Ensure proper RTL alignment */}
+
           <div className="flex items-center gap-2 sm:gap-3" style={{ direction: 'rtl', justifyContent: 'flex-start' }}>
             <IconComponent className={`w-5 h-5 sm:w-6 sm:h-6 ${currentArchetype.color}`} />
             <h3 className="text-black font-bold text-right text-base sm:text-lg lg:text-xl">
@@ -106,13 +124,14 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
               </span>
             )}
           </div>
-          
-          {/* Description */}
+
+          {/* SALIMA dynamic */}
+          <ArchetypeLetters archetype={currentArchetype.name} />
+
           <p className="text-black leading-relaxed text-right text-sm sm:text-base lg:text-lg" style={{ lineHeight: '1.6' }}>
             {currentArchetype.description}
           </p>
-          
-          {/* Clarification Paragraph */}
+
           <p className="text-gray-700 leading-relaxed text-right text-xs sm:text-sm lg:text-base" style={{ lineHeight: '1.6' }}>
             חשוב להדגיש: סגנון ניהולי זה אינו מעיד בהכרח על התחומים שבהם קיבלת את הציון הגבוה ביותר. הוא משקף את השילוב הסגנוני הבולט בפרופיל שלך — הדרך שבה אתה נוטה להנהיג, לחשוב ולהשפיע.
           </p>
