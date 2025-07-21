@@ -85,7 +85,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const archetypes = [
     {
       name: "המנהל הסקרן",
-      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה...",
+      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי. המנהל הסקרן מקפיד להתעדכן בידע חדש, לשאול שאלות שמובילות לחשיבה חדשה ולעודד צוותים להביע רעיונות.",
       icon: Lightbulb,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
@@ -93,7 +93,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "מנהל ההזדמנות",
-      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות...",
+      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים. המנהל ההזדמנותי מתבלט ביכולת לזהות שינויים בסביבה, להגיב במהירות ולהניע תהליכים.",
       icon: Crown,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
@@ -101,7 +101,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "המנהל המעצים",
-      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות...",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
       icon: Users,
       color: "text-green-700",
       bgColor: "bg-green-50",
