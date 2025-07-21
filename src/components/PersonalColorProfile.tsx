@@ -82,15 +82,27 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     };
   });
 
-  const archetypeSegments = archetypePairs.map(({ keys, color }) => {
-    const from = angleSegments.find(s => s.dimension === keys[0]);
-    const to = angleSegments.find(s => s.dimension === keys[1]);
-    return {
-      startAngle: from?.startAngle ?? 0,
-      endAngle: to?.endAngle ?? 0,
-      color
-    };
-  });
+  // Create archetype segments based on actual dimension positions
+  const archetypeSegments = [
+    {
+      // מנהל ההזדמנות: Strategy (S) + Adaptive (A)
+      startAngle: angleSegments.find(s => s.dimension === 'S')?.startAngle ?? 0,
+      endAngle: angleSegments.find(s => s.dimension === 'A')?.endAngle ?? 0,
+      color: archetypeColors.opportunity
+    },
+    {
+      // המנהל הסקרן: Learning (L) + Inspiration (I)
+      startAngle: angleSegments.find(s => s.dimension === 'L')?.startAngle ?? 0,
+      endAngle: angleSegments.find(s => s.dimension === 'I')?.endAngle ?? 0,
+      color: archetypeColors.curious
+    },
+    {
+      // המנהל המעצים: Meaning (M) + Authentic (A2)
+      startAngle: angleSegments.find(s => s.dimension === 'M')?.startAngle ?? 0,
+      endAngle: angleSegments.find(s => s.dimension === 'A2')?.endAngle ?? 0,
+      color: archetypeColors.empowering
+    }
+  ];
 
   const handlePieClick = (data: any) => {
     if (data && data.dimension) {
