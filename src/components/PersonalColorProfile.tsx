@@ -38,17 +38,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
     return 3;
   }
 
-  const archetypeColors = {
-    'opportunity': '#8B5CF6',
-    'curious': '#F97316',
-    'empowering': '#10B981'
-  };
-
-  const archetypePairs = [
-    { keys: ['S', 'A'], color: archetypeColors.opportunity },
-    { keys: ['L', 'I'], color: archetypeColors.curious },
-    { keys: ['M', 'A2'], color: archetypeColors.empowering }
-  ];
 
   const order = ['S', 'A', 'L', 'I', 'M', 'A2'] as const;
 
@@ -68,41 +57,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
   });
 
   const totalValue = profileData.reduce((sum, item) => sum + item.value, 0);
-  let cumulative = 0;
-
-  const angleSegments = profileData.map(item => {
-    const start = cumulative;
-    const angle = (item.value / totalValue) * 360;
-    cumulative += angle;
-    return {
-      dimension: item.dimension,
-      startAngle: start + 90,
-      endAngle: start + angle + 90,
-      value: item.value
-    };
-  });
-
-  // Create archetype segments based on actual dimension positions
-  const archetypeSegments = [
-    {
-      // מנהל ההזדמנות: Strategy (S) + Adaptive (A)
-      startAngle: angleSegments.find(s => s.dimension === 'S')?.startAngle ?? 0,
-      endAngle: angleSegments.find(s => s.dimension === 'A')?.endAngle ?? 0,
-      color: archetypeColors.opportunity
-    },
-    {
-      // המנהל הסקרן: Learning (L) + Inspiration (I)
-      startAngle: angleSegments.find(s => s.dimension === 'L')?.startAngle ?? 0,
-      endAngle: angleSegments.find(s => s.dimension === 'I')?.endAngle ?? 0,
-      color: archetypeColors.curious
-    },
-    {
-      // המנהל המעצים: Meaning (M) + Authentic (A2)
-      startAngle: angleSegments.find(s => s.dimension === 'M')?.startAngle ?? 0,
-      endAngle: angleSegments.find(s => s.dimension === 'A2')?.endAngle ?? 0,
-      color: archetypeColors.empowering
-    }
-  ];
 
   const handlePieClick = (data: any) => {
     if (data && data.dimension) {
@@ -124,23 +78,6 @@ const PersonalColorProfile: React.FC<PersonalColorProfileProps> = ({ result }) =
         <div className="w-full h-64 sm:h-80 lg:h-96 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              {archetypeSegments.map((segment, i) => (
-                <Pie
-                  key={`arc-${i}`}
-                  data={[{ value: 1 }]}
-                  cx="50%"
-                  cy="50%"
-                  startAngle={segment.startAngle}
-                  endAngle={segment.endAngle}
-                  outerRadius={"76%"}
-                  innerRadius={"73%"}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  <Cell fill={segment.color} />
-                </Pie>
-              ))}
-
               <Pie
                 data={profileData}
                 cx="50%"
