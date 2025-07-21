@@ -10,9 +10,9 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const highlightMap: Record<string, number[]> = {
-    'מנהל ההזדמנות': [4, 5], // A (Adaptivity), S (Strategy)
-    'המנהל הסקרן': [3, 2],   // L (Learning), I (Inspiration)
-    'המנהל המעצים': [1, 0],  // M (Meaning), A (Authenticity)
+    'מנהל ההזדמנות': [5, 4], // S (Strategy), A (Adaptivity)
+    'המנהל הסקרן': [2, 3],   // I (Inspiration), L (Learning)
+    'המנהל המעצים': [0, 1],  // A (Authenticity), M (Meaning)
   };
 
   const colorMap: Record<number, string> = {
