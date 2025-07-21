@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Users, Lightbulb, Crown, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,8 +8,9 @@ interface ResultsDominantArchetypeProps {
 }
 
 const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  
+  // Define which letter indices are relevant to which archetype
   const highlightMap: Record<string, number[]> = {
     'מנהל ההזדמנות': [0, 1], // S, A (first A)
     'המנהל הסקרן': [2, 3],   // L, I
@@ -16,40 +18,53 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
   };
 
   const colorMap: Record<number, string> = {
-    0: 'text-purple-600',
-    1: 'text-purple-600',
-    2: 'text-orange-600',
-    3: 'text-orange-600',
-    4: 'text-green-700',
-    5: 'text-green-700',
+    0: 'text-purple-600', // S
+    1: 'text-purple-600', // A (first A)
+    2: 'text-orange-600', // L
+    3: 'text-orange-600', // I
+    4: 'text-green-700',  // M
+    5: 'text-green-700',  // A (second A)
   };
 
-  const parameterExplanations: Record<number, string> = {
-    0: 'אסטרטגיה - היכולת לראות את התמונה הגדולה ולתכנן לטווח ארוך',
-    1: 'אדפטיביות - גמישות והתאמה מהירה לשינויים',
-    2: 'למידה - סקרנות ורצון מתמיד להתפתח ולהשתפר',
-    3: 'השראה - היכולת להניע אחרים ולהקרין נוכחות מנהיגותית',
-    4: 'משמעות - קשר לערכים פנימיים ותחושת שליחות',
-    5: 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן'
+  const parameterExplanations: Record<string, string> = {
+    'S': 'אסטרטגיה - היכולת לראות את התמונה הגדולה ולתכנן לטווח ארוך',
+    'A': 'אדפטיביות - גמישות והתאמה מהירה לשינויים',
+    'L': 'למידה - סקרנות ורצון מתמיד להתפתח ולהשתפר',
+    'I': 'השראה - היכולת להניע אחרים ולהקרין נוכחות מנהיגותית',
+    'M': 'משמעות - קשר לערכים פנימיים ותחושת שליחות',
+    'A': 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן'
   };
 
   const letters = ['S', 'A', 'L', 'I', 'M', 'A'];
   const highlightedIndices = highlightMap[archetype] || [];
 
+  const handleLetterClick = (letter: string, index: number) => {
+    if (highlightedIndices.includes(index)) {
+      setSelectedLetter(selectedLetter === letter ? null : letter);
+    }
+  };
+
   return (
     <div className="relative">
-      <div className="flex justify-center mt-2 rtl:space-x-reverse space-x-2 animate-fade-in">
+      <div className="flex justify-center mt-2 space-x-2 rtl:space-x-reverse">
         {letters.map((letter, index) => {
           const isHighlighted = highlightedIndices.includes(index);
           const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
           const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
           const isClickable = isHighlighted;
-
+          
           return (
             <span
               key={`${letter}-${index}`}
-              className={`transition-all duration-300 ease-in-out ${colorClass} ${sizeClass} ${isClickable ? 'cursor-pointer hover:scale-110 hover:opacity-80' : ''} ${selectedIndex === index ? 'scale-125' : ''}`}
-              onClick={() => isClickable ? setSelectedIndex(selectedIndex === index ? null : index) : null}
+              className={`
+                ${colorClass} ${sizeClass} 
+                transition-all duration-300 ease-in-out
+                ${isClickable ? 'cursor-pointer hover:scale-110 hover:opacity-80' : ''}
+                ${selectedLetter === letter ? 'scale-125' : ''}
+                animate-fade-in
+              `}
+              style={{ animationDelay: `${index * 100}ms` }}
+              onClick={() => handleLetterClick(letter, index)}
             >
               {letter}
             </span>
@@ -57,20 +72,20 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
         })}
       </div>
 
-      {selectedIndex !== null && (
+      {selectedLetter && (
         <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-10 bg-white border-2 rounded-lg shadow-lg p-4 max-w-xs w-full animate-fade-in">
           <button
-            onClick={() => setSelectedIndex(null)}
+            onClick={() => setSelectedLetter(null)}
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
           >
             <X size={16} />
           </button>
           <div className="text-center">
-            <div className={`text-lg font-bold mb-2 ${colorMap[selectedIndex]}`}>
-              {letters[selectedIndex]}
+            <div className="text-lg font-bold mb-2" style={{ color: colorMap[letters.indexOf(selectedLetter)] }}>
+              {selectedLetter}
             </div>
             <p className="text-sm text-gray-700 text-right" dir="rtl">
-              {parameterExplanations[selectedIndex]}
+              {parameterExplanations[selectedLetter]}
             </p>
           </div>
         </div>
@@ -85,7 +100,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const archetypes = [
     {
       name: "המנהל הסקרן",
-      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה...",
+      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי.",
       icon: Lightbulb,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
@@ -93,7 +108,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "מנהל ההזדמנות",
-      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות...",
+      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים.",
       icon: Crown,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
@@ -101,7 +116,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "המנהל המעצים",
-      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות...",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
       icon: Users,
       color: "text-green-700",
       bgColor: "bg-green-50",
@@ -130,7 +145,9 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
 
   return (
     <Card
-      className={`mb-3 sm:mb-4 lg:mb-6 border-2 shadow-lg rounded-xl transition-all duration-300 ${isDominant ? 'border-gray-300' : 'border-gray-200'} relative`}
+      className={`mb-3 sm:mb-4 lg:mb-6 border-2 shadow-lg rounded-xl transition-all duration-300 ${
+        isDominant ? 'border-gray-300' : 'border-gray-200'
+      } relative`}
       style={{ backgroundColor: currentArchetype.lightBg }}
       dir="rtl"
     >
@@ -160,6 +177,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
             )}
           </div>
 
+          {/* SALIMA dynamic with proper ordering and animations */}
           <ArchetypeLetters archetype={currentArchetype.name} />
 
           <p className="text-black leading-relaxed text-right text-sm sm:text-base lg:text-lg" style={{ lineHeight: '1.6' }}>
