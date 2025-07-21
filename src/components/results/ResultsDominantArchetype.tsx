@@ -10,30 +10,30 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const highlightMap: Record<string, number[]> = {
-    'מנהל ההזדמנות': [0, 1], // S, A (first A)
-    'המנהל הסקרן': [2, 3],   // L, I
-    'המנהל המעצים': [4, 5],  // M, A (second A)
+    'מנהל ההזדמנות': [4, 5], // A (Adaptivity), S (Strategy)
+    'המנהל הסקרן': [3, 2],   // L (Learning), I (Inspiration)
+    'המנהל המעצים': [1, 0],  // M (Meaning), A (Authenticity)
   };
 
   const colorMap: Record<number, string> = {
-    0: 'text-purple-600',
-    1: 'text-purple-600',
-    2: 'text-orange-600',
-    3: 'text-orange-600',
-    4: 'text-green-700',
-    5: 'text-green-700',
+    0: 'text-green-700',     // A (Authenticity)
+    1: 'text-green-700',     // M (Meaning)
+    2: 'text-orange-600',    // I (Inspiration)
+    3: 'text-orange-600',    // L (Learning)
+    4: 'text-purple-600',    // A (Adaptivity)
+    5: 'text-purple-600',    // S (Strategy)
   };
 
   const parameterExplanations: Record<number, string> = {
-    0: 'אסטרטגיה - היכולת לראות את התמונה הגדולה ולתכנן לטווח ארוך',
-    1: 'אדפטיביות - גמישות והתאמה מהירה לשינויים',
-    2: 'למידה - סקרנות ורצון מתמיד להתפתח ולהשתפר',
-    3: 'השראה - היכולת להניע אחרים ולהקרין נוכחות מנהיגותית',
-    4: 'משמעות - קשר לערכים פנימיים ותחושת שליחות',
-    5: 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן'
+    0: 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן',
+    1: 'משמעות - קשר לערכים פנימיים ותחושת שליחות',
+    2: 'השראה - היכולת להניע אחרים ולהקרין נוכחות מנהיגותית',
+    3: 'למידה - סקרנות ורצון מתמיד להתפתח ולהשתפר',
+    4: 'אדפטיביות - גמישות והתאמה מהירה לשינויים',
+    5: 'אסטרטגיה - היכולת לראות את התמונה הגדולה ולתכנן לטווח ארוך'
   };
 
-  const letters = ['S', 'A', 'L', 'I', 'M', 'A'];
+  const letters = ['A', 'M', 'I', 'L', 'A', 'S'];
   const highlightedIndices = highlightMap[archetype] || [];
 
   return (
@@ -42,7 +42,7 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
         {letters.map((letter, index) => {
           const isHighlighted = highlightedIndices.includes(index);
           const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
-          const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
+          const sizeClass = isHighlighted ? 'text-2xl sm:text-3xl lg:text-4xl font-bold' : 'text-lg sm:text-xl lg:text-2xl';
           const isClickable = isHighlighted;
 
           return (
@@ -85,7 +85,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
   const archetypes = [
     {
       name: "המנהל הסקרן",
-      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה. סגנון זה מתאפיין בפתיחות, חקירה מתמדת ויכולת לסחוף אחרים דרך דוגמה אישית ונרטיב משמעותי.",
+      description: "מונע מתוך סקרנות טבעית, אהבת למידה והשראה...",
       icon: Lightbulb,
       color: "text-orange-600",
       bgColor: "bg-orange-50",
@@ -93,7 +93,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "מנהל ההזדמנות",
-      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות משתנה, ומנווט בה תוך תכנון קדימה וגמישות. סגנון זה משלב בין חשיבה אסטרטגית ויכולת התאמה מהירה לשינויים.",
+      description: "ניחן בגישה יוזמת, רואה את המציאות כמפת הזדמנויות...",
       icon: Crown,
       color: "text-purple-600",
       bgColor: "bg-purple-50",
@@ -101,7 +101,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
     },
     {
       name: "המנהל המעצים",
-      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות. משלב הקשבה, שקיפות וראיית האחר כדי ליצור מרחב מצמיח סביבו.",
+      description: "מונע ממשמעות, מחובר לערכים פנימיים ויודע להוביל באותנטיות...",
       icon: Users,
       color: "text-green-700",
       bgColor: "bg-green-50",
