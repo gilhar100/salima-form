@@ -42,7 +42,7 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
         {letters.map((letter, index) => {
           const isHighlighted = highlightedIndices.includes(index);
           const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
-          const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
+          const sizeClass = isHighlighted ? 'text-2xl sm:text-3xl lg:text-4xl font-bold' : 'text-lg sm:text-xl lg:text-2xl';
           const isClickable = isHighlighted;
 
           return (
