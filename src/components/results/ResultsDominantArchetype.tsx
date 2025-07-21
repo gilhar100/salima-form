@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Users, Lightbulb, Crown } from "lucide-react";
+import { Users, Lightbulb, Crown, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ResultsDominantArchetypeProps {
@@ -7,6 +8,8 @@ interface ResultsDominantArchetypeProps {
 }
 
 const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  
   // Define which letter indices are relevant to which archetype
   const highlightMap: Record<string, number[]> = {
     'מנהל ההזדמנות': [0, 1], // S, A (first A)
@@ -23,21 +26,70 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
     5: 'text-green-700',  // A (second A)
   };
 
+  const parameterExplanations: Record<string, string> = {
+    'S': 'אסטרטגיה - היכולת לראות את התמונה הגדולה ולתכנן לטווח ארוך',
+    'A': 'אדפטיביות - גמישות והתאמה מהירה לשינויים',
+    'L': 'למידה - סקרנות ורצון מתמיד להתפתח ולהשתפר',
+    'I': 'השראה - היכולת להניע אחרים ולהקרין נוכחות מנהיגותית',
+    'M': 'משמעות - קשר לערכים פנימיים ותחושת שליחות',
+    'A': 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן'
+  };
+
   const letters = ['S', 'A', 'L', 'I', 'M', 'A'];
   const highlightedIndices = highlightMap[archetype] || [];
 
+  const handleLetterClick = (letter: string, index: number) => {
+    if (highlightedIndices.includes(index)) {
+      setSelectedLetter(selectedLetter === letter ? null : letter);
+    }
+  };
+
   return (
-    <div className="flex justify-center mt-2 space-x-1 rtl:space-x-reverse">
-      {letters.map((letter, index) => {
-        const isHighlighted = highlightedIndices.includes(index);
-        const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
-        const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
-        return (
-          <span key={index} className={`${colorClass} ${sizeClass}`}>
-            {letter}
-          </span>
-        );
-      })}
+    <div className="relative">
+      <div className="flex justify-center mt-2 space-x-2 rtl:space-x-reverse">
+        {letters.map((letter, index) => {
+          const isHighlighted = highlightedIndices.includes(index);
+          const colorClass = isHighlighted ? colorMap[index] : 'text-gray-400';
+          const sizeClass = isHighlighted ? 'text-xl sm:text-2xl font-bold' : 'text-sm sm:text-base';
+          const isClickable = isHighlighted;
+          
+          return (
+            <span
+              key={`${letter}-${index}`}
+              className={`
+                ${colorClass} ${sizeClass} 
+                transition-all duration-300 ease-in-out
+                ${isClickable ? 'cursor-pointer hover:scale-110 hover:opacity-80' : ''}
+                ${selectedLetter === letter ? 'scale-125' : ''}
+                animate-fade-in
+              `}
+              style={{ animationDelay: `${index * 100}ms` }}
+              onClick={() => handleLetterClick(letter, index)}
+            >
+              {letter}
+            </span>
+          );
+        })}
+      </div>
+
+      {selectedLetter && (
+        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-10 bg-white border-2 rounded-lg shadow-lg p-4 max-w-xs w-full animate-fade-in">
+          <button
+            onClick={() => setSelectedLetter(null)}
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          >
+            <X size={16} />
+          </button>
+          <div className="text-center">
+            <div className="text-lg font-bold mb-2" style={{ color: colorMap[letters.indexOf(selectedLetter)] }}>
+              {selectedLetter}
+            </div>
+            <p className="text-sm text-gray-700 text-right" dir="rtl">
+              {parameterExplanations[selectedLetter]}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -125,7 +177,7 @@ const ResultsDominantArchetype: React.FC<ResultsDominantArchetypeProps> = ({
             )}
           </div>
 
-          {/* SALIMA dynamic */}
+          {/* SALIMA dynamic with proper ordering and animations */}
           <ArchetypeLetters archetype={currentArchetype.name} />
 
           <p className="text-black leading-relaxed text-right text-sm sm:text-base lg:text-lg" style={{ lineHeight: '1.6' }}>
