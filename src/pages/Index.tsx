@@ -23,7 +23,7 @@ const Index = () => {
           
           <CardContent className="px-4 sm:px-6">
             <p className="mb-4 text-sm sm:text-base leading-relaxed">
-              מערכת  SALIMA-WOCA היא כלי אבחון ארגוני מקיף למנהלים וארגונים הפותח על ידי ד״ר יוסי שרעבי. שאלון מנהיגות מסוג SALIMA  כולל 105 היגדים ומציע שני סוגי שאלונים:
+              מערכת  SALIMA-WOCA היא כלי אבחון ארגוני מקיף למנהלים וארגונים שפותח על ידי ד״ר יוסי שרעבי. שאלון מנהיגות מסוג SALIMA  כולל 105 היגדים ומציע שני סוגי שאלונים:
             </p>
             
             <div className="grid md:grid-cols-2 gap-4 text-sm">
