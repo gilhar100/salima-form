@@ -33,7 +33,7 @@ const ArchetypeLetters = ({ archetype }: { archetype: string }) => {
     5: 'אותנטיות - שקיפות ויכולת להביא את עצמך באופן כן'
   };
 
-  const letters = ['S', 'A', 'L', 'I', 'M', 'A'];
+  const letters = ['A', 'M', 'I', 'L', 'A', 'S'];
   const highlightedIndices = highlightMap[archetype] || [];
 
   return (
